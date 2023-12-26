@@ -1,0 +1,23 @@
+{
+  "files": {
+    "main.css": "/static/css/main.07a14947.css",
+    "main.js": "/static/js/main.9e5662e3.js",
+    "static/js/787.6334f1fb.chunk.js": "/static/js/787.6334f1fb.chunk.js",
+    "static/media/aeromexico.png": "/static/media/aeromexico.10c8c83fdc85aadc92c6.png",
+    "static/media/logo.png": "/static/media/logo.5f7e31146c757276d5b7.png",
+    "static/media/c.png": "/static/media/c.73bc54e3e7e3213312e2.png",
+    "static/media/d.png": "/static/media/d.6f44d70b77991b69a51f.png",
+    "static/media/volaris.png": "/static/media/volaris.88c5c46de50d1f6b8dee.png",
+    "static/media/a.png": "/static/media/a.90a284db16888da93e3f.png",
+    "static/media/bmas.png": "/static/media/bmas.f4d84ec40c0fd801c7af.png",
+    "static/media/b.png": "/static/media/b.b079ba1f8a404c6e3d69.png",
+    "index.html": "/index.html",
+    "main.07a14947.css.map": "/static/css/main.07a14947.css.map",
+    "main.9e5662e3.js.map": "/static/js/main.9e5662e3.js.map",
+    "787.6334f1fb.chunk.js.map": "/static/js/787.6334f1fb.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.07a14947.css",
+    "static/js/main.9e5662e3.js"
+  ]
+}
