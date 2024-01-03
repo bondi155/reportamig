@@ -100,7 +100,7 @@ function Login({ setIslogin, form, setForm }) {
           className='semi-circle-login-btn'
           type='submit'
         > 
-          <GiPadlockOpen className="me-1" /> 
+          <GiPadlockOpen className="me-1" />
         </Button>
       </Form>
     )}

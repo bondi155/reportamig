@@ -93,7 +93,7 @@ function reportUrl__(req, res) {
   });
 }
 
-//upload report card
+
 /*
 function reportPdf__(req, res) {
 
@@ -157,6 +157,7 @@ function editCalif__(req, res) {
   });
 }
 
+//reset password
 async function resetPassword__(req, res) {
   const password = req.body.password;
   const username = req.body.username;

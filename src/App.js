@@ -94,7 +94,7 @@ function App() {
             path='/entrada_txt_cmer_cmbg'
             element={
               <PrivateRoute islogin={islogin}>
-                <EntradaCmer />{' '}
+                <EntradaCmer form={form} setForm={setForm} />
               </PrivateRoute>
             }
           />

@@ -72,7 +72,7 @@ app.delete(
   PostDataController.deleteUser__
 ); //delete user by id
 
-app.post('/uploadfile', upload.single('file'), txtController.cargaTxt__);
+app.post('/uploadfile', upload.single('file'), txtController.execFuncsTxt);
 
 
 //ruta descargar report card
