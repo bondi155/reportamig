@@ -2,10 +2,34 @@ const mysql = require('mysql2');
 const pool = mysql.createPool(process.env.DATABASE_URL);
 const fs = require('fs');
 
+let counter = 10;
+
 function generateIdProceso() {
   const now = new Date();
-  return now.getTime();
+  const datePart = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`;
+  const id = `${datePart}${counter}`;
+  counter += 10; 
+  return id;
 }
+
+async function registrarError(idProceso, rutaArchivo, codigoError, severidadError, mensajeErrorOriginal, mensajeErrorAplicacion) {
+    const query = `
+      INSERT INTO amigdb.am_carga_err
+      (id_proceso, ruta_arch, cod_err, sev_err, msg_err_orig, msg_err_apl, f_err)
+      VALUES
+      (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`;
+  
+    const values = [idProceso, rutaArchivo, codigoError, severidadError, mensajeErrorOriginal, mensajeErrorAplicacion];
+  
+    try {
+      const connection = await pool.promise().getConnection();
+      await connection.query(query, values);
+      connection.release();
+    } catch (err) {
+      console.error('Error al registrar el ERROR en BD', err.message);
+    }
+  }
+  
 async function cargaTxt__(req, res) {
   if (!req.file) {
     console.error('No se subió ningún archivo.');
@@ -44,11 +68,11 @@ async function cargaTxt__(req, res) {
 async function saveDBtxtCmbg(parsedData, usuario, res, fileName) {
   const connection = await pool.promise().getConnection();
   let lineaNum = 0;
+  let idProceso;
   try {
     await connection.beginTransaction();
-
+    idProceso = generateIdProceso();
     const batchValues = parsedData.map((row, index) => {
-      const idProceso = '25'; // Asegúrate de que este valor sea correcto
       lineaNum = index + 1;
       const fechaCarga = new Date();
       return [idProceso, lineaNum, ...row, fechaCarga, usuario];
@@ -68,6 +92,7 @@ async function saveDBtxtCmbg(parsedData, usuario, res, fileName) {
           usr_carga
         ) VALUES ?`;
 
+        console.log(idProceso);
     await connection.query(query, [batchValues]);
     await connection.commit();
     console.log(`Todas las líneas insertadas en am_cmbg.`);
@@ -75,7 +100,7 @@ async function saveDBtxtCmbg(parsedData, usuario, res, fileName) {
       .status(200)
       .json({
         code: 'SUCCESS',
-        message: `${fileName} Se proceso sin errores!`,
+        message: `${fileName} procesado sin errores! con el id ${idProceso}`,
       });
   } catch (error) {
     await connection.rollback();
@@ -85,7 +110,9 @@ async function saveDBtxtCmbg(parsedData, usuario, res, fileName) {
     let additionalMessage = lineNumber === "1"
       ? " Revise si seleccionó bien la opción de tipo de archivo ya que tiene error en la primera línea."
       : "";
-      let errorMessage = `Error al insertar en CMER: Error en la línea ${lineNumber}.${additionalMessage}`;
+      let errorMessage = `Error al insertar en CMBG: Error en la línea ${lineNumber}.${additionalMessage}`;
+
+      await registrarError(idProceso , fileName, error.code, '5', errorMessage, errorMessage);
 
     return res.status(500).json({
       code: 'ERROR_INSERT',
@@ -99,14 +126,14 @@ async function saveDBtxtCmbg(parsedData, usuario, res, fileName) {
 //guardar el error , nombre de archivo y id_proceso en la tabla error
 //guardar nombre de archivo y id_proceso en map
 
-async function saveDBtxtCmer(parsedData, usuario, res) {
+async function saveDBtxtCmer(parsedData, usuario, res, fileName) {
   const connection = await pool.promise().getConnection();
   let lineaNum = 0;
+  let idProceso;
   try {
     await connection.beginTransaction();
-
+    idProceso = generateIdProceso();
     const batchValues = parsedData.map((row, index) => {
-      const idProceso = '25';
       const fechaCarga = new Date();
       lineaNum = index + 1;
       return [idProceso, lineaNum, ...row, fechaCarga, usuario];
@@ -135,7 +162,7 @@ async function saveDBtxtCmer(parsedData, usuario, res) {
     console.log(`Todas las líneas insertadas en am_cmer.`);
     return res
       .status(200)
-      .json({ code: 'SUCCESS', message: ' Se proceso sin errores!' });
+      .json({ code: 'SUCCESS', message: `${fileName} procesado sin errores! con el id ${idProceso}`});
   } catch (error) {
     await connection.rollback();
     console.error(`Error al insertar en am_cmer: ${error.message}`);
@@ -147,6 +174,8 @@ async function saveDBtxtCmer(parsedData, usuario, res) {
        : "";
        let errorMessage = `Error al insertar en CMER: Error en la línea ${lineNumber}.${additionalMessage}`;
    
+       await registrarError(idProceso , fileName, error.code, '5', errorMessage, errorMessage);
+
     return res.status(500).json({
       code: 'ERROR_INSERT',
       message: errorMessage,
@@ -156,11 +185,12 @@ async function saveDBtxtCmer(parsedData, usuario, res) {
   }
 }
 
+
+
 async function execFuncsTxt(req, res) {
   const entradaValue = req.body.entradaValue;
   const usuario = req.body.usuario;
-  const fileName = req.body.fileName; // Asegúrate de obtener fileName del cuerpo de la solicitud
-
+  const fileName = req.body.fileName; 
   try {
     const parsedData = await cargaTxt__(req, res);
     if (!parsedData) {
