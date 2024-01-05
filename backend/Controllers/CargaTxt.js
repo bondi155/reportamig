@@ -2,16 +2,33 @@ const mysql = require('mysql2');
 const pool = mysql.createPool(process.env.DATABASE_URL);
 const fs = require('fs');
 
-let counter = 10;
-
-function generateIdProceso() {
-  const now = new Date();
-  const datePart = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`;
-  const id = `${datePart}${counter}`;
-  counter += 10; 
-  return id;
-}
-
+async function gestionarProceso(idProceso, estado, comentario, rutaArchivo) {
+    const connection = await pool.promise().getConnection();
+  
+    try {
+      if (estado === 'I') {
+        // insert para estado 'I'
+        const queryInicio = `
+          INSERT INTO am_proceso (estatus, ruta_arch, comentario)
+          VALUES (?, ?, ?)`;
+        const [result] = await connection.query(queryInicio, [estado, rutaArchivo, comentario]);
+        return result.insertId;
+      } else {
+        // UPDATE para estado 'F' o 'E'
+        const queryActualizacion = `
+          UPDATE am_proceso
+          SET estatus = ?
+          WHERE id = ?`;
+        await connection.query(queryActualizacion, [estado, idProceso]);
+      }
+    } catch (error) {
+      console.error('Error en gestionarProceso:', error.message);
+      throw error;
+    } finally {
+      connection.release();
+    }
+  }
+  
 async function registrarError(idProceso, rutaArchivo, codigoError, severidadError, mensajeErrorOriginal, mensajeErrorAplicacion) {
     const query = `
       INSERT INTO amigdb.am_carga_err
@@ -62,16 +79,15 @@ async function cargaTxt__(req, res) {
   }
 }
 
+
 //ahora lo que tengo que hacer es meter en la base de datos esto que estoy haciendo y validar , tienen q entrar bien en los campos
 //si da error de eso ya parar el proceso , entonces primer paso es insert y error
 //acordarse de hacer un select en el front para decir que archivo es y asi usar un query o el otro para el insert ya que tienen difer nº de camp
-async function saveDBtxtCmbg(parsedData, usuario, res, fileName) {
+async function saveDBtxtCmbg(parsedData, usuario, res, fileName, idProceso) {
   const connection = await pool.promise().getConnection();
   let lineaNum = 0;
-  let idProceso;
   try {
     await connection.beginTransaction();
-    idProceso = generateIdProceso();
     const batchValues = parsedData.map((row, index) => {
       lineaNum = index + 1;
       const fechaCarga = new Date();
@@ -95,6 +111,9 @@ async function saveDBtxtCmbg(parsedData, usuario, res, fileName) {
         console.log(idProceso);
     await connection.query(query, [batchValues]);
     await connection.commit();
+    await gestionarProceso(idProceso, 'F', 'pendiente', fileName); 
+    console.log(`F FInalizada checar el id aca y en la atabla cmgb.`);
+
     console.log(`Todas las líneas insertadas en am_cmbg.`);
     return res
       .status(200)
@@ -102,6 +121,7 @@ async function saveDBtxtCmbg(parsedData, usuario, res, fileName) {
         code: 'SUCCESS',
         message: `${fileName} procesado sin errores! con el id ${idProceso}`,
       });
+      
   } catch (error) {
     await connection.rollback();
      // exp regular para extraer solo el num de la lineNum del mensaje de error
@@ -111,9 +131,9 @@ async function saveDBtxtCmbg(parsedData, usuario, res, fileName) {
       ? " Revise si seleccionó bien la opción de tipo de archivo ya que tiene error en la primera línea."
       : "";
       let errorMessage = `Error al insertar en CMBG: Error en la línea ${lineNumber}.${additionalMessage}`;
-
+      await gestionarProceso(idProceso, 'E', fileName);
+      console.error('E UPDATEADA');
       await registrarError(idProceso , fileName, error.code, '5', errorMessage, errorMessage);
-
     return res.status(500).json({
       code: 'ERROR_INSERT',
       message: errorMessage
@@ -123,16 +143,13 @@ async function saveDBtxtCmbg(parsedData, usuario, res, fileName) {
   }
 }
 
-//guardar el error , nombre de archivo y id_proceso en la tabla error
 //guardar nombre de archivo y id_proceso en map
 
-async function saveDBtxtCmer(parsedData, usuario, res, fileName) {
+async function saveDBtxtCmer(parsedData, usuario, res, fileName, idProceso) {
   const connection = await pool.promise().getConnection();
   let lineaNum = 0;
-  let idProceso;
   try {
     await connection.beginTransaction();
-    idProceso = generateIdProceso();
     const batchValues = parsedData.map((row, index) => {
       const fechaCarga = new Date();
       lineaNum = index + 1;
@@ -159,6 +176,8 @@ async function saveDBtxtCmer(parsedData, usuario, res, fileName) {
 
     await connection.query(query, [batchValues]);
     await connection.commit();
+    await gestionarProceso(idProceso, 'F', 'pendiente', fileName); 
+    console.log(`F FInalizada checar el id aca y en la atabla cmgb.`);
     console.log(`Todas las líneas insertadas en am_cmer.`);
     return res
       .status(200)
@@ -173,7 +192,8 @@ async function saveDBtxtCmer(parsedData, usuario, res, fileName) {
        ? " Revise si seleccionó bien la opción de tipo de archivo ya que tiene error en la primera línea."
        : "";
        let errorMessage = `Error al insertar en CMER: Error en la línea ${lineNumber}.${additionalMessage}`;
-   
+       await gestionarProceso(idProceso, 'E', fileName);
+       console.error('E UPDATEADA');
        await registrarError(idProceso , fileName, error.code, '5', errorMessage, errorMessage);
 
     return res.status(500).json({
@@ -188,32 +208,34 @@ async function saveDBtxtCmer(parsedData, usuario, res, fileName) {
 
 
 async function execFuncsTxt(req, res) {
-  const entradaValue = req.body.entradaValue;
-  const usuario = req.body.usuario;
-  const fileName = req.body.fileName; 
-  try {
-    const parsedData = await cargaTxt__(req, res);
-    if (!parsedData) {
-      // Si parsedData es undefined, envía una respuesta de error.
-      return res.status(500).json({
-        code: 'EMPTY_PATH',
-        message: 'Error al procesar el archivo , seleccione uno por favor',
-      });
+    const entradaValue = req.body.entradaValue;
+    const usuario = req.body.usuario;
+    const fileName = req.body.fileName; 
+    let idProceso;
+    try {
+         idProceso = await gestionarProceso(null, 'I', 'pendiente', fileName);
+        const parsedData = await cargaTxt__(req, res);
+        if (!parsedData) {
+            return res.status(500).json({
+                code: 'EMPTY_PATH',
+                message: 'Error al procesar el archivo, seleccione uno por favor',
+            });
+        }
+        if (entradaValue === 'cmbg') {
+            await saveDBtxtCmbg(parsedData, usuario, res, fileName, idProceso);
+        } else if (entradaValue === 'cmer') {
+            await saveDBtxtCmer(parsedData, usuario, res, fileName, idProceso);
+            console.log('Terminaron las líneas del archivo');
+        }
+    } catch (error) {
+        console.error(`Error en execFuncsTxt: ${error.message}`);
+        res.status(500).json({
+            code: 'ERROR_SERVIDOR',
+            message: `Error interno del servidor: ${error.message}`,
+        });
     }
-    if (entradaValue === 'cmbg') {
-      await saveDBtxtCmbg(parsedData, usuario, res, fileName);
-    } else if (entradaValue === 'cmer') {
-      await saveDBtxtCmer(parsedData, usuario, res, fileName);
-      console.log('terminaron las lineas del archivo');
-    }
-  } catch (error) {
-    console.error(`Error en execFuncsTxt: ${error.message}`);
-    res.status(500).json({
-      code: 'ERROR_SERVIDOR',
-      message: `Error interno del servidor: ${error.message}`,
-    });
-  }
 }
+
 
 module.exports = {
   execFuncsTxt,

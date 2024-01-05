@@ -154,6 +154,8 @@ import Spinner from '../components/Spinner';
     };
     
     //get data from db de entrada de txt
+    // eslint-disable-next-line no-lone-blocks
+    {/* 
 const getCmerData = async () => {
   try {
     setIsLoading(true); 
@@ -174,11 +176,12 @@ const getCmerData = async () => {
     setIsLoading(false);
   }
 };
-
-
-    useEffect(() => {
+ useEffect(() => {
       getCmerData();
     }, []);
+*/}
+
+   
 
     const rows = consultaEntrada.map((row) => ({
       id: row.id_proceso,

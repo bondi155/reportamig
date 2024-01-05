@@ -52,11 +52,6 @@ app.use(cors());
 app.use(express.json());
 
 
-app.get(
-  '/getData',
-  authenticateToken,
-  getDataController.consultaEntrada__
-); //get evaluation data in data-grid
 app.get('/getCompanies', authenticateToken, getDataController.getAllCompanies__);//all companies for admin
 app.post('/loginUsers', authenticateToken, getDataController.loginUsers__);//login
 app.get('/companyEval', authenticateToken, getDataController.EvalCompany__);//get evaluation by company

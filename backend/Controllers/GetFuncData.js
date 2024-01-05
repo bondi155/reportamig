@@ -7,22 +7,6 @@ const jwt = require('jsonwebtoken');
 const secretkey = process.env.JWT_SECRET;
 const path = require('path');
 
-//evaluation data select
-function consultaEntrada__(req, res) {
-  const sqlGetEvalData = 'SELECT * FROM ctamcer_entrada ORDER BY id_proceso DESC;';
-
-  pool.query(sqlGetEvalData, (err, result) => {
-    if (err) {
-      console.error(
-        'Error executing query sqlGetEvalData..Check DB connection',
-        err
-      );
-      return res.status(500).send('Error to get Evaluation data');
-    }
-    res.send(result);
-  });
-}
-
 //get list users.
 function listUsers__(req, res) {
   const sqlGetusuarios = 'SELECT * FROM users ';
@@ -215,7 +199,6 @@ function getDateEval__(req, res) {
 }
 
 module.exports = {
-  consultaEntrada__,
   getDateEval__,
   loginUsers__,
   listUsers__,
