@@ -12,6 +12,7 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import PlaneSpinner from './components/planeSpinner';
 import ConsultaGrid from './pages/ConsultaGrid';
+import ReportCreate from './pages/ReportCreate';
 function App() {
   const [islogin, setIslogin] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -22,7 +23,7 @@ function App() {
     password: '',
   });
   useEffect(() => {
-    // Simulando un tiempo de carga
+    //simulando un tiempo de carga
     setTimeout(() => {
       setIsLoaded(true);
     }, 1000);
@@ -35,10 +36,10 @@ function App() {
       </div>
     );
   }
-  // quita al usuario luego de la expiracion del token
+  //quita al usuario luego de la expiracion del token
   axios.interceptors.response.use(
     function (response) {
-      // Si la respuesta fue exitosa, simplemente la devolvemos
+      //si la respuesta fue exitosa, simplemente la devolvemos
       return response;
     },
     function (error) {
@@ -53,7 +54,7 @@ function App() {
         axios.defaults.headers.common['Authorization'] = '';
         window.location.href = '/';
       }
-      // Si el error no fue un 403, simplemente lo devolvemos para que pueda ser manejado mas adelante
+      //si el error no fue un 403, simplemente lo devolvemos para que pueda ser manejado mas adelante
       return Promise.reject(error);
     }
   );
@@ -103,6 +104,18 @@ function App() {
             element={
               <PrivateRoute islogin={islogin}>
                 <UserCreate
+                  form={form}
+                  userCreate={userCreate}
+                  setUserCreate={setUserCreate}
+                />{' '}
+              </PrivateRoute>
+            }
+          />
+                    <Route
+            path='/reporteCreac'
+            element={
+              <PrivateRoute islogin={islogin}>
+                <ReportCreate
                   form={form}
                   userCreate={userCreate}
                   setUserCreate={setUserCreate}

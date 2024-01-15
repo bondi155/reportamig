@@ -5,7 +5,6 @@ import axios from 'axios';
 import { API_URL } from '../config/config.js';
 import GridEval from '../charts/GridEval';
 import Swal from 'sweetalert2';
-import { useParams } from 'react-router-dom';
 
 const userColumns = [
   { field: 'id', headerName: 'ID', width: 150 },

@@ -61,7 +61,7 @@ function NavigationBar({ setIslogin, form }) {
                   Admin. de Usuarios
                 </Link>
                 <Link
-                  to='/confReporte'
+                  to='/reporteCreac'
                   className='nav-link'
                   onClick={handleLinkClick}
                 >
