@@ -68,47 +68,50 @@ async function registrarError(
 async function cargaTxt__(req, res) {
   if (!req.file) {
     console.error('No se subió ningún archivo.');
+    return;
   }
+
   try {
-    // Leer el archivo subido
+    //lee el archivo subido
     const dataTxt = await fs.promises.readFile(req.file.path, 'utf8');
-    //console.log(dataTxt);
     const fileName = req.body.fileName;
-    //cod de empresa y la fecha
-    const codigoEmpresaMatch = fileName.match(/([A-Z]\d{4})/);
+
+    //extrae el cod de compañía y la fecha
+    const codigoCompaniaMatch = fileName.match(/([A-Z])(\d{4})/);
     const fechaMatch = fileName.match(/(\d{8})\.txt$/);
 
-    const codigoEmpresa = codigoEmpresaMatch ? codigoEmpresaMatch[1] : null;
+    //extraer el tipo_comp y cod_comp
+    const tipoCompania = codigoCompaniaMatch ? codigoCompaniaMatch[1] : null;
+    const codigoCompania = codigoCompaniaMatch ? codigoCompaniaMatch[2] : null;
     const fecha = fechaMatch ? fechaMatch[1] : null;
 
-    // Extraer año, mes y día de la fecha
+    //extrae año, mes y dia
     const anio = fecha ? fecha.substring(0, 4) : null;
     const mes = fecha ? fecha.substring(4, 6) : null;
     const dia = fecha ? fecha.substring(6, 8) : null;
 
     console.log(
-      `Código de Empresa: ${codigoEmpresa}, Año: ${anio}, Mes: ${mes}, Día: ${dia}`
+      `Tipo de Compañía: ${tipoCompania}, Código de Compañía: ${codigoCompania}, Año: ${anio}, Mes: ${mes}, Día: ${dia}`
     );
 
     const lines = dataTxt
       .split(';')
       .map((line) => line.trim())
       .filter((line) => line !== '');
-    // Dividir cada línea en sus componentes
     const parsedData = lines.map((line) =>
       line.split('|').filter((component) => component.trim() !== '')
     );
 
     console.log(parsedData[0]);
     console.log(fileName);
-    return {parsedData, codigoEmpresa, dia, mes, anio};
-    //console.log(JSON.stringify(dataTxt));
+
+    return { parsedData, tipoCompania, codigoCompania, dia, mes, anio };
   } catch (error) {
     console.error(`Ocurrió un error al intentar leer el archivo: ${error}`);
     return res.status(500).json({
       code: 'ERROR_READ_TXT',
       message:
-        'Error en el proceso de lectura del archivo, fijese que el formato sea el correcto',
+        'Error en el proceso de lectura del archivo, fíjese que el formato sea el correcto',
     });
   }
 }
@@ -124,7 +127,8 @@ async function saveDBtxtCmbg(
   res,
   fileName,
   idProceso,
-  codigoEmpresa,
+  tipoCompania,
+  codigoCompania,
   dia,
   mes,
   anio
@@ -140,7 +144,8 @@ async function saveDBtxtCmbg(
         idProceso,
         lineaNum,
         ...row,
-        codigoEmpresa,
+        tipoCompania,
+        codigoCompania,
         dia,
         mes,
         anio,
@@ -159,7 +164,8 @@ async function saveDBtxtCmbg(
       cuenta_nivel_4,
       moneda,
       importe,
-      cod_empresa, 
+      tipo_comp,
+      cod_comp,
       dia, 
       mes, 
       anio, 
@@ -180,7 +186,7 @@ async function saveDBtxtCmbg(
     });
   } catch (error) {
     await connection.rollback();
-    // exp regular para extraer solo el num de la lineNum del mensaje de error
+    //exp regular para extraer solo el num de la lineNum del mensaje de error
     const errorMatch = error.message.match(/at row (\d+)/);
     let lineNumber =
       errorMatch && errorMatch[1] ? errorMatch[1] : 'desconocida';
@@ -216,7 +222,8 @@ async function saveDBtxtCmer(
   res,
   fileName,
   idProceso,
-  codigoEmpresa,
+  tipoCompania,
+  codigoCompania,
   dia,
   mes,
   anio
@@ -232,7 +239,8 @@ async function saveDBtxtCmer(
         idProceso,
         lineaNum,
         ...row,
-        codigoEmpresa,
+        tipoCompania,
+        codigoCompania,
         dia,
         mes,
         anio,
@@ -255,7 +263,8 @@ async function saveDBtxtCmer(
           cve_subramo, 
           cve_subsubramo, 
           importe,
-          cod_empresa, 
+          tipo_comp,
+          cod_comp, 
           dia, 
           mes, 
           anio,  
@@ -275,7 +284,7 @@ async function saveDBtxtCmer(
   } catch (error) {
     await connection.rollback();
     console.error(`Error al insertar en am_cmer: ${error.message}`);
-    // exp regular para extraer solo el num de la lineNum del mensaje de error
+    //exp regular para extraer solo el num de la lineNum del mensaje de error
     const errorMatch = error.message.match(/at row (\d+)/);
     let lineNumber =
       errorMatch && errorMatch[1] ? errorMatch[1] : 'desconocida';
@@ -311,7 +320,8 @@ async function execFuncsTxt(req, res) {
   let idProceso;
   try {
     idProceso = await gestionarProceso(null, 'I', 'pendiente', fileName);
-    const { parsedData, codigoEmpresa, dia, mes, anio } = await cargaTxt__(req, res);
+    const { parsedData, tipoCompania, codigoCompania, dia, mes, anio } =
+      await cargaTxt__(req, res);
     if (!parsedData) {
       return res.status(500).json({
         code: 'EMPTY_PATH',
@@ -319,9 +329,31 @@ async function execFuncsTxt(req, res) {
       });
     }
     if (entradaValue === 'cmbg') {
-      await saveDBtxtCmbg(parsedData, usuario, res, fileName, idProceso, codigoEmpresa, dia, mes, anio);
+      await saveDBtxtCmbg(
+        parsedData,
+        usuario,
+        res,
+        fileName,
+        idProceso,
+        tipoCompania,
+        codigoCompania,
+        dia,
+        mes,
+        anio
+      );
     } else if (entradaValue === 'cmer') {
-      await saveDBtxtCmer(parsedData, usuario, res, fileName, idProceso, codigoEmpresa, dia, mes, anio);
+      await saveDBtxtCmer(
+        parsedData,
+        usuario,
+        res,
+        fileName,
+        idProceso,
+        tipoCompania,
+        codigoCompania,
+        dia,
+        mes,
+        anio
+      );
       console.log('Terminaron las líneas del archivo');
     }
   } catch (error) {
