@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Navbar, Nav, Button } from 'react-bootstrap';
+import { Navbar, Nav, Button, NavDropdown } from 'react-bootstrap';
 import { Outlet } from 'react-router-dom';
 import logo from '../components/img/logo.png';
 import { Link } from 'react-router-dom';
@@ -60,13 +60,22 @@ function NavigationBar({ setIslogin, form }) {
                 >
                   Admin. de Usuarios
                 </Link>
-                <Link
-                  to='/reporteCreac'
-                  className='nav-link'
-                  onClick={handleLinkClick}
-                >
-                  Conf. Reporte 
-                </Link>
+                <NavDropdown title='Reportes' id='basic-nav-dropdown'>
+                  <NavDropdown.Item as={Link} to="/reporteCreac">
+                    Total
+                  </NavDropdown.Item>
+                  <NavDropdown.Item href='#action/3.2'>
+                    reporte2{' '}
+                  </NavDropdown.Item>
+                  <NavDropdown.Item href='#action/3.3'>
+                    reporte3
+                  </NavDropdown.Item>
+                  <NavDropdown.Divider />
+                  <NavDropdown.Item href='#action/3.4'>
+                    Configuracion de reportes{' '}
+                  </NavDropdown.Item>
+                </NavDropdown>
+
                 <Link
                   to='/entrada_txt_cmer_cmbg'
                   className='nav-link'

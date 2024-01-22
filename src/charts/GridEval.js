@@ -36,7 +36,7 @@ function CustomToolbar({ fileNameVar }) {
   );
 }
 
-function GridEval({ rows, columnsVar, onDelete, fileNameVar, showDeleteColumn = false}) {
+function GridEval({ rows, columnsVar, onDelete, fileNameVar, showDeleteColumn = false, columnGroupingModel}) {
   let columns = [...columnsVar];
   if (showDeleteColumn) {
     const deleteButtonColumn = {
@@ -92,6 +92,8 @@ function GridEval({ rows, columnsVar, onDelete, fileNameVar, showDeleteColumn = 
             toolbar: (props) => <CustomToolbar {...props} fileNameVar={fileNameVar} />,
           }}
           disableRowSelectionOnClick
+          columnGroupingModel={columnGroupingModel}
+          experimentalFeatures={{ columnGrouping: true }}
           pageSizeOptions={[5, 10, 20, 50]}
         />
       </ThemeProvider>
