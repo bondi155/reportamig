@@ -384,3 +384,13 @@ body {
   padding-right: 5px;
   min-height: 60px;
 }
+
+.MuiDataGrid-columnHeader--alignCenter .MuiDataGrid-columnHeaderTitleContainer {
+  justify-content: center !important;
+  text-align: center !important;
+}
+
+.MuiDataGrid-columnHeaderTitle {
+  text-align: center !important;
+  flex-grow: 1 !important;
+}
