@@ -13,6 +13,7 @@ import Swal from 'sweetalert2';
 import PlaneSpinner from './components/planeSpinner';
 import ConsultaGrid from './pages/ConsultaGrid';
 import ReportCreate from './pages/ReportCreate';
+import RamoAdministrativo from './pages/RamoAdministrativo';
 function App() {
   const [islogin, setIslogin] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -116,6 +117,18 @@ function App() {
             element={
               <PrivateRoute islogin={islogin}>
                 <ReportCreate
+                  form={form}
+                  userCreate={userCreate}
+                  setUserCreate={setUserCreate}
+                />{' '}
+              </PrivateRoute>
+            }
+          />
+                          <Route
+            path='/ramoAdministrativo'
+            element={
+              <PrivateRoute islogin={islogin}>
+                <RamoAdministrativo
                   form={form}
                   userCreate={userCreate}
                   setUserCreate={setUserCreate}

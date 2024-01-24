@@ -2,7 +2,15 @@ import React from 'react';
 import 'react-data-grid/lib/styles.css';
 import Box from '@mui/material/Box';
 import { esES as coreBgBG } from '@mui/material/locale';
-import { DataGrid, esES, GridToolbarContainer, GridToolbarColumnsButton, GridToolbarExport, GridToolbarDensitySelector, GridToolbarFilterButton } from '@mui/x-data-grid';
+import {
+  DataGrid,
+  esES,
+  GridToolbarContainer,
+  GridToolbarColumnsButton,
+  GridToolbarExport,
+  GridToolbarDensitySelector,
+  GridToolbarFilterButton,
+} from '@mui/x-data-grid';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import '../css/App.css';
 import { BsFillTrashFill } from 'react-icons/bs';
@@ -18,7 +26,6 @@ const theme = createTheme(
   pickersBgBG, // x-date-pickers translations
   coreBgBG // core translations
 );
-
 
 function CustomToolbar({ fileNameVar }) {
   return (
@@ -36,7 +43,14 @@ function CustomToolbar({ fileNameVar }) {
   );
 }
 
-function GridEval({ rows, columnsVar, onDelete, fileNameVar, showDeleteColumn = false, columnGroupingModel}) {
+function GridEval({
+  rows,
+  columnsVar,
+  onDelete,
+  fileNameVar,
+  showDeleteColumn = false,
+  columnGroupingModel,
+}) {
   let columns = [...columnsVar];
   if (showDeleteColumn) {
     const deleteButtonColumn = {
@@ -46,7 +60,12 @@ function GridEval({ rows, columnsVar, onDelete, fileNameVar, showDeleteColumn = 
       sortable: false,
       filterable: false,
       renderCell: (params) => (
-        <BsFillTrashFill size={25} color="black" onClick={() => onDelete(params.row.id)} style={{ cursor: 'pointer' }} />
+        <BsFillTrashFill
+          size={25}
+          color='black'
+          onClick={() => onDelete(params.row.id)}
+          style={{ cursor: 'pointer' }}
+        />
       ),
     };
     columns.push(deleteButtonColumn);
@@ -58,7 +77,7 @@ function GridEval({ rows, columnsVar, onDelete, fileNameVar, showDeleteColumn = 
         flexGrow: 1,
         height: 600,
         width: '100%',
-       mt: 0,
+        mt: 0,
         pb: 5,
         alignGrids: 'center',
         px: 5,
@@ -70,6 +89,8 @@ function GridEval({ rows, columnsVar, onDelete, fileNameVar, showDeleteColumn = 
             width: '100%',
             backgroundColor: 'white',
           }}
+          density='compact'
+          rowHeight={35} //height de rows
           rows={rows}
           columns={columns}
           getRowId={(row) => row.id}
@@ -89,7 +110,9 @@ function GridEval({ rows, columnsVar, onDelete, fileNameVar, showDeleteColumn = 
             },
           }}
           slots={{
-            toolbar: (props) => <CustomToolbar {...props} fileNameVar={fileNameVar} />,
+            toolbar: (props) => (
+              <CustomToolbar {...props} fileNameVar={fileNameVar} />
+            ),
           }}
           disableRowSelectionOnClick
           columnGroupingModel={columnGroupingModel}
