@@ -394,3 +394,11 @@ body {
   text-align: center !important;
   flex-grow: 1 !important;
 }
+
+.nav-link {
+  color: #bdbcbc;
+}
+
+.nav-link:hover {
+  color: rgb(232, 232, 232)
+}

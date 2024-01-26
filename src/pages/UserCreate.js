@@ -182,6 +182,7 @@ function UserCreate({ userCreate, setUserCreate, form }) {
                   className='mb-5'
                   variant='outline-secondary'
                   type='submit'
+                  size='sm'
                 >
                   Crear Usuario
                 </Button>

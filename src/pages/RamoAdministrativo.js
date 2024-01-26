@@ -190,7 +190,7 @@ const columnGroupingModelPd = [
     children: [
       {
         groupId: 'monto',
-        headerName: 'monto',
+        headerName: 'Monto',
         headerAlign: 'center', 
         children: [
             { field: 'montoDirectas2024' },
