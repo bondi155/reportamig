@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Container, Row, Col, Button } from 'react-bootstrap';
+import { Form, Container, Row, Col, Button, Card } from 'react-bootstrap';
 import axios from 'axios';
 //import { useNavigate } from 'react-router-dom';  USUARIO CON RECOIL O SECUENCIAL , VER ESO PARA LOS ROLES
 import { API_URL } from '../config/config.js';
 import GridEval from '../charts/GridEval';
 import Swal from 'sweetalert2';
+import { GoPasskeyFill } from "react-icons/go";
+import { FaUserPlus } from "react-icons/fa6";
+
 
 const userColumns = [
   { field: 'id', headerName: 'ID', width: 150 },
@@ -26,7 +29,7 @@ function UserCreate({ userCreate, setUserCreate, form }) {
 
   //const navigate = useNavigate();
 
-  const [newPass, setNewPass] = useState ('');
+  const [newPass, setNewPass] = useState('');
 
   const handleUserInput = (e) => {
     setUserCreate({
@@ -96,7 +99,11 @@ function UserCreate({ userCreate, setUserCreate, form }) {
         'success'
       );
     } catch (error) {
-      Swal.fire('Ooops', 'Fallo al actualizar su contrasena , salga del sistema e intente nuevamente', 'error');
+      Swal.fire(
+        'Ooops',
+        'Fallo al actualizar su contrasena , salga del sistema e intente nuevamente',
+        'error'
+      );
     }
   };
 
@@ -128,69 +135,77 @@ function UserCreate({ userCreate, setUserCreate, form }) {
     <>
       {form.role === 'admin' ? (
         <Container className='container-custom'>
-          <h2>Administración de Usuario </h2>
           <form onSubmit={addNewUser}>
-            <Row className='mt-5'>
-              <Col lg={4} sm={4} md={4}>
-                <Form.Group className='mb-3'>
-                  <Form.Control
-                    type='text'
-                    name='username'
-                    required
-                    placeholder='Usuario'
-                    onChange={handleUserInput}
-                  />
-                </Form.Group>
-              </Col>
-              <Col lg={4} sm={4} md={4}>
-                <Form.Group className='mb-3'>
-                  <Form.Select
-                    aria-label='role'
-                    value={userCreate.role}
-                    name='role'
-                    required
-                    onChange={handleUserInput}
-                  >
-                    <option disabled value=''>
-                      {' '}
-                      Tipo de Usuario{' '}
-                    </option>
-                    <option value='operador'>Operador</option>
-                    <option value='consulta'>Consulta</option>
-                    <option value='admin'>Administrador</option>
-                  </Form.Select>
-                </Form.Group>
-              </Col>
-              <Col lg={4} sm={4} md={4}>
-                <Form.Group className='mb-3'>
-                  <Form.Control
-                    type='password'
-                    required
-                    name='password'
-                    placeholder='Contraseña'
-                    onChange={handleUserInput}
-                  />
-                </Form.Group>
-              </Col>
-              <Col
-                xs={{ span: 8, offset: 4 }}
-                lg={{ span: 4, offset: 5 }}
-                sm={{ span: 6, offset: 4 }}
-                md={{ span: 3, offset: 5 }}
-              >
-                <Button
-                  className='mb-5'
-                  variant='outline-secondary'
-                  type='submit'
-                  size='sm'
+            <Card>
+              <Card.Header>
+                <h3> Administración de Usuarios</h3>
+              </Card.Header>
+              <Card.Body>
+        <Card.Title>Creación de Usuario</Card.Title>
+        </Card.Body>
+              <Row className='mt-1'>
+                <Col lg={{ span: 3, offset: 1 }} sm={4} md={4}>
+                  <Form.Group className='mb-3'>
+                    <Form.Control
+                      type='text'
+                      name='username'
+                      required
+                      placeholder='Usuario'
+                      onChange={handleUserInput}
+                    />
+                  </Form.Group>
+                </Col>
+                <Col lg={4} sm={4} md={4}>
+                  <Form.Group className='mb-3'>
+                    <Form.Select
+                      aria-label='role'
+                      value={userCreate.role}
+                      name='role'
+                      required
+                      onChange={handleUserInput}
+                    >
+                      <option disabled value=''>
+                        {' '}
+                        Tipo de Usuarios{' '}
+                      </option>
+                      <option value='operador'>Operador</option>
+                      <option value='consulta'>Consulta</option>
+                      <option value='admin'>Administrador</option>
+                    </Form.Select>
+                  </Form.Group>
+                </Col>
+                <Col lg={3} sm={4} md={4}>
+                  <Form.Group className='mb-3'>
+                    <Form.Control
+                      type='password'
+                      required
+                      name='password'
+                      placeholder='Contraseña'
+                      onChange={handleUserInput}
+                    />
+                  </Form.Group>
+                </Col>
+                <Col
+                  xs={{ span: 8, offset: 4 }}
+                  lg={{ span: 3, offset: 5 }}
+                  sm={{ span: 6, offset: 4 }}
+                  md={{ span: 3, offset: 5 }}
                 >
-                  Crear Usuario
-                </Button>
-              </Col>
-            </Row>
+                  <Button
+                    className='mb-3 mt-1'
+                    variant='outline-secondary'
+                    type='submit'
+                    size='sm'
+                  >
+                    Crear Usuario <FaUserPlus className='mb-1'/>
+
+                  </Button>
+                </Col>
+              </Row>
+            </Card>
           </form>
           <div className='evaluation-grid'>
-            <Row>
+            <Row className='mt-5'>
               <Col md={{ span: 10, offset: 1 }} lg={{ span: 8, offset: 2 }}>
                 <GridEval
                   rows={listUser}
@@ -206,33 +221,39 @@ function UserCreate({ userCreate, setUserCreate, form }) {
       ) : (
         <>
           <Container className='container-custom'>
-            <h2>Administración de Usuario </h2>
             <form onSubmit={passReset}>
-              <p>Reseteo de contraseña</p>
-              <Row>
-              <Col lg={{ span : 4, offset:3 }}> 
-              <Form.Group className='mb-3'>
-                <Form.Control
-                  type='password'
-                  required
-                  placeholder='Contraseña Nueva'
-                  size='sm'
-                  onChange={(e) => setNewPass(e.target.value)} 
-                  />
-              </Form.Group>
-              </Col>
-              <Col lg={{ span : 2}}> 
-              <Button
-                  className='mb-5'
-                  variant='outline-secondary'
-                  type='submit'
-                  size='sm'
-                >
-                  Actualizar contraseña
-                </Button>{' '}
-                </Col>
-              </Row>
-              
+              <Card>
+                <Card.Header>
+                  <h3>Administración de Usuario</h3>{' '}
+                </Card.Header>
+                <Card.Body>
+        <Card.Title>Reseteo de Contraseña</Card.Title>
+        </Card.Body>
+                <Row>
+                  <Col lg={{ span: 4, offset: 3 }}>
+                    <Form.Group className='mb-3'>
+                      <Form.Control
+                        type='password'
+                        required
+                        placeholder='Contraseña Nueva'
+                        size='sm'
+                        onChange={(e) => setNewPass(e.target.value)}
+                      />
+                    </Form.Group>
+                  </Col>
+                  <Col lg={{ span: 2 }}>
+                    <Button
+                      className='mb-5'
+                      variant='outline-secondary'
+                      type='submit'
+                      size='sm'
+                    >
+                      <GoPasskeyFill/> Actualizar
+
+                    </Button>{' '}
+                  </Col>
+                </Row>
+              </Card>
             </form>
           </Container>
         </>

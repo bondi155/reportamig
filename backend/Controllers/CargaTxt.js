@@ -7,7 +7,7 @@ async function gestionarProceso(idProceso, estado, comentario, rutaArchivo) {
 
   try {
     if (estado === 'I') {
-      // insert para estado 'I'
+      //insert para estado 'I'
       const queryInicio = `
           INSERT INTO am_proceso (estatus, ruta_arch, comentario)
           VALUES (?, ?, ?)`;
@@ -18,7 +18,7 @@ async function gestionarProceso(idProceso, estado, comentario, rutaArchivo) {
       ]);
       return result.insertId;
     } else {
-      // UPDATE para estado 'F' o 'E'
+      //UPDATE para estado 'F' o 'E'
       const queryActualizacion = `
           UPDATE am_proceso
           SET estatus = ?
@@ -275,7 +275,7 @@ async function saveDBtxtCmer(
     await connection.query(query, [batchValues]);
     await connection.commit();
     await gestionarProceso(idProceso, 'F', 'pendiente', fileName);
-    console.log(`F FInalizada checar el id aca y en la atabla cmgb.`);
+    console.log(`F FInalizada checar el id aca y en la tabla cmgb.`);
     console.log(`Todas las líneas insertadas en am_cmer.`);
     return res.status(200).json({
       code: 'SUCCESS',
@@ -368,3 +368,9 @@ async function execFuncsTxt(req, res) {
 module.exports = {
   execFuncsTxt,
 };
+
+
+//armar periodo mes y año y tipo de reporte , una vez que se elija esto , abajo aparezcan pestañas web como el excel que sean los grids
+//con el periodo seleccionado y un boton , que sea un dropdown en la barra superior y que traiga los tabs de ese excel o reporte
+// que traiga el anteultimo periodo por defecto pero que se actualice con los combos de periodo de arriba y que abajo tenga un boton
+//que exporte todo a un excel (tabs incluidas).

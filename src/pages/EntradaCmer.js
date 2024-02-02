@@ -1,16 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import '../css/App.css';
-import { Container, Button, Row, Col, Form, Modal } from 'react-bootstrap';
+import { Container, Button, Row, Col, Form, Modal, Card } from 'react-bootstrap';
 import axios from 'axios';
 import { API_URL } from '../config/config';
-import GridEval from '../charts/GridEval';
+//import GridEval from '../charts/GridEval';
 import Swal from 'sweetalert2';
 import ProgressBar from 'react-bootstrap/ProgressBar';
-
 //import 'bootswatch/dist/zephyr/bootstrap.min.css';
 import { FaUpload } from 'react-icons/fa'; // Asegúrate de instalar react-icons
-
-import Spinner from '../components/Spinner';
 const cmbColumns = [
   { field: 'id_proceso', headerName: 'ID Proceso', width: 120, hide: true },
 
@@ -207,10 +204,15 @@ const getCmerData = async () => {
     <>
       <div>
         <Container className='container-custom'>
-          <h2>Carga de archivo de entrada</h2>
           <Form onSubmit={uploadFile}>
+          <Col lg={{span : 10, offset:1}}> 
+          <Card className=''> 
+        <Card.Header><h3>Carga de archivo de entrada</h3></Card.Header>
+        <Card.Body>
+        <Card.Text>Seleccione el archivo TXT correspondiente a CMER o CMBG.</Card.Text>
+        </Card.Body>
             <Row className='align-items-center'>
-              <Col xs={12} sm={12} md={8} lg={9} className='mt-3'>
+              <Col xs={12} sm={12} md={8} lg={{span:7, offset:1}} className='mt-3'>
                 <Form.Group controlId='formFileLg' className='mb-3'>
                   <Form.Control type='file' size='md' onChange={saveFile} />
                 </Form.Group>
@@ -234,9 +236,11 @@ const getCmerData = async () => {
               lg={{ spin: 2, offset: 5 }}
               className='mt-2'
             >
-              <Button variant='primary' size='sm' type='submit'>
-                <FaUpload /> Cargar
+              <Button className='mt-3 mb-4' size='sm' variant='outline-secondary' type='submit'>
+              Procesar <FaUpload className='mb-1'/> 
               </Button>
+            </Col>
+            </Card>
             </Col>
           </Form>
           <Modal show={isLoading} centered backdrop="static" keyboard={false}>

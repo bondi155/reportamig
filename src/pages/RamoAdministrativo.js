@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Container, Tabs, Tab, Button, Col, Row } from 'react-bootstrap';
+import { Form, Container, Tabs, Tab, Button, Col, Row, Card } from 'react-bootstrap';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { API_URL } from '../config/config.js';
 import GridEval from '../charts/GridEval.js';
 import '../css/App.css';
+import { CiSearch } from "react-icons/ci";
+
 
 function CustomGroupHeader({ headerName }) {
   return <div style={{ fontWeight: 'bold', width: '100%' }}>{headerName}</div>;
@@ -271,8 +273,6 @@ const columnGroupingModelPd = [
     ],
   },
 ];
-
-
 
 //COB_EXC
 const rowsCob = [
@@ -581,18 +581,19 @@ const columnsCob = [
   }
   return (
     <>
-      <Container className='container-custom'>
-        <h2>Ramo Administrativo</h2>
+      <Container className='container-custom'>        
         <Form>
-        <Col lg={{span : 5, offset:4}}>
-
+        <Col lg={{span : 10, offset:1}}> 
+        <Card className=''> 
+        <Card.Header><h3>Ramo Administrativas (Periodos)</h3></Card.Header>
+        <Row> 
+        <Col lg={{span:3, offset:2}}>
           <Form.Group controlId='formAnioSelect'>
-            <Form.Label>Año</Form.Label>
             <Form.Control
               as='select'
               value={anio}
               onChange={(e) => setAnio(e.target.value)}
-              className='mt-2 mb-2'
+              className='mt-4 mb-1'
             >
               {[2022, 2023, 2024, 2025, 2026, 2027].map((year) => (
                 <option key={year} value={year}>
@@ -601,13 +602,14 @@ const columnsCob = [
               ))}
             </Form.Control>
           </Form.Group>
+          </Col>
+          <Col lg={{span:3, offset:0}}>
           <Form.Group controlId='formMesSelect'>
-            <Form.Label>Mes</Form.Label>
             <Form.Control
               as='select'
+              className='mt-4 mb-5'
               value={mes}
               onChange={(e) => setMes(e.target.value)}
-              className='mt-2'
             >
               {[
                 'Enero',
@@ -630,10 +632,13 @@ const columnsCob = [
             </Form.Control>
           </Form.Group>
           </Col>
-          <Col lg={{span : 2, offset: 6}}>
-          <Button className='mt-4' variant='outline-secondary' type='submit'>
-            Aceptar
+          <Col lg={2}>
+          <Button className='mt-4 mb-3' variant='secondary' size='md' type='submit'>
+          <CiSearch className='mb-1'/> Buscar
           </Button>
+          </Col>
+          </Row>
+          </Card>
           </Col>
         </Form>
         <Tabs
