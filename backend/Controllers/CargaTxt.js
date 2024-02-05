@@ -4,7 +4,7 @@ const fs = require('fs');
 
 async function gestionarProceso(idProceso, estado, comentario, rutaArchivo) {
   const connection = await pool.promise().getConnection();
-
+  //de esta forma podemos hacer commit y rollback
   try {
     if (estado === 'I') {
       //insert para estado 'I'

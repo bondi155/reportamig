@@ -12,6 +12,7 @@ const getDataController = require('./Controllers/GetFuncData');
 const PostDataController = require('./Controllers/PostFuncData');
 //const mysql = require('mysql2');
 const txtController = require('./Controllers/CargaTxt');
+const { getId, seqLine } = require('./Controllers/RepRamoTotal'); //siempre hay que exportar las funciones para ejecutarlas en cada pantalla aunque no se usen todavia
 //multer
 const upload = multer({ dest: 'uploads/' });
 const jwt = require('jsonwebtoken');
