@@ -3,7 +3,6 @@ import GridEval from '../charts/GridEval';
 import { Container, Row} from 'react-bootstrap';
 import axios from 'axios';
 import { API_URL } from '../config/config';
-import images from '../components/Imagenes';
 
 
 function ConsultaGrid({ form }) {

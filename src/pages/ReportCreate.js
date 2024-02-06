@@ -129,7 +129,6 @@ const columnsPd = [
     type: 'number',
     width: 130,
   },
-  // Continuar con las demás columnas según la imagen...
 ];
 
 //PD
@@ -299,7 +298,6 @@ const columnsCob = [
         { field: 'resultadoTecnico2022' },
       ],
     },
-    // ... otros grupos de columnas si los hay ...
   ];
 
 
@@ -337,7 +335,6 @@ const columnsCob = [
     { field: 'productoFin2022', headerName: '2022', type: 'number', width: 130 },
     { field: 'productoFin2023Ant', headerName: '2023 (Anterior)', type: 'number', width: 130 },
     { field: 'productoFin2022Ant', headerName: '2022 (Anterior)', type: 'number', width: 130 },
-    // ... otras columnas si las hay ...
   ];
   //periodo anterior 2022 2023 (es comparativo )
 
@@ -375,7 +372,6 @@ const columnsCob = [
         { field: 'productoFin2022Ant' },
       ],
     },
-    // ... otros grupos de columnas si los hay ...
   ];
 
   //ORVAS
@@ -402,7 +398,7 @@ const columnsCob = [
     { field: 'importeResultadoNeto', headerName: 'Importe', type: 'number', width: 130 },
     { field: 'porcentajeResultadoNeto2023', headerName: '2023 (%)', type: 'number', width: 130 },
     { field: 'porcentajeResultadoNeto2022', headerName: '2022 (%)', type: 'number', width: 130 },
-    // ... más columnas si las hay ...
+    
   ];
   
 
@@ -476,7 +472,6 @@ const columnsCob = [
   { field: 'ebitda2022PD', headerName: '2022 (%) VS. PD', type: 'number', width: 130 },
   { field: 'ebitda2023CAP', headerName: '2023 (%) VS. CAP. PATRIM', type: 'number', width: 130 },
   { field: 'ebitda2022CAP', headerName: '2022 (%) VS. CAP. PATRIM', type: 'number', width: 130 },
-    // ... más columnas si las hay ...
   ];
 
   const columnGroupingModelIndGst = [
@@ -515,7 +510,6 @@ const columnsCob = [
           { field: 'ebitda2022CAP' },
         ],
       },
-      // ... más grupos de columnas si los hay ...
   ];
 
   //ROE

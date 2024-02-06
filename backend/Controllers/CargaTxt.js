@@ -2,6 +2,8 @@ const mysql = require('mysql2');
 const pool = mysql.createPool(process.env.DATABASE_URL);
 const fs = require('fs');
 
+
+//proceso para el estatus I , F , E (iniciado,   finalizado, error)
 async function gestionarProceso(idProceso, estado, comentario, rutaArchivo) {
   const connection = await pool.promise().getConnection();
   //de esta forma podemos hacer commit y rollback
@@ -33,6 +35,7 @@ async function gestionarProceso(idProceso, estado, comentario, rutaArchivo) {
   }
 }
 
+//guardar errores en la base de datos
 async function registrarError(
   idProceso,
   rutaArchivo,
@@ -65,6 +68,7 @@ async function registrarError(
   }
 }
 
+//carga de texto
 async function cargaTxt__(req, res) {
   if (!req.file) {
     console.error('No se subió ningún archivo.');
@@ -121,6 +125,8 @@ async function cargaTxt__(req, res) {
 //acordarse de hacer un select en el front para decir que archivo es y asi usar un query o el otro para el insert ya que tienen difer nº de camp
 //Agregar el año y el mes en las tablas de cmbg y cmer y el codigo de la empresa
 //Estos datos sacarlos del archivo osea del titulo del txt
+
+//guardar nombre de archivo y id_proceso en map en cmer
 async function saveDBtxtCmbg(
   parsedData,
   usuario,
@@ -215,7 +221,6 @@ async function saveDBtxtCmbg(
 }
 
 //guardar nombre de archivo y id_proceso en map
-
 async function saveDBtxtCmer(
   parsedData,
   usuario,
@@ -313,6 +318,7 @@ async function saveDBtxtCmer(
   }
 }
 
+//ejecuta funciones
 async function execFuncsTxt(req, res) {
   const entradaValue = req.body.entradaValue;
   const usuario = req.body.usuario;

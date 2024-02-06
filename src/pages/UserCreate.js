@@ -38,7 +38,7 @@ function UserCreate({ userCreate, setUserCreate, form }) {
     });
   };
 
-  //Creación del usuario con rol y usuario
+  //creacion del usuario con rol y usuario
   const addNewUser = async (e) => {
     e.preventDefault();
     try {

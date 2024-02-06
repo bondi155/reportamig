@@ -52,27 +52,19 @@ app.use(limiter);
 app.use(cors());
 app.use(express.json());
 
-
-app.get('/getCompanies', authenticateToken, getDataController.getAllCompanies__);//all companies for admin
-app.post('/loginUsers', authenticateToken, getDataController.loginUsers__);//login
-app.get('/companyEval', authenticateToken, getDataController.EvalCompany__);//get evaluation by company
-app.get('/getUserList', authenticateToken, getDataController.listUsers__);//get user for list
-app.put('/resetPass', authenticateToken, PostDataController.resetPassword__,);//reseteo password
+app.post('/loginUsers', authenticateToken, getDataController.loginUsers__); //login
+app.get('/getUserList', authenticateToken, getDataController.listUsers__); //lista de ususarios
+app.put('/resetPass', authenticateToken, PostDataController.resetPassword__); //reseteo password
 
 //post y put functions
-app.post('/createUser', authenticateToken, PostDataController.userCreate__); //creation of users
+app.post('/createUser', authenticateToken, PostDataController.userCreate__); //creacion de usuarios
 
 app.delete(
   '/deleteUser/:id',
   authenticateToken,
   PostDataController.deleteUser__
-); //delete user by id
-
+); //delete usuarios por id
 app.post('/uploadfile', upload.single('file'), txtController.execFuncsTxt);
-
-
-//ruta descargar report card
-app.get('/download/:filename', authenticateToken, getDataController.download__); //download file cancell
 
 app.listen(port, () => {
   console.log('servidor funcionando en el puerto ' + port);

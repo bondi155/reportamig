@@ -8,79 +8,10 @@ import Swal from 'sweetalert2';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 //import 'bootswatch/dist/zephyr/bootstrap.min.css';
 import { FaUpload } from 'react-icons/fa'; // Asegúrate de instalar react-icons
-const cmbColumns = [
-  { field: 'id_proceso', headerName: 'ID Proceso', width: 120, hide: true },
-
-  {
-    field: 'nvl1',
-    headerName: 'nvl1.',
-    width: 90,
-    hide: true,
-  },
-  {
-    field: 'nvl2',
-    headerName: 'nvl2',
-    width: 90,
-  },
-  {
-    field: 'nvl3',
-    headerName: 'nvl3',
-    width: 120,
-  },
-  {
-    field: 'nvl4',
-    headerName: 'nvl4',
-    width: 50,
-    hide: true,
-  },
-  {
-    field: 'moneda',
-    headerName: 'moneda',
-    width: 120,
-  },
-  {
-    field: 'operacion',
-    headerName: 'operación',
-    width: 100,
-  },
-  {
-    field: 'cve_ramo',
-    headerName: 'cve_ramo',
-    width: 90,
-    hide: true,
-  },
-  {
-    field: 'cvesubramo',
-    headerName: 'cvesubramo',
-    width: 100,
-  },
-  {
-    field: 'cve_susubramo',
-    headerName: 'cve_susubramo',
-    width: 90,
-    hide: true,
-  },
-  {
-    field: 'importe',
-    headerName: 'Importe',
-    width: 70,
-  },
-  {
-    field: 'fecha_carga',
-    headerName: 'fecha_carga',
-    width: 100,
-  },
-  {
-    field: 'estado',
-    headerName: 'estado',
-    width: 90,
-  },
-];
 
 function EntradaCmer({ form }) {
   const [file, setFile] = useState(null);
   const [fileName, setFileName] = useState('temp');
-  const [consultaEntrada, ] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [entradaValue, setEntradaValue] = useState('');
@@ -195,10 +126,6 @@ const getCmerData = async () => {
 */
   }
 
-  const rows = consultaEntrada.map((row) => ({
-    id: row.id_proceso,
-    ...row,
-  }));
 
   return (
     <>

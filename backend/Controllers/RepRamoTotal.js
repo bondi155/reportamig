@@ -13,7 +13,7 @@ async function obtenerCompaniasActivas() {
   try {
     const [companias] = await pool.promise().query(sqlCompaniasActivas);
     console.log(companias);
-    return companias; // Devuelve la lista de compañías activas
+    return companias; 
   } catch (error) {
     console.error('Error al obtener compañías activas:', error);
     throw error;
@@ -44,10 +44,10 @@ async function seqLine(resultadoId) {
                       AND tipo_det = 'H'
                       ORDER BY seq_lin`;
   try {
-    const [rows] = await pool.promise().query(sqlseqLine, [resultadoId.id]); // Asegúrate de pasar un arreglo
-    const resultadoSeqLine = rows || []; // Devuelve todas las filas
+    const [rows] = await pool.promise().query(sqlseqLine, [resultadoId.id]); 
+    const resultadoSeqLine = rows || [];
     console.log(resultadoSeqLine);
-    return resultadoSeqLine; // Devuelve el arreglo completo
+    return resultadoSeqLine; 
   } catch (error) {
     console.error('error', error);
     throw error;
@@ -171,34 +171,5 @@ ejecutarFunciones();
 
 //bueno fijarse lo q preguntaste en whatsapp y despues fijarte las funciones para armar el select
 
-async function cargarYModificarExcel(rutaArchivo) {
-  // Cargar el libro de Excel existente
-  const workbook = new Excel.Workbook();
-  const pdfPath = '../ramo_administrativas.xlsx';
-  await workbook.xlsx.readFile(pdfPath);
-
-  // Obtener la hoja de cálculo por su nombre
-  const sheet = workbook.getWorksheet('PD');
-
-  // Aquí puedes modificar la hoja como lo necesites, por ejemplo, añadir encabezados
-  // Suponiendo que ya tienes un array 'encabezados' con los valores a insertar
-  const encabezados = ['Posición', 'Compañía', 'Otras reservas']; // etc.
-
-  // Asumiendo que quieres empezar a escribir en la segunda fila
-  const filaInicio = 2;
-  encabezados.forEach((encabezado, index) => {
-    // Asumiendo que quieres añadir encabezados a partir de la columna B
-    const colInicio = 'B';
-    const cellRef = `${colInicio}${filaInicio + index}`;
-    sheet.getCell(cellRef).value = encabezado;
-  });
-
-  // Guardar los cambios en el archivo
-  await workbook.xlsx.writeFile(rutaArchivo);
-  console.log('Archivo modificado con éxito.');
-}
-
-// Usar la función y pasar la ruta de tu archivo Excel
-cargarYModificarExcel('ruta/a/ramo_administrativas.xlsx').catch(console.error);
 
 module.exports = { getId, seqLine, ejecutarFunciones };
