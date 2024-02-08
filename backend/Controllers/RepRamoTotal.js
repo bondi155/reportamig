@@ -4,16 +4,16 @@ const pool = mysql.createPool(process.env.DATABASE_URL);
 
 async function obtenerCompaniasActivas() {
   const sqlCompaniasActivas = `
-    SELECT id_cia, posic_cia, nom_cia
+    SELECT id_cia, posic_cia, nombre_cia
     FROM am_compania
     WHERE activa = 1
-    ORDER BY posic_cia, nom_cia
+    ORDER BY posic_cia, nombre_cia
   `;
 
   try {
     const [companias] = await pool.promise().query(sqlCompaniasActivas);
     console.log(companias);
-    return companias; 
+    return companias;
   } catch (error) {
     console.error('Error al obtener compañías activas:', error);
     throw error;
@@ -28,7 +28,6 @@ async function getId() {
   try {
     const [rows] = await pool.promise().query(sqlGetId);
     const resultadoId = rows[0] || {};
-    console.log(resultadoId);
     return resultadoId;
   } catch (error) {
     console.error('error', error);
@@ -44,10 +43,9 @@ async function seqLine(resultadoId) {
                       AND tipo_det = 'H'
                       ORDER BY seq_lin`;
   try {
-    const [rows] = await pool.promise().query(sqlseqLine, [resultadoId.id]); 
+    const [rows] = await pool.promise().query(sqlseqLine, [resultadoId.id]);
     const resultadoSeqLine = rows || [];
-    console.log(resultadoSeqLine);
-    return resultadoSeqLine; 
+    return resultadoSeqLine;
   } catch (error) {
     console.error('error', error);
     throw error;
@@ -58,24 +56,24 @@ async function seqLine(resultadoId) {
 async function obtenerEncabezados(idMapEnc, seqLins) {
   try {
     let encabezados = [];
+// si tengo val fijo devuelvo fal fijo
+    //si tiene val fijo que use el valfijo y no ejecute query , si val_fijo es null , ejecute el query y si el query no trae nada , que ponga lo que esta en val_def 
 
     for (let i = 0; i < seqLins.length; i++) {
       const seqLin = seqLins[i].seq_lin;
-      const sql = `
-        SELECT val_fijo
+      const sqlEnc = `
+        SELECT val_fijo, val_def
         FROM am_mapeo_det
         WHERE id_map_enc = ?
         AND tipo_det = 'H'
         AND seq_lin = ?
         ORDER BY seq_lin, seq_dest, seq_orig`;
 
-      const [rows] = await pool.promise().query(sql, [idMapEnc, seqLin]);
+      const [rows] = await pool.promise().query(sqlEnc, [idMapEnc, seqLin]);
 
-      const resultadoEnc = [rows] || [];
-      console.log(resultadoEnc);
+      encabezados = [rows] || [];
     }
 
-    console.log(encabezados);
     return encabezados;
   } catch (error) {
     console.error('error', error);
@@ -84,7 +82,6 @@ async function obtenerEncabezados(idMapEnc, seqLins) {
 }
 
 //Detalle
-
 async function obtenerDetallesD(idMapEnc) {
   const sqlDetallesD = `
     SELECT campo_orig, id_tipo_dato_orig, presic_orig_1, presic_orig_2, val_def, tabla_orig, where_cond
@@ -120,6 +117,7 @@ async function ejecutarConsultasDinamicas(detalles) {
     let whereCond = detalle.where_cond
       .replace(/\{\$ZZZ_ANIO\}/g, ZZZ_ANIO)
       .replace(/\{\$ZZZ_MES\}/g, ZZZ_MES)
+      .replace(/\{ZZZ_ID_CIA\}/g, ZZZ_MES)
       .replace(/\{ZZZ_ANIO_ANT\}/g, ZZZ_ANIO_ANT);
 
     let consultaFinal = `SELECT ${sqlDinamica} FROM ${tablaOrig} WHERE ${whereCond}`;
@@ -170,6 +168,5 @@ async function ejecutarFunciones() {
 ejecutarFunciones();
 
 //bueno fijarse lo q preguntaste en whatsapp y despues fijarte las funciones para armar el select
-
 
 module.exports = { getId, seqLine, ejecutarFunciones };
