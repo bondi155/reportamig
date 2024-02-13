@@ -5,16 +5,6 @@ const path = require('path');
 const Mexp = require('math-expression-evaluator');
 
 
-function math3() { 
-  const mexp1 = new Mexp();
-  const val1 = 25;
-  const val2 = 25;
-  const expression1 = val1 + " + " + val2; 
-  const value1 = mexp1.eval(expression1);
-  console.log('Resultado 1:', value1);
-}
-math3();
-
 async function obtenerCompaniasActivas() {
   const sqlCompaniasActivas = `
     SELECT id_cia, posic_cia, nombre_cia
@@ -40,8 +30,8 @@ async function getId() {
   WHERE tipo_arc = 'S'`; //de ser necesario agregar separador en el select
   try {
     const [rows] = await pool.promise().query(sqlGetId);
-    const resultadoId = rows[0] || {};
-    return resultadoId;
+    const mapeoEnc = rows[0] || {};
+    return mapeoEnc;
   } catch (error) {
     console.error('error', error);
     throw error;
@@ -79,12 +69,12 @@ async function obtenerEncabezados(idMapeo, numTab, seqLins) {
         SELECT val_fijo, val_def
         FROM am_mapeo_det
         WHERE id_map_enc = ?
-		AND tab_num = ?
+	    	AND tab_num = ?
         AND tipo_det = 'H'
         AND seq_lin = ?
         ORDER BY seq_lin, seq_dest, seq_orig`;
 
-      console.log('QUERY ENCABEZADO', sqlEnc, idMapeo, numTab, seqLin);
+      //console.log('QUERY ENCABEZADO', sqlEnc, idMapeo, numTab, seqLin);
 
       const [rows] = await pool
         .promise()
@@ -92,7 +82,7 @@ async function obtenerEncabezados(idMapeo, numTab, seqLins) {
 
       encabezados = [rows] || [];
     }
-console.log('ESTO SON LOS ENCABEZADOS!!!!!!!11',encabezados);
+//console.log('ESTO SON LOS ENCABEZADOS!!!!!!!11',encabezados);
     return encabezados;
   } catch (error) {
     console.error('error', error);
@@ -100,7 +90,7 @@ console.log('ESTO SON LOS ENCABEZADOS!!!!!!!11',encabezados);
   }
 }
 
-//Nombre tab
+//Nombre tab y numero
 async function nombreTab(idEncabezado) {
   try {
     const sqlGetTab = `SELECT DISTINCT tab_num, tab_nombre
@@ -108,7 +98,7 @@ async function nombreTab(idEncabezado) {
   WHERE id_map_enc = ? AND tipo_det = 'D'
   ORDER BY 1`;
 
-    console.log(sqlGetTab);
+  //  console.log(sqlGetTab);
     const [rows] = await pool.promise().query(sqlGetTab, [idEncabezado]);
     const resultadoTab = rows || {};
     return resultadoTab;
@@ -238,11 +228,14 @@ async function consultaDinamica(idCia, detalles) {
         .replace(/\{ZZZ_3\}/g, valorParaZZZ_3)
         .replace(/\{ZZZ_6\}/g, valorParaZZZ_6)
         .replace(/\{ZZZ_7\}/g, valorParaZZZ_7)
+        .replace(/\{ZZZ_9\}/g, valorParaZZZ_9)
         .replace(/\{ZZZ_10\}/g, valorParaZZZ_10)
+        .replace(/\{ZZZ_12\}/g, valorParaZZZ_12)
         .replace(/\{ZZZ_19\}/g, valorParaZZZ_19)
         .replace(/\{ZZZ_13\}/g, valorParaZZZ_13)
+        .replace(/\{ZZZ_15\}/g, valorParaZZZ_15)
         .replace(/\{ZZZ_16\}/g, valorParaZZZ_16);
-console.log('ESTA ES LA CONSULTA DINAMICA ',sqlDinamica);
+//console.log('ESTA ES LA CONSULTA DINAMICA ',sqlDinamica);
 
       let tablaOrig = detalle.tabla_orig;
       let whereCond = detalle.where_cond
@@ -351,9 +344,9 @@ console.log('ESTA ES LA CONSULTA DINAMICA ',sqlDinamica);
       }
     }
   }
-const resultadosTransformados = transformarResultados(resultados);
+const resultadosTransformadosDetalle = transformarResultados(resultados);
   
-return resultadosTransformados;
+return resultadosTransformadosDetalle;
 }
 
 async function reporteMapExcel(resultados) {
@@ -453,18 +446,20 @@ async function ejecutarGrid(resultadosConsultaDinamica) {
 */
 
 
+
+//ejecutar OK 
 exports.ejecutarFunciones = async (req, res) => {
   try {
-    const resultadoId = await getId();
+    const mapeoEnc = await getId();
     // console.log('Resultado de getId:', resultadoId);
 
-    const resultadoTab = await nombreTab(resultadoId.id);
-    //console.log('RESULTADO DE TAB', resultadoTab, resultadoId.id);
+    const resultadoTab = await nombreTab(mapeoEnc.id);
+    //console.log('RESULTADO DE TAB', resultadoTab, resultadoId.id); obtenerDetalleTab ?
 
     let datosTotal = [];
 
     for (let tabElem of resultadoTab) {
-      const resultadoSeqLine = await seqLine(resultadoId.id, tabElem.tab_num);
+      const resultadoSeqLine = await seqLine(mapeoEnc.id, tabElem.tab_num);
       let datosTab = {
         tab_nombre: tabElem.tab_nombre,
         encabezados: [],
@@ -473,7 +468,7 @@ exports.ejecutarFunciones = async (req, res) => {
     
       for (let lineaEnc of resultadoSeqLine) {
         const encabezado = await obtenerEncabezados(
-          resultadoId.id,
+          mapeoEnc.id,
           tabElem.tab_num,
           lineaEnc.seq_lin
         );
@@ -481,7 +476,7 @@ exports.ejecutarFunciones = async (req, res) => {
       }
     
       const companias = await obtenerCompaniasActivas();
-      const detallesD = await obtenerDetallesD(resultadoId.id, tabElem.tab_num);
+      const detallesD = await obtenerDetallesD(mapeoEnc.id, tabElem.tab_num);
     
       for (let compania of companias) {
         console.log(`Procesando compañía: ${compania.nombre_cia}`);
@@ -502,5 +497,42 @@ exports.ejecutarFunciones = async (req, res) => {
     res.status(500).send('Ocurrió un error al generar el reporte');
   }
 };
-
 //ejecutarFunciones();
+
+/*
+exports.ejecutarFunciones = async (req, res) => {
+  try {
+    const mapeoEnc = await getId();
+
+    console.log('Resultado de getId:', mapeoEnc);
+
+    const reporteTabs = await nombreTab(mapeoEnc.id);
+    console.log('RESULTADO DE TAB', reporteTabs, mapeoEnc.id);
+
+    let datosTotal = [];
+
+    for (let tabElem of reporteTabs) {
+      const lineasEnc = await seqLine(mapeoEnc.id, tabElem.tab_num);
+
+      for (let lineaEnc of lineasEnc) {
+        const encabezados = await obtenerEncabezados(mapeoEnc.id, reporteTabs.tab_num, lineaEnc);
+
+        const companias = await obtenerCompaniasActivas();
+
+        const detallesD = await obtenerDetallesD(mapeoEnc.id, reporteTabs.tab_num);
+
+        for (let compania of companias) {
+          const resultadosTransformadosDetalle = await consultaDinamica(compania.id_cia, detallesD);
+          console.log('Resultados para el Select de las consultas dinamicas:', resultadosTransformadosDetalle);
+          datosTotal = datosTotal.concat(resultadosTransformadosDetalle);
+        }
+      }
+    }
+
+   // const rutaSalida = await reporteMapExcel(datosTotal);
+    //res.download(rutaSalida, 'excel_resultado.xlsx');
+  } catch (error) {
+    console.error('Error al ejecutar funciones:', error);
+  }
+};
+*/
