@@ -10,9 +10,10 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const getDataController = require('./Controllers/GetFuncData');
 const PostDataController = require('./Controllers/PostFuncData');
+const ReportController = require ('./Controllers/ReportController') ;
 //const mysql = require('mysql2');
 const txtController = require('./Controllers/CargaTxt');
-const { getId, seqLine } = require('./Controllers/RepRamoTotal'); //siempre hay que exportar las funciones para ejecutarlas en cada pantalla aunque no se usen todavia
+//const { ejecutarFunciones } = require('./Controllers/ReportController'); //siempre hay que exportar las funciones para ejecutarlas en cada pantalla aunque no se usen todavia
 //multer
 const upload = multer({ dest: 'uploads/' });
 const jwt = require('jsonwebtoken');
@@ -55,6 +56,8 @@ app.use(express.json());
 app.post('/loginUsers', authenticateToken, getDataController.loginUsers__); //login
 app.get('/getUserList', authenticateToken, getDataController.listUsers__); //lista de ususarios
 app.put('/resetPass', authenticateToken, PostDataController.resetPassword__); //reseteo password
+app.get('/getReport', authenticateToken, ReportController.ejecutarFunciones); //ejecutar funcion general que hace select y reporte
+
 
 //post y put functions
 app.post('/createUser', authenticateToken, PostDataController.userCreate__); //creacion de usuarios
