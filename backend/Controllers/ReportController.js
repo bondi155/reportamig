@@ -4,7 +4,6 @@ const pool = mysql.createPool(process.env.DATABASE_URL);
 const path = require('path');
 const Mexp = require('math-expression-evaluator');
 
-
 async function obtenerCompaniasActivas() {
   const sqlCompaniasActivas = `
     SELECT id_cia, posic_cia, nombre_cia
@@ -43,7 +42,7 @@ async function seqLine(idEncabezado, numTab) {
   const sqlseqLine = `SELECT distinct seq_lin
                       FROM am_mapeo_det
                       WHERE id_map_enc = ?
-					  AND tab_num = ?
+					            AND tab_num = ?
                       AND tipo_det = 'H'
                       ORDER BY seq_lin`;
   try {
@@ -82,7 +81,7 @@ async function obtenerEncabezados(idMapeo, numTab, seqLins) {
 
       encabezados = [rows] || [];
     }
-//console.log('ESTO SON LOS ENCABEZADOS!!!!!!!11',encabezados);
+    //console.log('ESTO SON LOS ENCABEZADOS!!!!!!!11',encabezados);
     return encabezados;
   } catch (error) {
     console.error('error', error);
@@ -98,7 +97,7 @@ async function nombreTab(idEncabezado) {
   WHERE id_map_enc = ? AND tipo_det = 'D'
   ORDER BY 1`;
 
-  //  console.log(sqlGetTab);
+    //  console.log(sqlGetTab);
     const [rows] = await pool.promise().query(sqlGetTab, [idEncabezado]);
     const resultadoTab = rows || {};
     return resultadoTab;
@@ -106,6 +105,21 @@ async function nombreTab(idEncabezado) {
     console.error('error', error);
     throw error;
   }
+}
+
+async function obtenerDetalleTab(idEncabezado, tabs) {
+  let detallesConTabs = [];
+
+  for (const tab of tabs) {
+    const detallesPorTab = await nombreTab(idEncabezado, tab.tab_num);
+
+    detallesConTabs.push({
+      tab_numero: tab.tab_num, //tab.tab_num
+      tab_nombre: detallesPorTab,
+    });
+  }
+
+  return detallesConTabs;
 }
 
 //Detalle
@@ -133,26 +147,18 @@ async function obtenerDetallesD(idEncabezado, numTab) {
   }
 }
 
-async function obtenerDetalleTab(idEncabezado, tabs) {
-  let detallesConTabs = [];
-
-  for (const key in tabs) {
-    const detallesPorTab = await obtenerDetallesD(idEncabezado, key.tab_num);
-
-    detallesConTabs.push({
-      tab_nombre: key.tab_nombre,
-      detalles: detallesPorTab,
-    });
-  }
-  return detallesConTabs;
-}
 
 
+/*
 function transformarResultados(resultados) {
   let contadorColumna = 1;
 
   return resultados.map((resultado, index) => {
-    if (typeof resultado === 'object' && !Array.isArray(resultado) && resultado !== null) {
+    if (
+      typeof resultado === 'object' &&
+      !Array.isArray(resultado) &&
+      resultado !== null
+    ) {
       const [clave, valor] = Object.entries(resultado)[0];
       let tipo;
       if (index === 0) {
@@ -160,20 +166,19 @@ function transformarResultados(resultados) {
       } else if (index === 1) {
         tipo = 'nombre_cia';
       } else {
-        tipo = `Columna ${contadorColumna++}`; 
+        tipo = `Columna ${contadorColumna++}`;
       }
       return { tipo, valor };
     } else if (Array.isArray(resultado) && resultado[0]) {
       const [clave, valor] = Object.entries(resultado[0])[0];
-      let tipo = `Columna ${contadorColumna++}`; 
+      let tipo = `Columna ${contadorColumna++}`;
       return { tipo, valor };
     } else {
       return { tipo: `Columna ${contadorColumna++}`, valor: resultado };
     }
   });
 }
-
-
+*/
 const ZZZ_ANIO = '2023';
 const ZZZ_MES = '6';
 const ZZZ_ANIO_ANT = '2022';
@@ -196,29 +201,32 @@ async function consultaDinamica(idCia, detalles) {
   for (let i = 0; i < detalles.length; i++) {
     let detalle = detalles[i];
 
+	let alias = 'col' + (i+1);
+	
     if (detalle.val_fijo !== null) {
       let valorDinamico;
       if (detalle.val_fijo.startsWith('=')) {
-        const expression = detalle.val_fijo.slice(1); 
-         const parsedExpression = expression
-         .replace(/\{ZZZ_7\}/g, valorParaZZZ_7)
-         .replace(/\{ZZZ_3\}/g, valorParaZZZ_3)
-         .replace(/\{ZZZ_4\}/g, valorParaZZZ_4)
-         .replace(/\{ZZZ_6\}/g, valorParaZZZ_6)
-         .replace(/\{ZZZ_9\}/g, valorParaZZZ_9)
-         .replace(/\{ZZZ_10\}/g, valorParaZZZ_10)
-         .replace(/\{ZZZ_12\}/g, valorParaZZZ_12)
-         .replace(/\{ZZZ_13\}/g, valorParaZZZ_13)
-         .replace(/\{ZZZ_15\}/g, valorParaZZZ_15)
-         .replace(/\{ZZZ_16\}/g, valorParaZZZ_16)
-         .replace(/\{ZZZ_19\}/g, valorParaZZZ_19);
+        const expression = detalle.val_fijo.slice(1);
+        const parsedExpression = expression
+          .replace(/\{ZZZ_7\}/g, valorParaZZZ_7)
+          .replace(/\{ZZZ_3\}/g, valorParaZZZ_3)
+          .replace(/\{ZZZ_4\}/g, valorParaZZZ_4)
+          .replace(/\{ZZZ_6\}/g, valorParaZZZ_6)
+          .replace(/\{ZZZ_9\}/g, valorParaZZZ_9)
+          .replace(/\{ZZZ_10\}/g, valorParaZZZ_10)
+          .replace(/\{ZZZ_12\}/g, valorParaZZZ_12)
+          .replace(/\{ZZZ_13\}/g, valorParaZZZ_13)
+          .replace(/\{ZZZ_15\}/g, valorParaZZZ_15)
+          .replace(/\{ZZZ_16\}/g, valorParaZZZ_16)
+          .replace(/\{ZZZ_19\}/g, valorParaZZZ_19);
 
-     const mexp = new Mexp();
-     valorDinamico = mexp.eval(parsedExpression);
+        const mexp = new Mexp();
+        valorDinamico = mexp.eval(parsedExpression);
       } else {
-        valorDinamico = detalle.val_fijo !== '' ? detalle.val_fijo : detalle.val_def;
+        valorDinamico =
+          detalle.val_fijo !== '' ? detalle.val_fijo : detalle.val_def;
       }
-      resultados.push({['Columna ' + i]: valorDinamico });
+      resultados.push({ [alias]: valorDinamico });
     } else {
       let sqlDinamica = detalle.campo_orig
         .replace(/\{ZZZ_ANIO\}/g, ZZZ_ANIO)
@@ -235,7 +243,7 @@ async function consultaDinamica(idCia, detalles) {
         .replace(/\{ZZZ_13\}/g, valorParaZZZ_13)
         .replace(/\{ZZZ_15\}/g, valorParaZZZ_15)
         .replace(/\{ZZZ_16\}/g, valorParaZZZ_16);
-//console.log('ESTA ES LA CONSULTA DINAMICA ',sqlDinamica);
+      //console.log('ESTA ES LA CONSULTA DINAMICA ',sqlDinamica);
 
       let tablaOrig = detalle.tabla_orig;
       let whereCond = detalle.where_cond
@@ -244,8 +252,8 @@ async function consultaDinamica(idCia, detalles) {
         .replace(/\{ZZZ_ID_CIA\}/g, ZZZ_COMP)
         .replace(/\{ZZZ_ANIO_ANT\}/g, ZZZ_ANIO_ANT);
 
-      let consultaFinal = `SELECT ${sqlDinamica} FROM ${tablaOrig} WHERE ${whereCond}`;
-    //  console.log('Consulta Final: ',consultaFinal);
+        let consultaFinal = `SELECT ${sqlDinamica} AS ${alias} FROM ${tablaOrig} WHERE ${whereCond}`;
+        //  console.log('Consulta Final: ',consultaFinal);
       try {
         const [resultadoConsulta] = await pool.promise().query(consultaFinal);
 
@@ -337,16 +345,16 @@ async function consultaDinamica(idCia, detalles) {
         ) {
           valorParaZZZ_12 = resultadoConsulta[0].importe.toString();
         }
-      
+
         resultados.push(resultadoConsulta);
       } catch (error) {
         console.error('Error al ejecutar consulta dinámica:', error);
       }
     }
   }
-const resultadosTransformadosDetalle = transformarResultados(resultados);
-  
-return resultadosTransformadosDetalle;
+  //const resultadosTransformadosDetalle = transformarResultados(resultados);
+
+  return resultados;
 }
 
 async function reporteMapExcel(resultados) {
@@ -445,58 +453,42 @@ async function ejecutarGrid(resultadosConsultaDinamica) {
 };
 */
 
-
-
-//ejecutar OK 
+//ejecutar OK
 exports.ejecutarFunciones = async (req, res) => {
   try {
-    const mapeoEnc = await getId();
-    // console.log('Resultado de getId:', resultadoId);
-
-    const resultadoTab = await nombreTab(mapeoEnc.id);
-    //console.log('RESULTADO DE TAB', resultadoTab, resultadoId.id); obtenerDetalleTab ?
-
+    const resultadoId = await getId();
+    const resultadoTab = await nombreTab(resultadoId.id);
     let datosTotal = [];
 
     for (let tabElem of resultadoTab) {
-      const resultadoSeqLine = await seqLine(mapeoEnc.id, tabElem.tab_num);
-      let datosTab = {
-        tab_nombre: tabElem.tab_nombre,
-        encabezados: [],
-        detalles: [],
-      };
-    
+      let datosTab = { tab_nombre: tabElem.tab_nombre, encabezado: [], detalle: [] };
+      const resultadoSeqLine = await seqLine(resultadoId.id, tabElem.tab_num);
+      let encabezadoCompleto = [];
+
       for (let lineaEnc of resultadoSeqLine) {
-        const encabezado = await obtenerEncabezados(
-          mapeoEnc.id,
-          tabElem.tab_num,
-          lineaEnc.seq_lin
-        );
-        datosTab.encabezados.push(...encabezado);
+        const encabezado = await obtenerEncabezados(resultadoId.id, tabElem.tab_num, lineaEnc.seq_lin);
+        encabezadoCompleto.push(...encabezado);
       }
-    
+      datosTab.encabezado.push(...encabezadoCompleto);
+
       const companias = await obtenerCompaniasActivas();
-      const detallesD = await obtenerDetallesD(mapeoEnc.id, tabElem.tab_num);
-    
-      for (let compania of companias) {
-        console.log(`Procesando compañía: ${compania.nombre_cia}`);
-        const resultados = await consultaDinamica(compania.id_cia, detallesD);
-        console.log(`Resultados para la compañía ${compania.nombre_cia}:`, resultados);
-     
-        datosTab.detalles.push(...resultados);
-      }
-    
+      const detallesD = await obtenerDetallesD(resultadoId.id, tabElem.tab_num);
+
+      const consultas = companias.map(compania => consultaDinamica(compania.id_cia, detallesD));
+      const resultadosDetalles = await Promise.all(consultas);
+
+      datosTab.detalle.push(...resultadosDetalles);
+
       datosTotal.push(datosTab);
     }
 
-    //genera el reporte Excel
-    const rutaSalida = await reporteMapExcel(datosTotal);
-    res.download(rutaSalida, 'excel_resultado.xlsx');
+    res.status(200).json(datosTotal);
   } catch (error) {
     console.error('Error al ejecutar funciones:', error);
     res.status(500).send('Ocurrió un error al generar el reporte');
   }
 };
+
 //ejecutarFunciones();
 
 /*
@@ -536,3 +528,5 @@ exports.ejecutarFunciones = async (req, res) => {
   }
 };
 */
+
+
