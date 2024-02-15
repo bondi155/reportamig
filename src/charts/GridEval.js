@@ -75,12 +75,10 @@ function GridEval({
     <Box
       sx={{
         flexGrow: 1,
-        height: 600,
         width: '100%',
         mt: 0,
         pb: 5,
         alignGrids: 'center',
-        px: 5,
       }}
     >
       <ThemeProvider theme={theme}>
@@ -88,6 +86,8 @@ function GridEval({
           sx={{
             width: '100%',
             backgroundColor: 'white',
+            borderTop: 'none',
+            borderRadius: '0 0 8px 8px'
           }}
           density='compact'
           rowHeight={35} //height de rows

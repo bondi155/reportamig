@@ -201,8 +201,8 @@ async function consultaDinamica(idCia, detalles) {
   for (let i = 0; i < detalles.length; i++) {
     let detalle = detalles[i];
 
-	let alias = 'col' + (i+1);
-	
+    let alias = 'col' + (i+1);
+
     if (detalle.val_fijo !== null) {
       let valorDinamico;
       if (detalle.val_fijo.startsWith('=')) {
@@ -252,8 +252,8 @@ async function consultaDinamica(idCia, detalles) {
         .replace(/\{ZZZ_ID_CIA\}/g, ZZZ_COMP)
         .replace(/\{ZZZ_ANIO_ANT\}/g, ZZZ_ANIO_ANT);
 
-        let consultaFinal = `SELECT ${sqlDinamica} AS ${alias} FROM ${tablaOrig} WHERE ${whereCond}`;
-        //  console.log('Consulta Final: ',consultaFinal);
+      let consultaFinal = `SELECT ${sqlDinamica} AS ${alias} FROM ${tablaOrig} WHERE ${whereCond}`;
+      //  console.log('Consulta Final: ',consultaFinal);
       try {
         const [resultadoConsulta] = await pool.promise().query(consultaFinal);
 
@@ -346,7 +346,7 @@ async function consultaDinamica(idCia, detalles) {
           valorParaZZZ_12 = resultadoConsulta[0].importe.toString();
         }
 
-        resultados.push(resultadoConsulta);
+        resultados.push(resultadoConsulta[0]);
       } catch (error) {
         console.error('Error al ejecutar consulta dinámica:', error);
       }
@@ -461,7 +461,7 @@ exports.ejecutarFunciones = async (req, res) => {
     let datosTotal = [];
 
     for (let tabElem of resultadoTab) {
-      let datosTab = { tab_nombre: tabElem.tab_nombre, encabezado: [], detalle: [] };
+      let datosTab = { tab_num: tabElem.tab_num, tab_nombre: tabElem.tab_nombre, encabezado: [], detalle: [] };
       const resultadoSeqLine = await seqLine(resultadoId.id, tabElem.tab_num);
       let encabezadoCompleto = [];
 
@@ -482,7 +482,9 @@ exports.ejecutarFunciones = async (req, res) => {
       datosTotal.push(datosTab);
     }
 
+    // const rutaSalida = await reporteMapExcel(datosTotal);
     res.status(200).json(datosTotal);
+    // res.download(rutaSalida, 'excel_resultado.xlsx');
   } catch (error) {
     console.error('Error al ejecutar funciones:', error);
     res.status(500).send('Ocurrió un error al generar el reporte');
