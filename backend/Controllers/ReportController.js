@@ -22,7 +22,9 @@ async function obtenerCompaniasActivas() {
   }
 }
 
-//Sacamos el id
+
+//falta el valor de S como parametro 
+//Sacamos el id el tipo de archivo va a venir depende que reporte elijamos en el nav
 async function getId() {
   const sqlGetId = `SELECT id, tab_orig, tab_dest 
   FROM am_mapeo_enc
@@ -30,7 +32,9 @@ async function getId() {
   try {
     const [rows] = await pool.promise().query(sqlGetId);
     const mapeoEnc = rows[0] || {};
+    console.log(mapeoEnc);
     return mapeoEnc;
+
   } catch (error) {
     console.error('error', error);
     throw error;
@@ -147,8 +151,6 @@ async function obtenerDetallesD(idEncabezado, numTab) {
   }
 }
 
-
-
 /*
 function transformarResultados(resultados) {
   let contadorColumna = 1;
@@ -201,7 +203,7 @@ async function consultaDinamica(idCia, detalles) {
   for (let i = 0; i < detalles.length; i++) {
     let detalle = detalles[i];
 
-    let alias = 'col' + (i+1);
+    let alias = 'col' + (i + 1);
 
     if (detalle.val_fijo !== null) {
       let valorDinamico;
@@ -357,39 +359,53 @@ async function consultaDinamica(idCia, detalles) {
   return resultados;
 }
 
-async function reporteMapExcel(resultados) {
+async function reporteMapExcel(datosTotal, nombreArchivo) {
   const rutaEntrada = path.join(
     __dirname,
     '..',
     'Reportes',
     'ramo_administrativas.xlsx'
   );
-  const rutaSalida = path.join(
-    __dirname,
-    '..',
-    'Resultados',
-    'ramo_administrativas_resultado.xlsx'
-  );
+
+  const rutaBase = path.join(__dirname, '..', 'Resultados');
+  const nombreArchivoDinamico = nombreArchivo
+  .replace('{ZZZ_ANIO}', ZZZ_ANIO)
+  .replace('{ZZZ_MES}', ZZZ_MES)
+  .replace('.xls', '.xlsx'); 
+
+  const rutaSalida = path.join(rutaBase, nombreArchivoDinamico);
+
 
   const workbook = new Excel.Workbook();
   await workbook.xlsx.readFile(rutaEntrada);
 
-  const sheet = workbook.getWorksheet('PD');
+  datosTotal.forEach((pestaña) => {
+    const sheet = workbook.getWorksheet(pestaña.tab_nombre);
+    let filaActual = 15;
 
-  let filaActual = 15;
+    pestaña.detalle.forEach((detalleComp) => {
+      detalleComp.forEach((valorColumna, index) => {
+        //valorColumna no sea null antes de llamar a Object.values
+        if (valorColumna) {
+          const colLetter = String.fromCharCode('A'.charCodeAt(0) + index); //Convertir índ a letra de la columna
+          const cellRef = colLetter + filaActual;
 
-  if (resultados[0] && resultados[0].length > 0) {
-    sheet.getCell(`A${filaActual}`).value = resultados[0][0].posic_cia;
-  }
-
-  if (resultados[1] && resultados[1].length > 0) {
-    sheet.getCell(`B${filaActual}`).value = resultados[1][0].nombre_cia;
-  }
+          const valores = Object.values(valorColumna);
+          if (valores.length > 0 && valores[0] !== null) {
+            //verificar que el primer valor no sea null
+            sheet.getCell(cellRef).value = valores[0];
+          }
+        }
+      });
+      filaActual++;
+    });
+  });
 
   await workbook.xlsx.writeFile(rutaSalida);
   console.log('Archivo modificado con éxito en:', rutaSalida);
-}
 
+  return rutaSalida;
+}
 /*
 async function ejecutarGrid(resultadosConsultaDinamica) {
   try {
@@ -461,12 +477,21 @@ exports.ejecutarFunciones = async (req, res) => {
     let datosTotal = [];
 
     for (let tabElem of resultadoTab) {
-      let datosTab = { tab_num: tabElem.tab_num, tab_nombre: tabElem.tab_nombre, encabezado: [], detalle: [] };
+      let datosTab = {
+        tab_num: tabElem.tab_num,
+        tab_nombre: tabElem.tab_nombre,
+        encabezado: [],
+        detalle: [],
+      };
       const resultadoSeqLine = await seqLine(resultadoId.id, tabElem.tab_num);
       let encabezadoCompleto = [];
 
       for (let lineaEnc of resultadoSeqLine) {
-        const encabezado = await obtenerEncabezados(resultadoId.id, tabElem.tab_num, lineaEnc.seq_lin);
+        const encabezado = await obtenerEncabezados(
+          resultadoId.id,
+          tabElem.tab_num,
+          lineaEnc.seq_lin
+        );
         encabezadoCompleto.push(...encabezado);
       }
       datosTab.encabezado.push(...encabezadoCompleto);
@@ -474,17 +499,25 @@ exports.ejecutarFunciones = async (req, res) => {
       const companias = await obtenerCompaniasActivas();
       const detallesD = await obtenerDetallesD(resultadoId.id, tabElem.tab_num);
 
-      const consultas = companias.map(compania => consultaDinamica(compania.id_cia, detallesD));
+      const consultas = companias.map((compania) =>
+        consultaDinamica(compania.id_cia, detallesD)
+      );
       const resultadosDetalles = await Promise.all(consultas);
 
       datosTab.detalle.push(...resultadosDetalles);
 
       datosTotal.push(datosTab);
     }
+    // console.log(datosTotal)
+    const rutaSalida = await reporteMapExcel(datosTotal, resultadoId.tab_dest);
 
-    // const rutaSalida = await reporteMapExcel(datosTotal);
+    if (rutaSalida) { 
+      res.download(rutaSalida, path.basename(rutaSalida)); 
+    } else {
+      throw new Error('No se pudo generar el archivo Excel.');
+    }
+
     res.status(200).json(datosTotal);
-    // res.download(rutaSalida, 'excel_resultado.xlsx');
   } catch (error) {
     console.error('Error al ejecutar funciones:', error);
     res.status(500).send('Ocurrió un error al generar el reporte');
@@ -530,5 +563,3 @@ exports.ejecutarFunciones = async (req, res) => {
   }
 };
 */
-
-
