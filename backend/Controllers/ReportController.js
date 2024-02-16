@@ -64,7 +64,7 @@ async function seqLine(idEncabezado, numTab) {
 //Encabezado
 async function obtenerEncabezados(idMapeo, numTab, seqLins) {
   try {
-    let encabezados = [];
+    let encabezado = [];
 
     for (let i = 0; i < seqLins.length; i++) {
       const seqLin = seqLins[i].seq_lin;
@@ -83,10 +83,10 @@ async function obtenerEncabezados(idMapeo, numTab, seqLins) {
         .promise()
         .query(sqlEnc, [idMapeo, numTab, seqLin]);
 
-      encabezados = [rows] || [];
+      encabezado = [rows] || [];
     }
     //console.log('ESTO SON LOS ENCABEZADOS!!!!!!!11',encabezados);
-    return encabezados;
+    return encabezado;
   } catch (error) {
     console.error('error', error);
     throw error;
@@ -226,7 +226,7 @@ async function consultaDinamica(idCia, detalles) {
         valorDinamico = mexp.eval(parsedExpression);
       } else {
         valorDinamico =
-          detalle.val_fijo !== '' ? detalle.val_fijo : detalle.val_def;
+          detalle.val_fijo !== '' ? detalle.val_fijo : detalle.val_def; //
       }
       resultados.push({ [alias]: valorDinamico });
     } else {
@@ -247,14 +247,14 @@ async function consultaDinamica(idCia, detalles) {
         .replace(/\{ZZZ_16\}/g, valorParaZZZ_16);
       //console.log('ESTA ES LA CONSULTA DINAMICA ',sqlDinamica);
 
-      let tablaOrig = detalle.tabla_orig;
+      let tablaOrig = detalle.tabla_orig; // AGREGAR SI TABLA_ORIG ES NULL AL QUERY QUE ARMO SOLO SELECT SIN FROM NI WHERE ELSE LO DE SIEMPRE
       let whereCond = detalle.where_cond
         .replace(/\{ZZZ_ANIO\}/g, ZZZ_ANIO)
         .replace(/\{ZZZ_MES\}/g, ZZZ_MES)
         .replace(/\{ZZZ_ID_CIA\}/g, ZZZ_COMP)
         .replace(/\{ZZZ_ANIO_ANT\}/g, ZZZ_ANIO_ANT);
 
-      let consultaFinal = `SELECT ${sqlDinamica} AS ${alias} FROM ${tablaOrig} WHERE ${whereCond}`;
+      let consultaFinal = `SELECT ${sqlDinamica} AS ${alias} FROM ${tablaOrig} WHERE ${whereCond}`; //
       //  console.log('Consulta Final: ',consultaFinal);
       try {
         const [resultadoConsulta] = await pool.promise().query(consultaFinal);
