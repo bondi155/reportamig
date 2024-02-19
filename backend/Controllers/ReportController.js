@@ -22,8 +22,7 @@ async function obtenerCompaniasActivas() {
   }
 }
 
-
-//falta el valor de S como parametro 
+//falta el valor de S como parametro
 //Sacamos el id el tipo de archivo va a venir depende que reporte elijamos en el nav
 async function getId() {
   const sqlGetId = `SELECT id, tab_orig, tab_dest 
@@ -34,7 +33,6 @@ async function getId() {
     const mapeoEnc = rows[0] || {};
     console.log(mapeoEnc);
     return mapeoEnc;
-
   } catch (error) {
     console.error('error', error);
     throw error;
@@ -200,10 +198,15 @@ async function consultaDinamica(idCia, detalles) {
   let valorParaZZZ_15 = '0';
   let valorParaZZZ_19 = '0';
 
+  let valIns;
+  let consultaFinal;
+
   for (let i = 0; i < detalles.length; i++) {
     let detalle = detalles[i];
 
     let alias = 'col' + (i + 1);
+
+    valIns = { [alias]: null };
 
     if (detalle.val_fijo !== null) {
       let valorDinamico;
@@ -228,7 +231,8 @@ async function consultaDinamica(idCia, detalles) {
         valorDinamico =
           detalle.val_fijo !== '' ? detalle.val_fijo : detalle.val_def; //
       }
-      resultados.push({ [alias]: valorDinamico });
+      //resultados.push({ [alias]: valorDinamico });
+      valIns = { [alias]: valorDinamico };
     } else {
       let sqlDinamica = detalle.campo_orig
         .replace(/\{ZZZ_ANIO\}/g, ZZZ_ANIO)
@@ -254,7 +258,11 @@ async function consultaDinamica(idCia, detalles) {
         .replace(/\{ZZZ_ID_CIA\}/g, ZZZ_COMP)
         .replace(/\{ZZZ_ANIO_ANT\}/g, ZZZ_ANIO_ANT);
 
-      let consultaFinal = `SELECT ${sqlDinamica} AS ${alias} FROM ${tablaOrig} WHERE ${whereCond}`; //
+      if (tablaOrig === null) {
+        consultaFinal = `SELECT ${sqlDinamica} AS ${alias}`; //
+      } else {
+        consultaFinal = `SELECT ${sqlDinamica} AS ${alias} FROM ${tablaOrig} WHERE ${whereCond}`; //
+      }
       //  console.log('Consulta Final: ',consultaFinal);
       try {
         const [resultadoConsulta] = await pool.promise().query(consultaFinal);
@@ -347,12 +355,38 @@ async function consultaDinamica(idCia, detalles) {
         ) {
           valorParaZZZ_12 = resultadoConsulta[0].importe.toString();
         }
-
-        resultados.push(resultadoConsulta[0]);
+        //resultados.push(resultadoConsulta[0]);
+        if (resultadoConsulta[0]) {
+          /*if(isNaN(resultadoConsulta[0][alias])) {
+            valIns = { [alias]: "0" };
+          } else {
+            valIns = resultadoConsulta[0];
+          }*/
+          valIns = resultadoConsulta[0];
+        }
       } catch (error) {
         console.error('Error al ejecutar consulta dinámica:', error);
       }
     }
+    if (valIns[alias] == null && detalle.val_def != null) {
+      valIns = { [alias]: detalle.val_def };
+    } else {
+      if (detalle.id_tipo_dato_orig == 1 && isNaN(valIns[alias])) {
+        valIns[alias] = '0';
+      } else {
+        if (detalle.id_tipo_dato_orig == 1 && detalle.presic_orig_2 != null) {
+          if (detalle.presic_dato_orig_2 == 0) {
+            valIns[alias] = Math.round(valIns[alias]);
+          } else {
+            valIns[alias] = parseFloat(valIns[alias]).toFixed(
+              detalle.presic_orig_2
+            );
+          }
+          //Math.round((num + Number.EPSILON) * 100) / 10
+        }
+      }
+    }
+    resultados.push(valIns);
   }
   //const resultadosTransformadosDetalle = transformarResultados(resultados);
 
@@ -369,12 +403,11 @@ async function reporteMapExcel(datosTotal, nombreArchivo) {
 
   const rutaBase = path.join(__dirname, '..', 'Resultados');
   const nombreArchivoDinamico = nombreArchivo
-  .replace('{ZZZ_ANIO}', ZZZ_ANIO)
-  .replace('{ZZZ_MES}', ZZZ_MES)
-  .replace('.xls', '.xlsx'); 
+    .replace('{ZZZ_ANIO}', ZZZ_ANIO)
+    .replace('{ZZZ_MES}', ZZZ_MES)
+    .replace('.xls', '.xlsx');
 
   const rutaSalida = path.join(rutaBase, nombreArchivoDinamico);
-
 
   const workbook = new Excel.Workbook();
   await workbook.xlsx.readFile(rutaEntrada);
@@ -511,8 +544,8 @@ exports.ejecutarFunciones = async (req, res) => {
     // console.log(datosTotal)
     const rutaSalida = await reporteMapExcel(datosTotal, resultadoId.tab_dest);
 
-    if (rutaSalida) { 
-      res.download(rutaSalida, path.basename(rutaSalida)); 
+    if (rutaSalida) {
+      res.download(rutaSalida, path.basename(rutaSalida));
     } else {
       throw new Error('No se pudo generar el archivo Excel.');
     }
