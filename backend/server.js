@@ -56,7 +56,9 @@ app.use(express.json());
 app.post('/loginUsers', authenticateToken, getDataController.loginUsers__); //login
 app.get('/getUserList', authenticateToken, getDataController.listUsers__); //lista de ususarios
 app.put('/resetPass', authenticateToken, PostDataController.resetPassword__); //reseteo password
-app.get('/getReport', authenticateToken, ReportController.ejecutarFunciones); //ejecutar funcion general que hace select y reporte
+app.get('/getReport', authenticateToken, ReportController.ejecutarFunciones); //ejecutar funcion general que hace el response del json
+app.post('/descargarExcel', authenticateToken, ReportController.generarYDescargarExcel); //descarga excel con datosTotal
+
 
 
 //post y put functions

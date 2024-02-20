@@ -3,6 +3,7 @@ const mysql = require('mysql2');
 const pool = mysql.createPool(process.env.DATABASE_URL);
 const path = require('path');
 const Mexp = require('math-expression-evaluator');
+const { Console } = require('console');
 
 async function obtenerCompaniasActivas() {
   const sqlCompaniasActivas = `
@@ -190,15 +191,18 @@ async function consultaDinamica(idCia, detalles) {
   let valorParaZZZ_3 = '0';
   let valorParaZZZ_6 = '0';
   let valorParaZZZ_7 = '0';
+  let valorParaZZZ_8 = '0';
   let valorParaZZZ_9 = '0';
   let valorParaZZZ_10 = '0';
   let valorParaZZZ_12 = '0';
   let valorParaZZZ_13 = '0';
+  let valorParaZZZ_14 = '0';
   let valorParaZZZ_16 = '0';
   let valorParaZZZ_15 = '0';
   let valorParaZZZ_19 = '0';
 
   let valIns;
+  let valAComp;
   let consultaFinal;
 
   for (let i = 0; i < detalles.length; i++) {
@@ -207,16 +211,18 @@ async function consultaDinamica(idCia, detalles) {
     let alias = 'col' + (i + 1);
 
     valIns = { [alias]: null };
+    valAComp = null;
 
     if (detalle.val_fijo !== null) {
       let valorDinamico;
       if (detalle.val_fijo.startsWith('=')) {
         const expression = detalle.val_fijo.slice(1);
         const parsedExpression = expression
-          .replace(/\{ZZZ_7\}/g, valorParaZZZ_7)
           .replace(/\{ZZZ_3\}/g, valorParaZZZ_3)
           .replace(/\{ZZZ_4\}/g, valorParaZZZ_4)
           .replace(/\{ZZZ_6\}/g, valorParaZZZ_6)
+          .replace(/\{ZZZ_7\}/g, valorParaZZZ_7)
+          .replace(/\{ZZZ_8\}/g, valorParaZZZ_8)
           .replace(/\{ZZZ_9\}/g, valorParaZZZ_9)
           .replace(/\{ZZZ_10\}/g, valorParaZZZ_10)
           .replace(/\{ZZZ_12\}/g, valorParaZZZ_12)
@@ -226,7 +232,11 @@ async function consultaDinamica(idCia, detalles) {
           .replace(/\{ZZZ_19\}/g, valorParaZZZ_19);
 
         const mexp = new Mexp();
-        valorDinamico = mexp.eval(parsedExpression);
+        try {
+          valorDinamico = mexp.eval(parsedExpression);
+        } catch (e) {
+          valorDinamico = null;
+        }
       } else {
         valorDinamico =
           detalle.val_fijo !== '' ? detalle.val_fijo : detalle.val_def; //
@@ -237,131 +247,85 @@ async function consultaDinamica(idCia, detalles) {
       let sqlDinamica = detalle.campo_orig
         .replace(/\{ZZZ_ANIO\}/g, ZZZ_ANIO)
         .replace(/\{ZZZ_MES\}/g, ZZZ_MES)
+        .replace(/\{ZZZ_ID_CIA\}/g, ZZZ_COMP)
         .replace(/\{ZZZ_ANIO_ANT\}/g, ZZZ_ANIO_ANT)
         .replace(/\{ZZZ_4\}/g, valorParaZZZ_4)
         .replace(/\{ZZZ_3\}/g, valorParaZZZ_3)
         .replace(/\{ZZZ_6\}/g, valorParaZZZ_6)
         .replace(/\{ZZZ_7\}/g, valorParaZZZ_7)
+        .replace(/\{ZZZ_8\}/g, valorParaZZZ_8)
         .replace(/\{ZZZ_9\}/g, valorParaZZZ_9)
         .replace(/\{ZZZ_10\}/g, valorParaZZZ_10)
         .replace(/\{ZZZ_12\}/g, valorParaZZZ_12)
         .replace(/\{ZZZ_19\}/g, valorParaZZZ_19)
         .replace(/\{ZZZ_13\}/g, valorParaZZZ_13)
+        .replace(/\{ZZZ_14\}/g, valorParaZZZ_14)
         .replace(/\{ZZZ_15\}/g, valorParaZZZ_15)
         .replace(/\{ZZZ_16\}/g, valorParaZZZ_16);
       //console.log('ESTA ES LA CONSULTA DINAMICA ',sqlDinamica);
 
       let tablaOrig = detalle.tabla_orig; // AGREGAR SI TABLA_ORIG ES NULL AL QUERY QUE ARMO SOLO SELECT SIN FROM NI WHERE ELSE LO DE SIEMPRE
-      let whereCond = detalle.where_cond
-        .replace(/\{ZZZ_ANIO\}/g, ZZZ_ANIO)
-        .replace(/\{ZZZ_MES\}/g, ZZZ_MES)
-        .replace(/\{ZZZ_ID_CIA\}/g, ZZZ_COMP)
-        .replace(/\{ZZZ_ANIO_ANT\}/g, ZZZ_ANIO_ANT);
 
       if (tablaOrig === null) {
         consultaFinal = `SELECT ${sqlDinamica} AS ${alias}`; //
       } else {
+        let whereCond = detalle.where_cond
+          .replace(/\{ZZZ_ANIO\}/g, ZZZ_ANIO)
+          .replace(/\{ZZZ_MES\}/g, ZZZ_MES)
+          .replace(/\{ZZZ_ID_CIA\}/g, ZZZ_COMP)
+          .replace(/\{ZZZ_ANIO_ANT\}/g, ZZZ_ANIO_ANT);
+
         consultaFinal = `SELECT ${sqlDinamica} AS ${alias} FROM ${tablaOrig} WHERE ${whereCond}`; //
       }
+      //console.log(sqlDinamica);
       //  console.log('Consulta Final: ',consultaFinal);
       try {
         const [resultadoConsulta] = await pool.promise().query(consultaFinal);
 
-        if (
-          i === 3 &&
-          resultadoConsulta &&
-          resultadoConsulta.length > 0 &&
-          resultadoConsulta[0].importe
-        ) {
-          valorParaZZZ_4 = resultadoConsulta[0].importe.toString();
+        if (resultadoConsulta[0] && resultadoConsulta[0][alias] != null) {
+          valAComp = resultadoConsulta[0][alias].toString();
         }
-        if (
-          i === 2 &&
-          resultadoConsulta &&
-          resultadoConsulta.length > 0 &&
-          resultadoConsulta[0].importe
-        ) {
-          valorParaZZZ_3 = resultadoConsulta[0].importe.toString();
+        if (i === 3) {
+          valorParaZZZ_4 = valAComp;
         }
-        if (
-          i === 6 &&
-          resultadoConsulta &&
-          resultadoConsulta.length > 0 &&
-          resultadoConsulta[0].importe
-        ) {
-          valorParaZZZ_7 = resultadoConsulta[0].importe.toString();
+        if (i === 2) {
+          valorParaZZZ_3 = valAComp;
         }
-        if (
-          i === 8 &&
-          resultadoConsulta &&
-          resultadoConsulta.length > 0 &&
-          resultadoConsulta[0].importe
-        ) {
-          valorParaZZZ_9 = resultadoConsulta[0].importe.toString();
+        if (i === 6) {
+          valorParaZZZ_7 = valAComp;
         }
-        if (
-          i === 9 &&
-          resultadoConsulta &&
-          resultadoConsulta.length > 0 &&
-          resultadoConsulta[0].importe
-        ) {
-          valorParaZZZ_10 = resultadoConsulta[0].importe.toString();
+        if (i === 7) {
+          valorParaZZZ_8 = valAComp;
         }
-        if (
-          i === 5 &&
-          resultadoConsulta &&
-          resultadoConsulta.length > 0 &&
-          resultadoConsulta[0].importe
-        ) {
-          valorParaZZZ_6 = resultadoConsulta[0].importe.toString();
+        if (i === 8) {
+          valorParaZZZ_9 = valAComp;
         }
-        if (
-          i === 12 &&
-          resultadoConsulta &&
-          resultadoConsulta.length > 0 &&
-          resultadoConsulta[0].importe
-        ) {
-          valorParaZZZ_13 = resultadoConsulta[0].importe.toString();
+        if (i === 9) {
+          valorParaZZZ_10 = valAComp;
         }
-        if (
-          i === 15 &&
-          resultadoConsulta &&
-          resultadoConsulta.length > 0 &&
-          resultadoConsulta[0].importe
-        ) {
-          valorParaZZZ_16 = resultadoConsulta[0].importe.toString();
+        if (i === 5) {
+          valorParaZZZ_6 = valAComp;
         }
-        if (
-          i === 18 &&
-          resultadoConsulta &&
-          resultadoConsulta.length > 0 &&
-          resultadoConsulta[0].importe
-        ) {
-          valorParaZZZ_19 = resultadoConsulta[0].importe.toString();
+        if (i === 12) {
+          valorParaZZZ_13 = valAComp;
         }
-        if (
-          i === 14 &&
-          resultadoConsulta &&
-          resultadoConsulta.length > 0 &&
-          resultadoConsulta[0].importe
-        ) {
-          valorParaZZZ_15 = resultadoConsulta[0].importe.toString();
+        if (i === 13) {
+          valorParaZZZ_14 = valAComp;
         }
-        if (
-          i === 11 &&
-          resultadoConsulta &&
-          resultadoConsulta.length > 0 &&
-          resultadoConsulta[0].importe
-        ) {
-          valorParaZZZ_12 = resultadoConsulta[0].importe.toString();
+        if (i === 15) {
+          valorParaZZZ_16 = valAComp;
+        }
+        if (i === 18) {
+          valorParaZZZ_19 = valAComp;
+        }
+        if (i === 14) {
+          valorParaZZZ_15 = valAComp;
+        }
+        if (i === 11) {
+          valorParaZZZ_12 = valAComp;
         }
         //resultados.push(resultadoConsulta[0]);
         if (resultadoConsulta[0]) {
-          /*if(isNaN(resultadoConsulta[0][alias])) {
-            valIns = { [alias]: "0" };
-          } else {
-            valIns = resultadoConsulta[0];
-          }*/
           valIns = resultadoConsulta[0];
         }
       } catch (error) {
@@ -371,7 +335,10 @@ async function consultaDinamica(idCia, detalles) {
     if (valIns[alias] == null && detalle.val_def != null) {
       valIns = { [alias]: detalle.val_def };
     } else {
-      if (detalle.id_tipo_dato_orig == 1 && isNaN(valIns[alias])) {
+      if (
+        detalle.id_tipo_dato_orig == 1 &&
+        (isNaN(valIns[alias]) || !isFinite(valIns[alias]))
+      ) {
         valIns[alias] = '0';
       } else {
         if (detalle.id_tipo_dato_orig == 1 && detalle.presic_orig_2 != null) {
@@ -439,71 +406,8 @@ async function reporteMapExcel(datosTotal, nombreArchivo) {
 
   return rutaSalida;
 }
-/*
-async function ejecutarGrid(resultadosConsultaDinamica) {
-  try {
-    const datosGrid = resultadosConsultaDinamica.map((resultado) => {
-      return {
-        posicion: resultado.posic_cia,
-        compania: resultado.nombre_cia,
-      };
-    });
 
-    return datosGrid;
-  } catch (error) {
-    console.error('Error al ejecutar Grid:', error);
-    throw error;
-  }
-}
-*/
-//Ejecuta todas las funciones
-/*exports.ejecutarFunciones2 = async (req, res) => {
-  try {
-    const resultadoId = await getId();
-
-    console.log('Resultado de getId:', resultadoId);
-
-    const resultadoSeqLine = await seqLine(resultadoId);
-    //  console.log('Resultado de seqLine:', resultadoSeqLine);
-
-    const encabezados = await obtenerEncabezados(
-      resultadoId.id,
-      resultadoSeqLine
-    );
-    //    console.log('Resultado de encabezados:', encabezados);
-
-    const companiasActivas = await obtenerCompaniasActivas();
-    //  console.log('Compañías activas:', companiasActivas);
-
-    const resultadoTab = await nombreTab(resultadoId.id);
-         console.log('RESULTADO DE TAB', resultadoTab, resultadoId.id);
-
-
-    const detallesD = await obtenerDetallesD(resultadoId.id);
-   // console.log('Detalles para el Select:', detallesD);
-
-//const detallesConTabs = await obtenerDetalleTab(resultadoId, resultadoTab);
-//console.log("DETALLES CON TABS",detallesConTabs)
-    const resultados = await consultaDinamica(detallesD);
-    console.log(
-      'Resultados para el Select de las consultas dinamicas:',
-      resultados
-    );
-
-    // const datosParaGrid = await ejecutarGrid(resultados);
-    //console.log('Datos para el Grid:', datosParaGrid);
-
-    const rutaSalida = await reporteMapExcel(resultados);
-    // Enviar el archivo Excel como respuesta
-    res.download(rutaSalida, 'excel_resultado.xlsx');
-  } catch (error) {
-    console.error('Error al ejecutar funciones:', error);
-  }
-};
-*/
-
-//ejecutar OK
-exports.ejecutarFunciones = async (req, res) => {
+exports.generarYDescargarExcel = async (req, res) => {
   try {
     const resultadoId = await getId();
     const resultadoTab = await nombreTab(resultadoId.id);
@@ -538,18 +442,64 @@ exports.ejecutarFunciones = async (req, res) => {
       const resultadosDetalles = await Promise.all(consultas);
 
       datosTab.detalle.push(...resultadosDetalles);
-
       datosTotal.push(datosTab);
     }
-    // console.log(datosTotal)
-    const rutaSalida = await reporteMapExcel(datosTotal, resultadoId.tab_dest);
 
+    const rutaSalida = await reporteMapExcel(datosTotal, resultadoId.tab_dest);
     if (rutaSalida) {
       res.download(rutaSalida, path.basename(rutaSalida));
     } else {
       throw new Error('No se pudo generar el archivo Excel.');
     }
+  } catch (error) {
+    console.error('Error al generar y descargar Excel:', error);
+    res.status(500).send('Ocurrió un error al generar el reporte');
+  }
+};
 
+//ejecutar OK
+exports.ejecutarFunciones = async (req, res) => {
+  try {
+    const resultadoId = await getId();
+    const resultadoTab = await nombreTab(resultadoId.id);
+    let datosTotal = [];
+
+    for (let tabElem of resultadoTab) {
+      let datosTab = {
+        tab_num: tabElem.tab_num,
+        tab_nombre: tabElem.tab_nombre,
+        encabezado: [],
+        detalle: [],
+      };
+      const resultadoSeqLine = await seqLine(resultadoId.id, tabElem.tab_num);
+      let encabezadoCompleto = [];
+
+      for (let lineaEnc of resultadoSeqLine) {
+        const encabezado = await obtenerEncabezados(
+          resultadoId.id,
+          tabElem.tab_num,
+          lineaEnc.seq_lin
+        );
+        encabezadoCompleto.push(...encabezado);
+      }
+      datosTab.encabezado.push(...encabezadoCompleto);
+
+      const companias = await obtenerCompaniasActivas();
+      const detallesD = await obtenerDetallesD(resultadoId.id, tabElem.tab_num);
+
+      const consultas = companias.map((compania) =>
+        consultaDinamica(compania.id_cia, detallesD)
+      );
+
+      const resultadosDetalles = await Promise.all(consultas);
+
+      datosTab.detalle.push(...resultadosDetalles);
+
+      datosTotal.push(datosTab);
+    }
+    // console.log(datosTotal)
+
+    console.log('termina');
     res.status(200).json(datosTotal);
   } catch (error) {
     console.error('Error al ejecutar funciones:', error);
@@ -558,41 +508,3 @@ exports.ejecutarFunciones = async (req, res) => {
 };
 
 //ejecutarFunciones();
-
-/*
-exports.ejecutarFunciones = async (req, res) => {
-  try {
-    const mapeoEnc = await getId();
-
-    console.log('Resultado de getId:', mapeoEnc);
-
-    const reporteTabs = await nombreTab(mapeoEnc.id);
-    console.log('RESULTADO DE TAB', reporteTabs, mapeoEnc.id);
-
-    let datosTotal = [];
-
-    for (let tabElem of reporteTabs) {
-      const lineasEnc = await seqLine(mapeoEnc.id, tabElem.tab_num);
-
-      for (let lineaEnc of lineasEnc) {
-        const encabezados = await obtenerEncabezados(mapeoEnc.id, reporteTabs.tab_num, lineaEnc);
-
-        const companias = await obtenerCompaniasActivas();
-
-        const detallesD = await obtenerDetallesD(mapeoEnc.id, reporteTabs.tab_num);
-
-        for (let compania of companias) {
-          const resultadosTransformadosDetalle = await consultaDinamica(compania.id_cia, detallesD);
-          console.log('Resultados para el Select de las consultas dinamicas:', resultadosTransformadosDetalle);
-          datosTotal = datosTotal.concat(resultadosTransformadosDetalle);
-        }
-      }
-    }
-
-   // const rutaSalida = await reporteMapExcel(datosTotal);
-    //res.download(rutaSalida, 'excel_resultado.xlsx');
-  } catch (error) {
-    console.error('Error al ejecutar funciones:', error);
-  }
-};
-*/
