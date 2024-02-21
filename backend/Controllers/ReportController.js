@@ -22,16 +22,15 @@ async function obtenerCompaniasActivas() {
     throw error;
   }
 }
-
 //falta el valor de S como parametro
 //Sacamos el id el tipo de archivo va a venir depende que reporte elijamos en el nav
-async function getId() {
+async function getId(id) {
   const sqlGetId = `SELECT id, tab_orig, tab_dest 
   FROM am_mapeo_enc
-  WHERE tipo_arc = 'S'`; //de ser necesario agregar separador en el select
+  WHERE tipo_arc = 'S' AND id = ?`; //de ser necesario agregar separador en el select
   try {
-    const [rows] = await pool.promise().query(sqlGetId);
-    const mapeoEnc = rows[0] || {};
+    const [rows] = await pool.promise().query(sqlGetId, id);
+   const mapeoEnc = rows[0] || [];
     console.log(mapeoEnc);
     return mapeoEnc;
   } catch (error) {
@@ -39,6 +38,8 @@ async function getId() {
     throw error;
   }
 }
+
+
 
 //Sacamos la Linea
 async function seqLine(idEncabezado, numTab) {
@@ -360,13 +361,11 @@ async function consultaDinamica(idCia, detalles) {
   return resultados;
 }
 
+
 async function reporteMapExcel(datosTotal, nombreArchivo) {
-  const rutaEntrada = path.join(
-    __dirname,
-    '..',
-    'Reportes',
-    'ramo_administrativas.xlsx'
-  );
+
+   const rutaEntrada = path.join(__dirname, '..', 'Reportes', nombreArchivo);
+
 
   const rutaBase = path.join(__dirname, '..', 'Resultados');
   const nombreArchivoDinamico = nombreArchivo
@@ -407,9 +406,13 @@ async function reporteMapExcel(datosTotal, nombreArchivo) {
   return rutaSalida;
 }
 
+
+
 exports.generarYDescargarExcel = async (req, res) => {
   try {
-    const resultadoId = await getId();
+    const id = req.query.id_arch
+
+    const resultadoId = await getId(id);
     const resultadoTab = await nombreTab(resultadoId.id);
     let datosTotal = [];
 
@@ -460,7 +463,9 @@ exports.generarYDescargarExcel = async (req, res) => {
 //ejecutar OK
 exports.ejecutarFunciones = async (req, res) => {
   try {
-    const resultadoId = await getId();
+    const id = req.query.id_arch
+
+    const resultadoId = await getId(id);
     const resultadoTab = await nombreTab(resultadoId.id);
     let datosTotal = [];
 
