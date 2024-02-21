@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FiLogOut } from 'react-icons/fi';
 import '../css/App.css';
+
 function NavigationBar({ setIslogin, form }) {
   const navigate = useNavigate();
 
@@ -31,11 +32,11 @@ function NavigationBar({ setIslogin, form }) {
       <Navbar
         collapseOnSelect
         fixed='top'
-        bg='dark'
         expand='md'
         variant='dark'
         className='mb-3 navbar-custom'
         expanded={navOpen}
+        style={{ backgroundColor: 'var(--amig-bg-color)' }}
       >
         <Link to='/home' className='nav-link'>
           <Navbar.Brand className='font-weight-bold text-muted'>
@@ -57,19 +58,20 @@ function NavigationBar({ setIslogin, form }) {
                   to='/userCreation'
                   className='nav-link'
                   onClick={handleLinkClick}
+                  style={{ color: '#002248' }}
                 >
                   Admin. de Usuarios
                 </Link>
-                <NavDropdown title='Reportes' id='basic-nav-dropdown'>
+                <NavDropdown title="Reportes" id='basic-nav-dropdown' menuVariant="dark">
                   <NavDropdown.Item as={Link} to="/reporteCreac">
                     Total
                   </NavDropdown.Item>
                   <NavDropdown.Item as={Link} to="/ramoAdministrativo">
-                  Ramo Administrativo{' '}
+                    Ramo Administrativo{' '}
                   </NavDropdown.Item>
-                  <NavDropdown.Item href='#action/3.3'>
+                  {/* <NavDropdown.Item href='#action/3.3'>
                     reporte3
-                  </NavDropdown.Item>
+                  </NavDropdown.Item> */}
                   <NavDropdown.Divider />
                   <NavDropdown.Item href='#action/3.4'>
                     Configuracion de reportes{' '}
@@ -80,6 +82,7 @@ function NavigationBar({ setIslogin, form }) {
                   to='/entrada_txt_cmer_cmbg'
                   className='nav-link'
                   onClick={handleLinkClick}
+                  style={{ color: '#002248' }}
                 >
                   Conf. Archivo de entrada
                 </Link>

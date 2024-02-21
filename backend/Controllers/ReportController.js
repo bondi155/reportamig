@@ -22,6 +22,7 @@ async function obtenerCompaniasActivas() {
     throw error;
   }
 }
+
 //falta el valor de S como parametro
 //Sacamos el id el tipo de archivo va a venir depende que reporte elijamos en el nav
 async function getId(id) {
@@ -33,6 +34,7 @@ async function getId(id) {
    const mapeoEnc = rows[0] || [];
     console.log(mapeoEnc);
     return mapeoEnc;
+
   } catch (error) {
     console.error('error', error);
     throw error;
@@ -232,6 +234,7 @@ async function consultaDinamica(idCia, detalles) {
           .replace(/\{ZZZ_16\}/g, valorParaZZZ_16)
           .replace(/\{ZZZ_19\}/g, valorParaZZZ_19);
 
+
         const mexp = new Mexp();
         try {
           valorDinamico = mexp.eval(parsedExpression);
@@ -245,6 +248,7 @@ async function consultaDinamica(idCia, detalles) {
       //resultados.push({ [alias]: valorDinamico });
       valIns = { [alias]: valorDinamico };
     } else {
+
       let sqlDinamica = detalle.campo_orig
         .replace(/\{ZZZ_ANIO\}/g, ZZZ_ANIO)
         .replace(/\{ZZZ_MES\}/g, ZZZ_MES)
@@ -270,6 +274,7 @@ async function consultaDinamica(idCia, detalles) {
       if (tablaOrig === null) {
         consultaFinal = `SELECT ${sqlDinamica} AS ${alias}`; //
       } else {
+
         let whereCond = detalle.where_cond
           .replace(/\{ZZZ_ANIO\}/g, ZZZ_ANIO)
           .replace(/\{ZZZ_MES\}/g, ZZZ_MES)
@@ -346,9 +351,7 @@ async function consultaDinamica(idCia, detalles) {
           if (detalle.presic_dato_orig_2 == 0) {
             valIns[alias] = Math.round(valIns[alias]);
           } else {
-            valIns[alias] = parseFloat(valIns[alias]).toFixed(
-              detalle.presic_orig_2
-            );
+            valIns[alias] = parseFloat(valIns[alias]).toFixed(detalle.presic_orig_2);
           }
           //Math.round((num + Number.EPSILON) * 100) / 10
         }
@@ -374,6 +377,7 @@ async function reporteMapExcel(datosTotal, nombreArchivo) {
     .replace('.xls', '.xlsx');
 
   const rutaSalida = path.join(rutaBase, nombreArchivoDinamico);
+
 
   const workbook = new Excel.Workbook();
   await workbook.xlsx.readFile(rutaEntrada);
@@ -442,6 +446,7 @@ exports.generarYDescargarExcel = async (req, res) => {
       const consultas = companias.map((compania) =>
         consultaDinamica(compania.id_cia, detallesD)
       );
+
       const resultadosDetalles = await Promise.all(consultas);
 
       datosTab.detalle.push(...resultadosDetalles);
