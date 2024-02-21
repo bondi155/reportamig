@@ -5,12 +5,36 @@ import {
   TableHead,
   TableBody,
   TableRow,
-  TableCell
+  TableCell,
+  TableSortLabel
 } from '@mui/material';
 import Paper from '@mui/material/Paper';
 import { styled } from '@mui/system';
 import axios from "axios";
 import { API_URL } from '../config/config';
+import numeral from 'numeral';
+
+const sortData = (data, fieldIndex, direction) => {
+  let sortedData = [];
+  if (Array.isArray(data)) {
+    sortedData = data.sort((a, b) => {
+      if (
+        (Number.isFinite(parseInt(Object.values(a[fieldIndex])[0])) && Number.isFinite(parseInt(Object.values(b[fieldIndex])[0])))
+        ||
+        (Number.isFinite(parseFloat(Object.values(a[fieldIndex])[0])) && Number.isFinite(parseFloat(Object.values(b[fieldIndex])[0])))
+      ) {
+        return direction === "asc"
+          ? parseFloat(Object.values(a[fieldIndex])[0]) - parseFloat(Object.values(b[fieldIndex])[0])
+          : parseFloat(Object.values(b[fieldIndex])[0]) - parseFloat(Object.values(a[fieldIndex])[0])
+      } else {
+        return direction === "asc"
+          ? Object.values(a[fieldIndex])[0].toLowerCase().localeCompare(Object.values(b[fieldIndex])[0].toLowerCase())
+          : -1 * Object.values(a[fieldIndex])[0].toLowerCase().localeCompare(Object.values(b[fieldIndex])[0].toLowerCase())
+      }
+    });
+  }
+  return sortedData;
+}
 
 const StyledTable = styled(Table)({
   thead: {
@@ -44,6 +68,10 @@ export default function SecondGridEval(props) {
   const { headers, data } = props
   const firstRowHeaders = []
   const secondRowHeaders = [];
+  const [orderedData, setOrderedData] = useState([])
+  const [orderFieldIndex, setOrderFieldIndex] = useState(0);
+  const [orderDirection, setOrderDirection] = useState('desc');
+
   for (const key in headers) {
     if (headers[key].hasOwnProperty("name")) {
       firstRowHeaders.push({ name: headers[key]["name"], span: Object.keys(headers[key]).length - 1 })
@@ -56,31 +84,69 @@ export default function SecondGridEval(props) {
     }
   }
 
+  const sortingHandler = (indexToHandle) => {
+    if (indexToHandle === orderFieldIndex) {
+      orderDirection === 'asc'
+        ? setOrderDirection('desc')
+        : setOrderDirection('asc')
+    } else {
+      setOrderFieldIndex(indexToHandle)
+      setOrderDirection('asc')
+      data && data.detalle && setOrderedData(sortData(data.detalle, indexToHandle, 'desc'))
+    }
+  }
+
+  useEffect(() => {
+    data && data.detalle && setOrderedData(sortData(data.detalle, orderFieldIndex, orderDirection))
+  }, [data])
+
+  useEffect(() => {
+    data && data.detalle && setOrderedData(sortData(data.detalle, orderFieldIndex, orderDirection))
+  }, [orderFieldIndex, orderDirection])
+
   return (
     <TableContainer component={Paper}>
       <StyledTable>
         <TableHead>
           <TableRow>
-            {firstRowHeaders.map(elementData => {
-              return <TableCell colSpan={elementData.span} rowSpan={elementData.span === 1 ? 2 : 1}>{elementData.name}</TableCell>
+            {firstRowHeaders.map((elementData, index) => {
+              return index <= 1
+                ? (
+                  <TableCell colSpan={elementData.span} rowSpan={elementData.span === 1 ? 2 : 1} style={{ color: '#002248' }}>
+                    <TableSortLabel active={orderFieldIndex === index} direction={orderDirection} onClick={() => sortingHandler(index)}>
+                      {elementData.name}
+                    </TableSortLabel>
+                  </TableCell>
+                )
+                : (
+                  <TableCell colSpan={elementData.span} rowSpan={elementData.span === 1 ? 2 : 1} style={{ color: '#002248' }}>
+                    {elementData.name}
+                  </TableCell>
+                )
             })}
           </TableRow>
           <TableRow>
-            {secondRowHeaders.map(elementData => {
-              return <TableCell>{elementData.name}</TableCell>
+            {secondRowHeaders.map((elementData, index) => {
+              return (
+                <TableCell style={{ color: '#002248' }}>
+                  <TableSortLabel active={orderFieldIndex === index + 2} direction={orderDirection} onClick={() => sortingHandler(index + 2)}>
+                    {elementData.name}
+                  </TableSortLabel>
+                </TableCell>
+              )
             })}
           </TableRow>
         </TableHead>
         <TableBody>
-          {data && data.detalle.map(rowData => {
+          {orderedData && orderedData.map(rowData => {
             return (
               <TableRow>
-                {rowData.map(data => {
+                {rowData.map((data, indexData) => {
                   let information = data && Object.values(data)
-                  if (information && typeof parseInt(information[0]) === "number" && parseInt(information) > 100) information = parseInt(information) / 1000
                   if (Array.isArray(information)) information = information[0]
+                  if (information && Number.isFinite(parseInt(information)) && parseInt(information) > 100) information = parseInt(information) / 1000
                   if (information === null || information === undefined) information = 0
-                  return (<TableCell align={typeof information === 'number' ? 'right' : 'left'}>{(information > 100 ? information.toFixed(2) : information)}</TableCell>)
+                  return (<TableCell align={indexData !== 1 ? 'right' : 'left'}>{(information > 100 ? numeral(information.toFixed(2)).format('0,0.00') : information)}</TableCell>)
                 })}
               </TableRow>
             )

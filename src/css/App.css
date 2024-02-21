@@ -40,7 +40,7 @@
 }
 
 .container-custom {
-  max-width: 70%;
+  max-width: 95%;
   margin-top: 6rem;
   width: 100%;
 }
@@ -88,7 +88,7 @@ h3,
 h4,
 h5,
 h6 {
-  color: rgb(0, 0, 0) !important;
+  color: #002248 !important;
 
   font-family: 'Roboto', sans-serif;
 }
@@ -108,6 +108,14 @@ h6 {
 
 .spinner-consolidate {
   padding-top: 6rem;
+}
+
+.navbar-dropdown-title {
+  color: #002248;
+}
+
+.navbar-dropdown-title::after {
+  color: #002248;
 }
 
 /* Tab. */
@@ -133,7 +141,7 @@ h6 {
 
 .login-form h1 {
   text-align: center;
-  color: #333;
+  color: #002248;
 }
 
 .login-form .form-group {
@@ -142,7 +150,7 @@ h6 {
 
 .login-form .form-group label {
   display: block;
-  color: #666;
+  color: #002248;
   font-weight: bold;
 }
 
@@ -265,7 +273,7 @@ h6 {
 }
 
 body {
-  background-color: #f5f5f5;
+  background-color: #fff;
   /* Gris claro, por ejemplo */
 }
 
@@ -375,9 +383,28 @@ body {
 }
 
 .nav-link {
-  color: #bdbcbc;
+  color: #002248;
 }
 
 .nav-link:hover {
-  color: rgb(232, 232, 232)
+  color: #002248;
+}
+
+.nav-link:active {
+  color: #002248;
+}
+
+li.nav-item {
+  padding: 5px 5px 0;
+  background-color: #cfcfcf;
+}
+
+.active {
+  color: #002248;
+  font-weight: 800;
+}
+
+.inactive {
+  color: #737373 !important;
+  font-weight: 600;
 }

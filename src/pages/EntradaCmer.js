@@ -54,7 +54,6 @@ function EntradaCmer({ form }) {
           setUploadProgress(percentCompleted);
         },
       });
-      console.log('respuesta', res.data);
       if (res.status === 200 && res.data.code === 'SUCCESS') {
         Swal.fire('Procesado!!', `Archivo txt ${res.data.message}`, 'success');
       } else {
@@ -132,55 +131,55 @@ const getCmerData = async () => {
       <div>
         <Container className='container-custom'>
           <Form onSubmit={uploadFile}>
-          <Col lg={{span : 10, offset:1}}> 
-          <Card className=''> 
-        <Card.Header><h3>Carga de archivo de entrada</h3></Card.Header>
-        <Card.Body>
-        <Card.Text>Seleccione el archivo TXT correspondiente a CMER o CMBG.</Card.Text>
-        </Card.Body>
-            <Row className='align-items-center'>
-              <Col xs={12} sm={12} md={8} lg={{span:7, offset:1}} className='mt-3'>
-                <Form.Group controlId='formFileLg' className='mb-3'>
-                  <Form.Control type='file' size='md' onChange={saveFile} />
-                </Form.Group>
-              </Col>
-              <Col xs={12} sm={6} md={4} lg={3} className='mt-0'>
-                <select
-                  required
-                  className='form-select'
-                  onChange={handleChange}
+            <Col lg={{ span: 10, offset: 1 }}>
+              <Card className=''>
+                <Card.Header><h3>Carga de archivo de entrada</h3></Card.Header>
+                <Card.Body>
+                  <Card.Text>Seleccione el archivo TXT correspondiente a CMER o CMBG.</Card.Text>
+                </Card.Body>
+                <Row className='align-items-center'>
+                  <Col xs={12} sm={12} md={8} lg={{ span: 7, offset: 1 }} className='mt-3'>
+                    <Form.Group controlId='formFileLg' className='mb-3'>
+                      <Form.Control type='file' size='md' onChange={saveFile} />
+                    </Form.Group>
+                  </Col>
+                  <Col xs={12} sm={6} md={4} lg={3} className='mt-0'>
+                    <select
+                      required
+                      className='form-select'
+                      onChange={handleChange}
+                    >
+                      <option value=''>Tipo de Archivo</option>
+                      <option value='cmer'>Resultados</option>
+                      <option value='cmbg'>Balance</option>
+                    </select>
+                  </Col>
+                </Row>
+                <Col
+                  xs={{ span: 4, offset: 5 }}
+                  sm={6}
+                  md={2}
+                  lg={{ spin: 2, offset: 5 }}
+                  className='mt-2'
                 >
-                  <option value=''>Tipo de Archivo</option>
-                  <option value='cmer'>Resultados</option>
-                  <option value='cmbg'>Balance</option>
-                </select>
-              </Col>
-            </Row>
-            <Col
-              xs={{ span: 4, offset: 5 }}
-              sm={6}
-              md={2}
-              lg={{ spin: 2, offset: 5 }}
-              className='mt-2'
-            >
-              <Button className='mt-3 mb-4' size='sm' variant='outline-secondary' type='submit'>
-              Procesar <FaUpload className='mb-1'/> 
-              </Button>
-            </Col>
-            </Card>
+                  <Button className='mt-3 mb-4' size='sm' variant='outline-secondary' type='submit'>
+                    Procesar <FaUpload className='mb-1' />
+                  </Button>
+                </Col>
+              </Card>
             </Col>
           </Form>
           <Modal show={isLoading} centered backdrop="static" keyboard={false}>
-    <Modal.Body>
-      <div className="d-flex justify-content-center align-items-center">
-        <ProgressBar
-          now={uploadProgress}
-          label={`${uploadProgress}%`}
-          style={{ width: '100%' }}
-        />
-      </div>
-    </Modal.Body>
-  </Modal>
+            <Modal.Body>
+              <div className="d-flex justify-content-center align-items-center">
+                <ProgressBar
+                  now={uploadProgress}
+                  label={`${uploadProgress}%`}
+                  style={{ width: '100%' }}
+                />
+              </div>
+            </Modal.Body>
+          </Modal>
         </Container>
         <div className='evaluation-grid'>
           <div className='mt-5 mb-3 center-text'></div>

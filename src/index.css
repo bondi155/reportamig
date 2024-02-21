@@ -1,3 +1,11 @@
+:root {
+  --amig-bg-color: #f3fbfe;
+  --amig-ligth-green: #7bdcb5;
+  --amig-vivid-green: #00d084;
+  --amig-ligth-blue: #8ed1fc;
+  --amig-vivid-blue: #0693e3;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
