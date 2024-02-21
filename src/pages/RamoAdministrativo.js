@@ -29,11 +29,12 @@ const buttonsStyles = {
   },
 }
 
-const downloadExcel = async (e) => {
+const downloadExcel = async (e, setDownloadStatus, anio, mes) => {
   e.preventDefault()
+  setDownloadStatus(true)
   console.log('Descargando...')
   try {
-    const config = { responseType: 'blob' };
+    const config = { responseType: 'blob', params: { id_arch: 3, anio, mes } };
 
     const response = await axios.post(`${API_URL}/descargarExcel`, {}, config);
 
@@ -49,16 +50,18 @@ const downloadExcel = async (e) => {
     link.parentNode.removeChild(link);
     window.URL.revokeObjectURL(url);
     console.log('Termino')
+    setDownloadStatus(false)
   } catch (error) {
     console.error('Error al descargar el archivo: ', error);
     console.log('Fallo')
+    setDownloadStatus(false)
   }
 }
 
 const RamoAdministrativo = () => {
   const [anio, setAnio] = useState(2023);
   const [mes, setMes] = useState(6);
-  // const [consultaEntrada, setConsultaEntrada] = useState([]);
+  const [tabKey, setTabKey] = useState('pd')
   const [isLoading, setIsLoading] = useState(true);
   const [isDownloading, setDownloadStatus] = useState(false);
 
@@ -67,7 +70,7 @@ const RamoAdministrativo = () => {
   useEffect(() => {
     const asyncCall = async () => {
       const response = await axios.get(`${API_URL}/getReport`, {
-        params: { anio: new Date().getFullYear(), mes: new Date().getMonth() + 1 }
+        params: { id_arch: 3, anio, mes }
       })
       setAxiosResponse(response)
       setIsLoading(false)
@@ -77,7 +80,7 @@ const RamoAdministrativo = () => {
 
   const handleDownload = (e) => {
     setDownloadStatus(true)
-    downloadExcel(e, setDownloadStatus)
+    downloadExcel(e, setDownloadStatus, anio, mes)
   }
 
   // const getResponse = async () => {
@@ -176,13 +179,13 @@ const RamoAdministrativo = () => {
                   </Form.Group>
                 </Col>
                 <Col style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                  <Button className='mt-4 mb-3' variant='secondary' size='md' type='submit' style={buttonsStyles.primary}>
+                  <Button className='mt-4 mb-3' variant='secondary' size='md' type='submit' style={buttonsStyles.primary} disabled={isLoading}>
                     <CiSearch className='mb-1' /> Buscar
                   </Button>
                 </Col>
                 <Col style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
                   <Button className='mt-4 mb-3' variant='secondary' size='md' type='submit' style={buttonsStyles.secondary} onClick={(e) => { handleDownload(e) }} disabled={!axiosResponse || isDownloading}>
-                    {isDownloading ? <div style={{ position: 'absolute', top: '-10px' }}><PlaneSpinner /></div> : <CiSaveDown2 className='mb-1' />} Descargar reporte
+                    {isDownloading ? <><div style={{ position: 'absolute', top: '-10px' }}><PlaneSpinner /></div> Descargando reporte</> : <><CiSaveDown2 className='mb-1' /> Descargar reporte</>}
                   </Button>
                 </Col>
               </Row>
@@ -196,17 +199,19 @@ const RamoAdministrativo = () => {
             className='mb-0 mt-5'
             fill
             style={{ padding: '0 !important' }}
+            activeKey={tabKey}
+            onSelect={(k) => k && setTabKey(k)}
           >
-            <Tab eventKey='pd' title={<span style={{ fontWeight: 600, color: '#002248' }}>PD</span>} style={{ fontWeight: 600 }}>
+            <Tab eventKey='pd' title={<span className={tabKey === 'pd' ? 'active' : 'inactive'}>PD</span>} style={{ fontWeight: 600 }}>
               <SecondGridEval headers={pdTableHeadersAdministrativo} data={axiosResponse && axiosResponse.data[0]} />
             </Tab>
-            <Tab eventKey='cobexc' title={<span style={{ fontWeight: 600, color: '#002248' }}>COB_EXC</span>} style={{ fontWeight: 600 }}>
+            <Tab eventKey='cobexc' title={<span className={tabKey === 'cobexc' ? 'active' : 'inactive'}>COB_EXC</span>} style={{ fontWeight: 600 }}>
               <SecondGridEval headers={cobexcTableHeadersAdministrativo} data={axiosResponse && axiosResponse.data[1]} />
             </Tab>
-            <Tab eventKey='gtosop' title={<span style={{ fontWeight: 600, color: '#002248' }}>GTOSOP</span>} style={{ fontWeight: 600 }}>
+            <Tab eventKey='gtosop' title={<span className={tabKey === 'gtosop' ? 'active' : 'inactive'}>GTOSOP</span>} style={{ fontWeight: 600 }}>
               <SecondGridEval headers={gtosopTableHeadersAdministrativo} data={axiosResponse && axiosResponse.data[2]} />
             </Tab>
-            <Tab eventKey='orvas' title={<span style={{ fontWeight: 600, color: '#002248' }}>ORVAS</span>} style={{ fontWeight: 600 }}>
+            <Tab eventKey='orvas' title={<span className={tabKey === 'orvas' ? 'active' : 'inactive'}>ORVAS</span>} style={{ fontWeight: 600 }}>
               <SecondGridEval headers={orvasTableHeadersAdministrativo} data={axiosResponse && axiosResponse.data[3]} />
             </Tab>
           </Tabs>

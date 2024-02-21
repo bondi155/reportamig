@@ -27,12 +27,12 @@ const buttonsStyles = {
   },
 }
 
-const downloadExcel = async (e, setDownloadStatus) => {
+const downloadExcel = async (e, setDownloadStatus, anio, mes) => {
   e.preventDefault()
   setDownloadStatus(true)
   console.log('Descargando...')
   try {
-    const config = { responseType: 'blob' };
+    const config = { responseType: 'blob', params: { id_arch: 4, anio, mes } };
 
     const response = await axios.post(`${API_URL}/descargarExcel`, {}, config);
 
@@ -68,15 +68,16 @@ const ReportCreate = () => {
   useEffect(() => {
     const asyncCall = async () => {
       const response = await axios.get(`${API_URL}/getReport`, {
-        params: { anio: new Date().getFullYear(), mes: new Date().getMonth() + 1 }
+        params: { id_arch: 4, anio, mes }
       })
       setAxiosResponse(response)
       setIsLoading(false)
+      console.log(response)
     }
     asyncCall()
   }, [])
 
-  const handleDownload = (e) => downloadExcel(e, setDownloadStatus)
+  const handleDownload = (e) => downloadExcel(e, setDownloadStatus, anio, mes)
 
   {
     /* 
@@ -164,13 +165,13 @@ const ReportCreate = () => {
                   </Form.Group>
                 </Col>
                 <Col style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
-                  <Button className='mt-4 mb-3' variant='secondary' size='md' type='submit' style={buttonsStyles.primary}>
+                  <Button className='mt-4 mb-3' variant='secondary' size='md' type='submit' style={buttonsStyles.primary} disabled={isLoading}>
                     <CiSearch className='mb-1' /> Buscar
                   </Button>
                 </Col>
                 <Col style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
                   <Button className='mt-4 mb-3' variant='secondary' size='md' type='submit' style={buttonsStyles.secondary} onClick={(e) => { handleDownload(e) }} disabled={!axiosResponse || isDownloading}>
-                    {isDownloading ? <div style={{ position: 'absolute', top: '-10px', paddingLeft: '10px' }}><PlaneSpinner /></div> : <CiSaveDown2 className='mb-1' />} Descargar reporte
+                    {isDownloading ? <><div style={{ position: 'absolute', top: '-10px' }}><PlaneSpinner /></div> Descargando reporte</> : <><CiSaveDown2 className='mb-1' /> Descargar reporte</>}
                   </Button>
                 </Col>
               </Row>
@@ -200,10 +201,10 @@ const ReportCreate = () => {
               <SecondGridEval headers={orvasTableHeadersTotal} data={axiosResponse && axiosResponse.data && axiosResponse.data[3]} />
             </Tab>
             <Tab eventKey='indgestion' title={<span className={tabKey === 'indgestion' ? 'active' : 'inactive'}>IND.GESTION</span>} style={{ fontWeight: 600 }}>
-              <SecondGridEval headers={orvasTableHeadersTotal} data={axiosResponse && axiosResponse.data && axiosResponse.data[4]} />
+              <SecondGridEval headers={indGestionHeadersTotal} data={axiosResponse && axiosResponse.data && axiosResponse.data[4]} />
             </Tab>
             <Tab eventKey='roe' title={<span className={tabKey === 'roe' ? 'active' : 'inactive'}>ROE</span>} style={{ fontWeight: 600 }}>
-              <SecondGridEval headers={orvasTableHeadersTotal} data={axiosResponse && axiosResponse.data && axiosResponse.data[5]} />
+              <SecondGridEval headers={roeHeadersTotal} data={axiosResponse && axiosResponse.data && axiosResponse.data[5]} />
             </Tab>
           </Tabs>
         </Form>

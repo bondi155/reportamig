@@ -320,8 +320,8 @@ export const indGestionHeadersTotal = {
 		"col1": "Importe",
 		"col2": "Porcentaje 2023",
 		"col3": "Porcentaje 2022",
-		"col2": "Porcentaje 2023",
-		"col3": "Porcentaje 2022",
+		"col4": "Porcentaje 2023",
+		"col5": "Porcentaje 2022",
 	},
 }
 
