@@ -142,7 +142,6 @@ export default function SecondGridEval(props) {
                 {rowData.map((data, indexData) => {
                   let information = data && Object.values(data)
                   if (Array.isArray(information)) information = information[0]
-                  if (information && Number.isFinite(parseInt(information)) && parseInt(information) > 100) information = parseInt(information) / 1000
                   if (information === null || information === undefined) information = 0
                   return (<TableCell align={indexData !== 1 ? 'right' : 'left'}>{(information > 100 ? numeral(information).format('0,0.00') : information)}</TableCell>)
                 })}
