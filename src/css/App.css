@@ -399,6 +399,16 @@ li.nav-item {
   background-color: #cfcfcf;
 }
 
+.nav-link.show {
+  color: #002248 !important;
+}
+
+.nav-link:focus,
+.nav-link:hover {
+  color: #002248 !important;
+  font-weight: 600;
+}
+
 .active {
   color: #002248;
   font-weight: 800;
@@ -407,4 +417,9 @@ li.nav-item {
 .inactive {
   color: #737373 !important;
   font-weight: 600;
+}
+
+a.dropdown-item:hover {
+  font-weight: 600;
+  background-color: var(--amig-bg-color);
 }

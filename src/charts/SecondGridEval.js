@@ -67,8 +67,8 @@ export default function SecondGridEval(props) {
   const firstRowHeaders = []
   const secondRowHeaders = [];
   const [orderedData, setOrderedData] = useState([])
-  const [orderFieldIndex, setOrderFieldIndex] = useState(0);
-  const [orderDirection, setOrderDirection] = useState('desc');
+  const [orderFieldIndex, setOrderFieldIndex] = useState();
+  const [orderDirection, setOrderDirection] = useState('asc');
 
   for (const key in headers) {
     if (headers[key].hasOwnProperty("name")) {
@@ -95,7 +95,7 @@ export default function SecondGridEval(props) {
   }
 
   useEffect(() => {
-    data && data.detalle && setOrderedData(sortData(data.detalle, orderFieldIndex, orderDirection))
+    data && data.detalle && setOrderedData(data.detalle)
   }, [data])
 
   useEffect(() => {
