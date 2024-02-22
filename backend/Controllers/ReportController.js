@@ -366,42 +366,41 @@ async function consultaDinamica(idCia, detalles) {
 
 
 async function reporteMapExcel(datosTotal, nombreArchivo) {
-
-   const rutaEntrada = path.join(__dirname, '..', 'Reportes', nombreArchivo);
-
-
+  const rutaEntrada = path.join(__dirname, '..', 'Reportes', nombreArchivo);
   const rutaBase = path.join(__dirname, '..', 'Resultados');
   const nombreArchivoDinamico = nombreArchivo
-    .replace('{ZZZ_ANIO}', ZZZ_ANIO)
-    .replace('{ZZZ_MES}', ZZZ_MES)
-    .replace('.xls', '.xlsx');
-
+      .replace('{ZZZ_ANIO}', ZZZ_ANIO)
+      .replace('{ZZZ_MES}', ZZZ_MES)
+      .replace('.xls', '.xlsx');
   const rutaSalida = path.join(rutaBase, nombreArchivoDinamico);
-
 
   const workbook = new Excel.Workbook();
   await workbook.xlsx.readFile(rutaEntrada);
 
   datosTotal.forEach((pestaña) => {
-    const sheet = workbook.getWorksheet(pestaña.tab_nombre);
-    let filaActual = 15;
+      const sheet = workbook.getWorksheet(pestaña.tab_nombre);
+      let filaActual = 15;
 
-    pestaña.detalle.forEach((detalleComp) => {
-      detalleComp.forEach((valorColumna, index) => {
-        //valorColumna no sea null antes de llamar a Object.values
-        if (valorColumna) {
-          const colLetter = String.fromCharCode('A'.charCodeAt(0) + index); //Convertir índ a letra de la columna
-          const cellRef = colLetter + filaActual;
-
-          const valores = Object.values(valorColumna);
-          if (valores.length > 0 && valores[0] !== null) {
-            //verificar que el primer valor no sea null
-            sheet.getCell(cellRef).value = valores[0];
-          }
-        }
+      pestaña.detalle.forEach((detalleComp) => {
+          detalleComp.forEach((valorColumna, index) => {
+              if (valorColumna) {
+                  const colLetter = String.fromCharCode('A'.charCodeAt(0) + index); //Convertir indice a letra de la columna
+                  const cellRef = colLetter + filaActual;
+                  const valor = Object.values(valorColumna)[0];
+                  //comprobar si el valor es num y convertirlo
+                  if (valor !== null) {
+                      //Si el valor es num (y no empieza con letra) convierte a num
+                      if (!isNaN(valor) && !isNaN(parseFloat(valor)) && !/^[a-zA-Z]/.test(valor)) {
+                          sheet.getCell(cellRef).value = parseFloat(valor);
+                      } else {
+                          //Dejarlo como string
+                          sheet.getCell(cellRef).value = valor;
+                      }
+                  }
+              }
+          });
+          filaActual++;
       });
-      filaActual++;
-    });
   });
 
   await workbook.xlsx.writeFile(rutaSalida);
@@ -409,7 +408,6 @@ async function reporteMapExcel(datosTotal, nombreArchivo) {
 
   return rutaSalida;
 }
-
 
 
 exports.generarYDescargarExcel = async (req, res) => {
@@ -454,8 +452,16 @@ exports.generarYDescargarExcel = async (req, res) => {
     }
 
     const rutaSalida = await reporteMapExcel(datosTotal, resultadoId.tab_dest);
+
+    const nombreArchivo = path.basename(rutaSalida);
+
     if (rutaSalida) {
-      res.download(rutaSalida, path.basename(rutaSalida));
+      console.log("Enviando archivo:", nombreArchivo);
+
+      res.setHeader('Content-Disposition', `attachment; filename="${nombreArchivo}"`);
+      res.setHeader('Archivo-Nombre', nombreArchivo);
+      res.sendFile(rutaSalida, nombreArchivo);
+
     } else {
       throw new Error('No se pudo generar el archivo Excel.');
     }
