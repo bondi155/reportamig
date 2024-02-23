@@ -42,7 +42,7 @@ const downloadExcel = async (e, setDownloadStatus, anio, mes) => {
 
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', 'nombreArchivo.xlsx');
+    link.setAttribute('download', 'ramo_adm2023_06.xlsx');
 
     document.body.appendChild(link);
     link.click();
@@ -130,7 +130,7 @@ const RamoAdministrativo = () => {
           <Col>
             <Card className=''>
               <Card.Header><h3>Ramo Administrativas</h3></Card.Header>
-              <Row style={{ display: "grid", gridTemplateColumns: '2fr 2fr 1fr 1fr', padding: '0 25px' }}>
+              <Row style={{ display: "grid", gridTemplateColumns: '2fr 2fr 1fr', padding: '0 25px' }}>
                 <Col style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                   <Form.Group controlId='formAnioSelect'>
                     <Form.Control
@@ -178,11 +178,11 @@ const RamoAdministrativo = () => {
                     </Form.Control>
                   </Form.Group>
                 </Col>
-                <Col style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                {/* <Col style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                   <Button className='mt-4 mb-3' variant='secondary' size='md' type='submit' style={buttonsStyles.primary} disabled={isLoading}>
                     <CiSearch className='mb-1' /> Buscar
                   </Button>
-                </Col>
+                </Col> */}
                 <Col style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
                   <Button className='mt-4 mb-3' variant='secondary' size='md' type='submit' style={buttonsStyles.secondary} onClick={(e) => { handleDownload(e) }} disabled={!axiosResponse || isDownloading}>
                     {isDownloading ? <><div style={{ position: 'absolute', top: '-10px' }}><PlaneSpinner /></div> Descargando reporte</> : <><CiSaveDown2 className='mb-1' /> Descargar reporte</>}

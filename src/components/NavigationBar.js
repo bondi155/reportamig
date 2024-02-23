@@ -62,7 +62,7 @@ function NavigationBar({ setIslogin, form }) {
                 >
                   Admin. de Usuarios
                 </Link>
-                <NavDropdown title="Reportes" id='basic-nav-dropdown' menuVariant="dark">
+                <NavDropdown title="Reportes" id='basic-nav-dropdown'>
                   <NavDropdown.Item as={Link} to="/reporteCreac">
                     Total
                   </NavDropdown.Item>
