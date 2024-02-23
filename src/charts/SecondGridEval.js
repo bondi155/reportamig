@@ -16,18 +16,20 @@ const sortData = (data, fieldIndex, direction) => {
   let sortedData = [];
   if (Array.isArray(data)) {
     sortedData = data.sort((a, b) => {
-      if (
-        (Number.isFinite(parseInt(Object.values(a[fieldIndex])[0])) && Number.isFinite(parseInt(Object.values(b[fieldIndex])[0])))
-        ||
-        (Number.isFinite(parseFloat(Object.values(a[fieldIndex])[0])) && Number.isFinite(parseFloat(Object.values(b[fieldIndex])[0])))
-      ) {
-        return direction === "asc"
-          ? parseFloat(Object.values(a[fieldIndex])[0]) - parseFloat(Object.values(b[fieldIndex])[0])
-          : parseFloat(Object.values(b[fieldIndex])[0]) - parseFloat(Object.values(a[fieldIndex])[0])
-      } else {
-        return direction === "asc"
-          ? Object.values(a[fieldIndex])[0].toLowerCase().localeCompare(Object.values(b[fieldIndex])[0].toLowerCase())
-          : -1 * Object.values(a[fieldIndex])[0].toLowerCase().localeCompare(Object.values(b[fieldIndex])[0].toLowerCase())
+      if (a[fieldIndex] && b[fieldIndex]) {
+        if (
+          (Number.isFinite(parseInt(Object.values(a[fieldIndex])[0])) && Number.isFinite(parseInt(Object.values(b[fieldIndex])[0])))
+          ||
+          (Number.isFinite(parseFloat(Object.values(a[fieldIndex])[0])) && Number.isFinite(parseFloat(Object.values(b[fieldIndex])[0])))
+        ) {
+          return direction === "asc"
+            ? parseFloat(Object.values(a[fieldIndex])[0]) - parseFloat(Object.values(b[fieldIndex])[0])
+            : parseFloat(Object.values(b[fieldIndex])[0]) - parseFloat(Object.values(a[fieldIndex])[0])
+        } else {
+          return direction === "asc"
+            ? Object.values(a[fieldIndex])[0].toLowerCase().localeCompare(Object.values(b[fieldIndex])[0].toLowerCase())
+            : -1 * Object.values(a[fieldIndex])[0].toLowerCase().localeCompare(Object.values(b[fieldIndex])[0].toLowerCase())
+        }
       }
     });
   }
