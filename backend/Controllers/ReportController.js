@@ -4,7 +4,6 @@ const pool = mysql.createPool(process.env.DATABASE_URL);
 const path = require('path');
 const Mexp = require('math-expression-evaluator');
 const { Console } = require('console');
-const fs = require('fs');
 
 async function obtenerCompaniasActivas() {
   const sqlCompaniasActivas = `
@@ -455,11 +454,11 @@ exports.generarYDescargarExcel = async (req, res) => {
     const rutaSalida = await reporteMapExcel(datosTotal, resultadoId.tab_dest);
 
     const nombreArchivo = path.basename(rutaSalida);
-    const urlDescarga = `${req.protocol}://${req.get('host')}/descargas/${nombreArchivo}`;
 
     if (rutaSalida) {
-      res.json({ urlDescarga: urlDescarga, archivoNombre: nombreArchivo 
-    });
+      console.log("Enviando archivo:", nombreArchivo);
+
+      res.sendFile(rutaSalida, nombreArchivo);
 
     } else {
       throw new Error('No se pudo generar el archivo Excel.');
@@ -469,8 +468,6 @@ exports.generarYDescargarExcel = async (req, res) => {
     res.status(500).send('Ocurrió un error al generar el reporte');
   }
 };
-
-
 
 //ejecutar OK
 exports.ejecutarFunciones = async (req, res) => {

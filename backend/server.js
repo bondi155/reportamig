@@ -42,15 +42,6 @@ function authenticateToken(req, res, next) {
   }
 }
 
-app.use(cors({
-  exposedHeaders: ['Archivo-Nombre'], // Exponer 'Archivo-Nombre' además de los encabezados por defecto permitidos por CORS
-}));
-
-// Tu middleware personalizado para exponer headers adicionales (alternativa si no usas el paquete CORS)
-app.use((req, res, next) => {
-  res.header('Access-Control-Expose-Headers', 'Archivo-Nombre');
-  next();
-});
 
 //limitador de tasa contra ddos
 const limiter = rateLimit({
