@@ -1,6 +1,7 @@
 const mysql = require('mysql2');
 const pool = mysql.createPool(process.env.DATABASE_URL);
 const fs = require('fs');
+const { limpiarCache } = require('./CacheManager');
 
 
 //proceso para el estatus I , F , E (iniciado,   finalizado, error)
@@ -362,6 +363,9 @@ async function execFuncsTxt(req, res) {
       );
       console.log('Terminaron las líneas del archivo');
     }
+    limpiarCache();
+    console.log('Cache limpio de procesar el archivo.');
+
   } catch (error) {
     console.error(`Error en execFuncsTxt: ${error.message}`);
     res.status(500).json({

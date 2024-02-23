@@ -4,6 +4,8 @@ const pool = mysql.createPool(process.env.DATABASE_URL);
 const path = require('path');
 const Mexp = require('math-expression-evaluator');
 const { Console } = require('console');
+const { getCache, updateCache } = require('./CacheManager');
+
 
 async function obtenerCompaniasActivas() {
   const sqlCompaniasActivas = `
@@ -217,10 +219,20 @@ async function consultaDinamica(idCia, detalles) {
     valAComp = null;
 
     if (detalle.val_fijo !== null) {
+      if (i === 14) {
+        if(idCia==1) {
+          console.log("Calcula");
+        }
+      }
       let valorDinamico;
+      let pruebaParsed;
       if (detalle.val_fijo.startsWith('=')) {
         const expression = detalle.val_fijo.slice(1);
         const parsedExpression = expression
+          .replace(/\{ZZZ_ANIO\}/g, ZZZ_ANIO)
+          .replace(/\{ZZZ_MES\}/g, ZZZ_MES)
+          .replace(/\{ZZZ_ID_CIA\}/g, ZZZ_COMP)
+          .replace(/\{ZZZ_ANIO_ANT\}/g, ZZZ_ANIO_ANT)
           .replace(/\{ZZZ_3\}/g, valorParaZZZ_3)
           .replace(/\{ZZZ_4\}/g, valorParaZZZ_4)
           .replace(/\{ZZZ_6\}/g, valorParaZZZ_6)
@@ -234,16 +246,21 @@ async function consultaDinamica(idCia, detalles) {
           .replace(/\{ZZZ_16\}/g, valorParaZZZ_16)
           .replace(/\{ZZZ_19\}/g, valorParaZZZ_19);
 
-
         const mexp = new Mexp();
         try {
           valorDinamico = mexp.eval(parsedExpression);
         } catch (e) {
           valorDinamico = null;
         }
+        pruebaParsed = parsedExpression;
       } else {
         valorDinamico =
           detalle.val_fijo !== '' ? detalle.val_fijo : detalle.val_def; //
+      }
+      if (i === 14) {
+        if(idCia==1) {
+          console.log("Valor fijo y din:", detalle.val_fijo, pruebaParsed, valorParaZZZ_4, valorDinamico);
+        }
       }
       //resultados.push({ [alias]: valorDinamico });
       valIns = { [alias]: valorDinamico };
@@ -410,57 +427,33 @@ async function reporteMapExcel(datosTotal, nombreArchivo) {
 
 exports.generarYDescargarExcel = async (req, res) => {
   try {
-    const id = req.query.id_arch
+    const id = req.query.id_arch;
 
-    const resultadoId = await getId(id);
-    const resultadoTab = await nombreTab(resultadoId.id);
-    let datosTotal = [];
-
-    for (let tabElem of resultadoTab) {
-      let datosTab = {
-        tab_num: tabElem.tab_num,
-        tab_nombre: tabElem.tab_nombre,
-        encabezado: [],
-        detalle: [],
-      };
-      const resultadoSeqLine = await seqLine(resultadoId.id, tabElem.tab_num);
-      let encabezadoCompleto = [];
-
-      for (let lineaEnc of resultadoSeqLine) {
-        const encabezado = await obtenerEncabezados(
-          resultadoId.id,
-          tabElem.tab_num,
-          lineaEnc.seq_lin
+    const datosEnCache = getCache(); // Obtiene todo el objeto de caché
+    if (!datosEnCache[id]) {
+      return res
+        .status(404)
+        .send(
+          'Datos no encontrados en caché. Por favor, ejecute la generación primero.'
         );
-        encabezadoCompleto.push(...encabezado);
-      }
-      datosTab.encabezado.push(...encabezadoCompleto);
-
-      const companias = await obtenerCompaniasActivas();
-      const detallesD = await obtenerDetallesD(resultadoId.id, tabElem.tab_num);
-
-      const consultas = companias.map((compania) =>
-        consultaDinamica(compania.id_cia, detallesD)
-      );
-
-      const resultadosDetalles = await Promise.all(consultas);
-
-      datosTab.detalle.push(...resultadosDetalles);
-      datosTotal.push(datosTab);
     }
+
+    const datosTotal = datosEnCache[id];
+    const resultadoId = await getId(id);
 
     const rutaSalida = await reporteMapExcel(datosTotal, resultadoId.tab_dest);
 
-    const nombreArchivo = path.basename(rutaSalida);
+    //const nombreArchivo = path.basename(rutaSalida);
 
-    if (rutaSalida) {
-      console.log("Enviando archivo:", nombreArchivo);
-
-      res.sendFile(rutaSalida, nombreArchivo);
-
-    } else {
-      throw new Error('No se pudo generar el archivo Excel.');
-    }
+    //Enviar el Excel como respuesta
+    res.download(rutaSalida, (err) => {
+      if (err) {
+        console.error('Error enviando el archivo:', err);
+        res.status(500).send('Error al descargar el archivo Excel.');
+      } else {
+        console.log('Archivo enviado con éxito.');
+      }
+    });
   } catch (error) {
     console.error('Error al generar y descargar Excel:', error);
     res.status(500).send('Ocurrió un error al generar el reporte');
@@ -471,6 +464,12 @@ exports.generarYDescargarExcel = async (req, res) => {
 exports.ejecutarFunciones = async (req, res) => {
   try {
     const id = req.query.id_arch
+
+    const datosEnCache = getCache(); // Obtiene todo el objeto de caché
+    if (datosEnCache[id]) {
+      console.log('Datos obtenidos de la caché');
+      return res.status(200).json(datosEnCache[id]);
+    }
 
     const resultadoId = await getId(id);
     const resultadoTab = await nombreTab(resultadoId.id);
@@ -510,6 +509,8 @@ exports.ejecutarFunciones = async (req, res) => {
       datosTotal.push(datosTab);
     }
     // console.log(datosTotal)
+
+    updateCache(id, datosTotal); 
 
     console.log('termina');
     res.status(200).json(datosTotal);

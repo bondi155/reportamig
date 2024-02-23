@@ -21,7 +21,7 @@ const secretkey = process.env.JWT_SECRET;
 app.use(helmet());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
+const { limpiarCache } = require('./Controllers/CacheManager');
 //validacion del token como encabezado en todas las llamadas de api
 function authenticateToken(req, res, next) {
   const authHeader = req.headers['authorization'];
@@ -72,6 +72,12 @@ app.delete(
   PostDataController.deleteUser__
 ); //delete usuarios por id
 app.post('/uploadfile', upload.single('file'), txtController.execFuncsTxt);
+
+
+app.get('/limpiar-cache', authenticateToken, (req, res) => {
+  limpiarCache();
+  res.send('Caché limpiada con éxito.');
+});
 
 app.listen(port, () => {
   console.log('servidor funcionando en el puerto ' + port);
