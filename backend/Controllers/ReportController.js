@@ -288,48 +288,6 @@ async function consultaDinamica(idCia, detalles) {
       try {
         const [resultadoConsulta] = await pool.promise().query(consultaFinal);
 
-        if (resultadoConsulta[0] && resultadoConsulta[0][alias] != null) {
-          valAComp = resultadoConsulta[0][alias].toString();
-        }
-        if (i === 3) {
-          valorParaZZZ_4 = valAComp;
-        }
-        if (i === 2) {
-          valorParaZZZ_3 = valAComp;
-        }
-        if (i === 6) {
-          valorParaZZZ_7 = valAComp;
-        }
-        if (i === 7) {
-          valorParaZZZ_8 = valAComp;
-        }
-        if (i === 8) {
-          valorParaZZZ_9 = valAComp;
-        }
-        if (i === 9) {
-          valorParaZZZ_10 = valAComp;
-        }
-        if (i === 5) {
-          valorParaZZZ_6 = valAComp;
-        }
-        if (i === 12) {
-          valorParaZZZ_13 = valAComp;
-        }
-        if (i === 13) {
-          valorParaZZZ_14 = valAComp;
-        }
-        if (i === 15) {
-          valorParaZZZ_16 = valAComp;
-        }
-        if (i === 18) {
-          valorParaZZZ_19 = valAComp;
-        }
-        if (i === 14) {
-          valorParaZZZ_15 = valAComp;
-        }
-        if (i === 11) {
-          valorParaZZZ_12 = valAComp;
-        }
         //resultados.push(resultadoConsulta[0]);
         if (resultadoConsulta[0]) {
           valIns = resultadoConsulta[0];
@@ -356,6 +314,46 @@ async function consultaDinamica(idCia, detalles) {
           //Math.round((num + Number.EPSILON) * 100) / 10
         }
       }
+    }
+    valAComp = valIns[alias];
+    if (i === 3) {
+      valorParaZZZ_4 = valAComp;
+    }
+    if (i === 2) {
+      valorParaZZZ_3 = valAComp;
+    }
+    if (i === 6) {
+      valorParaZZZ_7 = valAComp;
+    }
+    if (i === 7) {
+      valorParaZZZ_8 = valAComp;
+    }
+    if (i === 8) {
+      valorParaZZZ_9 = valAComp;
+    }
+    if (i === 9) {
+      valorParaZZZ_10 = valAComp;
+    }
+    if (i === 5) {
+      valorParaZZZ_6 = valAComp;
+    }
+    if (i === 12) {
+      valorParaZZZ_13 = valAComp;
+    }
+    if (i === 13) {
+      valorParaZZZ_14 = valAComp;
+    }
+    if (i === 15) {
+      valorParaZZZ_16 = valAComp;
+    }
+    if (i === 18) {
+      valorParaZZZ_19 = valAComp;
+    }
+    if (i === 14) {
+      valorParaZZZ_15 = valAComp;
+    }
+    if (i === 11) {
+      valorParaZZZ_12 = valAComp;
     }
     resultados.push(valIns);
   }
