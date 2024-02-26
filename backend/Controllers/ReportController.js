@@ -427,33 +427,57 @@ async function reporteMapExcel(datosTotal, nombreArchivo) {
 
 exports.generarYDescargarExcel = async (req, res) => {
   try {
-    const id = req.query.id_arch;
+    const id = req.query.id_arch
 
-    const datosEnCache = getCache(); // Obtiene todo el objeto de caché
-    if (!datosEnCache[id]) {
-      return res
-        .status(404)
-        .send(
-          'Datos no encontrados en caché. Por favor, ejecute la generación primero.'
-        );
-    }
-
-    const datosTotal = datosEnCache[id];
     const resultadoId = await getId(id);
+    const resultadoTab = await nombreTab(resultadoId.id);
+    let datosTotal = [];
+
+    for (let tabElem of resultadoTab) {
+      let datosTab = {
+        tab_num: tabElem.tab_num,
+        tab_nombre: tabElem.tab_nombre,
+        encabezado: [],
+        detalle: [],
+      };
+      const resultadoSeqLine = await seqLine(resultadoId.id, tabElem.tab_num);
+      let encabezadoCompleto = [];
+
+      for (let lineaEnc of resultadoSeqLine) {
+        const encabezado = await obtenerEncabezados(
+          resultadoId.id,
+          tabElem.tab_num,
+          lineaEnc.seq_lin
+        );
+        encabezadoCompleto.push(...encabezado);
+      }
+      datosTab.encabezado.push(...encabezadoCompleto);
+
+      const companias = await obtenerCompaniasActivas();
+      const detallesD = await obtenerDetallesD(resultadoId.id, tabElem.tab_num);
+
+      const consultas = companias.map((compania) =>
+        consultaDinamica(compania.id_cia, detallesD)
+      );
+
+      const resultadosDetalles = await Promise.all(consultas);
+
+      datosTab.detalle.push(...resultadosDetalles);
+      datosTotal.push(datosTab);
+    }
 
     const rutaSalida = await reporteMapExcel(datosTotal, resultadoId.tab_dest);
 
-    //const nombreArchivo = path.basename(rutaSalida);
+    const nombreArchivo = path.basename(rutaSalida);
 
-    //Enviar el Excel como respuesta
-    res.download(rutaSalida, (err) => {
-      if (err) {
-        console.error('Error enviando el archivo:', err);
-        res.status(500).send('Error al descargar el archivo Excel.');
-      } else {
-        console.log('Archivo enviado con éxito.');
-      }
-    });
+    if (rutaSalida) {
+      console.log("Enviando archivo:", nombreArchivo);
+
+      res.sendFile(rutaSalida, nombreArchivo);
+
+    } else {
+      throw new Error('No se pudo generar el archivo Excel.');
+    }
   } catch (error) {
     console.error('Error al generar y descargar Excel:', error);
     res.status(500).send('Ocurrió un error al generar el reporte');
@@ -464,12 +488,6 @@ exports.generarYDescargarExcel = async (req, res) => {
 exports.ejecutarFunciones = async (req, res) => {
   try {
     const id = req.query.id_arch
-
-    const datosEnCache = getCache(); // Obtiene todo el objeto de caché
-    if (datosEnCache[id]) {
-      console.log('Datos obtenidos de la caché');
-      return res.status(200).json(datosEnCache[id]);
-    }
 
     const resultadoId = await getId(id);
     const resultadoTab = await nombreTab(resultadoId.id);
@@ -509,8 +527,6 @@ exports.ejecutarFunciones = async (req, res) => {
       datosTotal.push(datosTab);
     }
     // console.log(datosTotal)
-
-    updateCache(id, datosTotal); 
 
     console.log('termina');
     res.status(200).json(datosTotal);
