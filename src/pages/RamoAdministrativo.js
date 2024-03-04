@@ -106,7 +106,7 @@ const RamoAdministrativo = () => {
         Swal.fire({
           icon: 'error',
           title: 'Security Message',
-          text: 'Token expire, please login again',
+          text: 'El token expiró, por favor inicie sesión nuevamente',
         });
       } else {
         console.error(err);
@@ -129,7 +129,7 @@ const RamoAdministrativo = () => {
         <Form>
           <Col>
             <Card className=''>
-              <Card.Header><h3>Ramo Administrativas</h3></Card.Header>
+              <Card.Header><h3>Ramo administrativas</h3></Card.Header>
               <Row style={{ display: "grid", gridTemplateColumns: '2fr 2fr 1fr', padding: '0 25px' }}>
                 <Col style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                   <Form.Group controlId='formAnioSelect'>

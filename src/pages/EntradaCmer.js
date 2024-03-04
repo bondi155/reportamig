@@ -109,7 +109,7 @@ const getCmerData = async () => {
       Swal.fire({
         icon: 'error',
         title: 'Security Message',
-        text: 'Token expire, please login again',
+        text: 'El token expiró, por favor inicie sesión nuevamente',
       });
     } else {
       console.error(err);
