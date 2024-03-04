@@ -4,8 +4,8 @@ const pool = mysql.createPool(process.env.DATABASE_URL);
 const path = require('path');
 const Mexp = require('math-expression-evaluator');
 const { Console } = require('console');
-const { getCache, updateCache } = require('./CacheManager');
-
+let nombreArchivo;
+//const { getCache, updateCache } = require('./CacheManager');
 
 async function obtenerCompaniasActivas() {
   const sqlCompaniasActivas = `
@@ -27,12 +27,12 @@ async function obtenerCompaniasActivas() {
 
 //falta el valor de S como parametro
 //Sacamos el id el tipo de archivo va a venir depende que reporte elijamos en el nav
-async function getId(id) {
-  const sqlGetId = `SELECT id, tab_orig, tab_dest 
+async function getEnc(id) {
+  const sqlGetEnc = `SELECT id, tab_orig, tab_dest, tipo_proc 
   FROM am_mapeo_enc
   WHERE tipo_arc = 'S' AND id = ?`; //de ser necesario agregar separador en el select
   try {
-    const [rows] = await pool.promise().query(sqlGetId, id);
+    const [rows] = await pool.promise().query(sqlGetEnc, id);
    const mapeoEnc = rows[0] || [];
     console.log(mapeoEnc);
     return mapeoEnc;
@@ -47,7 +47,7 @@ async function getId(id) {
 
 //Sacamos la Linea
 async function seqLine(idEncabezado, numTab) {
-  const sqlseqLine = `SELECT distinct seq_lin
+  const sqlseqLine = `SELECT distinct seq_lin num_linea
                       FROM am_mapeo_det
                       WHERE id_map_enc = ?
 					            AND tab_num = ?
@@ -56,7 +56,7 @@ async function seqLine(idEncabezado, numTab) {
   try {
     const [rows] = await pool
       .promise()
-      .query(sqlseqLine, [idEncabezado.id, numTab]); //const [rows] me limpia el metadato que trae el array
+      .query(sqlseqLine, [idEncabezado, numTab]); //const [rows] me limpia el metadato que trae el array
     const resultadoSeqLine = rows || []; //si es rows si es vacio array vacio
     return resultadoSeqLine;
   } catch (error) {
@@ -66,14 +66,14 @@ async function seqLine(idEncabezado, numTab) {
 }
 
 //Encabezado
-async function obtenerEncabezados(idMapeo, numTab, seqLins) {
+async function obtenerEncabezados(idMapeo, numTab, lineaEnc) {
   try {
     let encabezado = [];
 
-    for (let i = 0; i < seqLins.length; i++) {
-      const seqLin = seqLins[i].seq_lin;
+    //for (let i = 0; i < seqLins.length; i++) {
+    //  const seqLin = seqLins[i].seq_lin;
       const sqlEnc = `
-        SELECT val_fijo, val_def
+        SELECT val_fijo
         FROM am_mapeo_det
         WHERE id_map_enc = ?
 	    	AND tab_num = ?
@@ -85,10 +85,10 @@ async function obtenerEncabezados(idMapeo, numTab, seqLins) {
 
       const [rows] = await pool
         .promise()
-        .query(sqlEnc, [idMapeo, numTab, seqLin]);
+        .query(sqlEnc, [idMapeo, numTab, lineaEnc]);
 
-      encabezado = [rows] || [];
-    }
+      encabezado = rows || [];
+    //}
     //console.log('ESTO SON LOS ENCABEZADOS!!!!!!!11',encabezados);
     return encabezado;
   } catch (error) {
@@ -185,14 +185,47 @@ function transformarResultados(resultados) {
   });
 }
 */
-const ZZZ_ANIO = '2023';
-const ZZZ_MES = '6';
-const ZZZ_ANIO_ANT = '2022';
 
-async function consultaDinamica(idCia, detalles) {
+function reempParam(pTexto, pCia, pAnio, pMes, pAnioAnt, pArrVal) {
+  let valDev;
+  try {
+    valDev = pTexto
+    .replace(/\{ZZZ_ANIO\}/g, pAnio)
+    .replace(/\{ZZZ_MES\}/g, pMes)
+    .replace(/\{ZZZ_ID_CIA\}/g, pCia)
+    .replace(/\{ZZZ_ANIO_ANT\}/g, pAnioAnt)
+    .replace(/\{ZZZ_3\}/g, pArrVal[2])
+    .replace(/\{ZZZ_4\}/g, pArrVal[3])
+    .replace(/\{ZZZ_5\}/g, pArrVal[4])
+    .replace(/\{ZZZ_6\}/g, pArrVal[5])
+    .replace(/\{ZZZ_7\}/g, pArrVal[6])
+    .replace(/\{ZZZ_8\}/g, pArrVal[7])
+    .replace(/\{ZZZ_9\}/g, pArrVal[8])
+    .replace(/\{ZZZ_10\}/g, pArrVal[9])
+    .replace(/\{ZZZ_11\}/g, pArrVal[10])
+    .replace(/\{ZZZ_12\}/g, pArrVal[11])
+    .replace(/\{ZZZ_13\}/g, pArrVal[12])
+    .replace(/\{ZZZ_14\}/g, pArrVal[13])
+    .replace(/\{ZZZ_15\}/g, pArrVal[14])
+    .replace(/\{ZZZ_16\}/g, pArrVal[15])
+    .replace(/\{ZZZ_17\}/g, pArrVal[16])
+    .replace(/\{ZZZ_18\}/g, pArrVal[17])
+    .replace(/\{ZZZ_19\}/g, pArrVal[18]);
+  } catch (e) {
+    console.error("Error reemplazando parámetros:", e);
+    valDev = pTexto
+    .replace(/\{ZZZ_ANIO\}/g, pAnio)
+    .replace(/\{ZZZ_MES\}/g, pMes)
+    .replace(/\{ZZZ_ID_CIA\}/g, pCia)
+    .replace(/\{ZZZ_ANIO_ANT\}/g, pAnioAnt);
+  }
+  return valDev;
+}
+
+async function consultaDinamica(idCia, anio, mes, anioAnt, detalles) {
   const resultados = [];
-  let ZZZ_COMP = idCia;
-  let valorParaZZZ_4 = '0';
+  let valParam = [];
+  /*let valorParaZZZ_4 = '0';
   let valorParaZZZ_3 = '0';
   let valorParaZZZ_6 = '0';
   let valorParaZZZ_7 = '0';
@@ -204,7 +237,7 @@ async function consultaDinamica(idCia, detalles) {
   let valorParaZZZ_14 = '0';
   let valorParaZZZ_16 = '0';
   let valorParaZZZ_15 = '0';
-  let valorParaZZZ_19 = '0';
+  let valorParaZZZ_19 = '0';*/
 
   let valIns;
   let valAComp;
@@ -228,11 +261,12 @@ async function consultaDinamica(idCia, detalles) {
       let pruebaParsed;
       if (detalle.val_fijo.startsWith('=')) {
         const expression = detalle.val_fijo.slice(1);
-        const parsedExpression = expression
-          .replace(/\{ZZZ_ANIO\}/g, ZZZ_ANIO)
-          .replace(/\{ZZZ_MES\}/g, ZZZ_MES)
-          .replace(/\{ZZZ_ID_CIA\}/g, ZZZ_COMP)
-          .replace(/\{ZZZ_ANIO_ANT\}/g, ZZZ_ANIO_ANT)
+        const parsedExpression = reempParam(expression, idCia, anio, mes, anioAnt, valParam);
+        /*const parsedExpression = expression
+          .replace(/\{ZZZ_ANIO\}/g, anio)
+          .replace(/\{ZZZ_MES\}/g, mes)
+          .replace(/\{ZZZ_ID_CIA\}/g, idCia)
+          .replace(/\{ZZZ_ANIO_ANT\}/g, anioAnt)
           .replace(/\{ZZZ_3\}/g, valorParaZZZ_3)
           .replace(/\{ZZZ_4\}/g, valorParaZZZ_4)
           .replace(/\{ZZZ_6\}/g, valorParaZZZ_6)
@@ -244,7 +278,7 @@ async function consultaDinamica(idCia, detalles) {
           .replace(/\{ZZZ_13\}/g, valorParaZZZ_13)
           .replace(/\{ZZZ_15\}/g, valorParaZZZ_15)
           .replace(/\{ZZZ_16\}/g, valorParaZZZ_16)
-          .replace(/\{ZZZ_19\}/g, valorParaZZZ_19);
+          .replace(/\{ZZZ_19\}/g, valorParaZZZ_19);*/
 
         const mexp = new Mexp();
         try {
@@ -257,20 +291,16 @@ async function consultaDinamica(idCia, detalles) {
         valorDinamico =
           detalle.val_fijo !== '' ? detalle.val_fijo : detalle.val_def; //
       }
-      if (i === 14) {
-        if(idCia==1) {
-          console.log("Valor fijo y din:", detalle.val_fijo, pruebaParsed, valorParaZZZ_4, valorDinamico);
-        }
-      }
       //resultados.push({ [alias]: valorDinamico });
       valIns = { [alias]: valorDinamico };
     } else {
 
-      let sqlDinamica = detalle.campo_orig
-        .replace(/\{ZZZ_ANIO\}/g, ZZZ_ANIO)
-        .replace(/\{ZZZ_MES\}/g, ZZZ_MES)
-        .replace(/\{ZZZ_ID_CIA\}/g, ZZZ_COMP)
-        .replace(/\{ZZZ_ANIO_ANT\}/g, ZZZ_ANIO_ANT)
+      let sqlDinamica = reempParam(detalle.campo_orig, idCia, anio, mes, anioAnt, valParam);
+      /*let sqlDinamica = detalle.campo_orig
+        .replace(/\{ZZZ_ANIO\}/g, anio)
+        .replace(/\{ZZZ_MES\}/g, mes)
+        .replace(/\{ZZZ_ID_CIA\}/g, idCia)
+        .replace(/\{ZZZ_ANIO_ANT\}/g, anioAnt)
         .replace(/\{ZZZ_4\}/g, valorParaZZZ_4)
         .replace(/\{ZZZ_3\}/g, valorParaZZZ_3)
         .replace(/\{ZZZ_6\}/g, valorParaZZZ_6)
@@ -283,7 +313,7 @@ async function consultaDinamica(idCia, detalles) {
         .replace(/\{ZZZ_13\}/g, valorParaZZZ_13)
         .replace(/\{ZZZ_14\}/g, valorParaZZZ_14)
         .replace(/\{ZZZ_15\}/g, valorParaZZZ_15)
-        .replace(/\{ZZZ_16\}/g, valorParaZZZ_16);
+        .replace(/\{ZZZ_16\}/g, valorParaZZZ_16);*/
       //console.log('ESTA ES LA CONSULTA DINAMICA ',sqlDinamica);
 
       let tablaOrig = detalle.tabla_orig; // AGREGAR SI TABLA_ORIG ES NULL AL QUERY QUE ARMO SOLO SELECT SIN FROM NI WHERE ELSE LO DE SIEMPRE
@@ -291,12 +321,12 @@ async function consultaDinamica(idCia, detalles) {
       if (tablaOrig === null) {
         consultaFinal = `SELECT ${sqlDinamica} AS ${alias}`; //
       } else {
-
-        let whereCond = detalle.where_cond
-          .replace(/\{ZZZ_ANIO\}/g, ZZZ_ANIO)
-          .replace(/\{ZZZ_MES\}/g, ZZZ_MES)
-          .replace(/\{ZZZ_ID_CIA\}/g, ZZZ_COMP)
-          .replace(/\{ZZZ_ANIO_ANT\}/g, ZZZ_ANIO_ANT);
+        let whereCond = reempParam(detalle.where_cond, idCia, anio, mes, anioAnt, valParam);
+        /*let whereCond = detalle.where_cond
+          .replace(/\{ZZZ_ANIO\}/g, anio)
+          .replace(/\{ZZZ_MES\}/g, mes)
+          .replace(/\{ZZZ_ID_CIA\}/g, idCia)
+          .replace(/\{ZZZ_ANIO_ANT\}/g, anioAnt);*/
 
         consultaFinal = `SELECT ${sqlDinamica} AS ${alias} FROM ${tablaOrig} WHERE ${whereCond}`; //
       }
@@ -333,7 +363,7 @@ async function consultaDinamica(idCia, detalles) {
       }
     }
     valAComp = valIns[alias];
-    if (i === 3) {
+    /*if (i === 3) {
       valorParaZZZ_4 = valAComp;
     }
     if (i === 2) {
@@ -371,7 +401,8 @@ async function consultaDinamica(idCia, detalles) {
     }
     if (i === 11) {
       valorParaZZZ_12 = valAComp;
-    }
+    }*/
+    valParam[i] = valAComp;
     resultados.push(valIns);
   }
   //const resultadosTransformadosDetalle = transformarResultados(resultados);
@@ -379,13 +410,12 @@ async function consultaDinamica(idCia, detalles) {
   return resultados;
 }
 
-
-async function reporteMapExcel(datosTotal, nombreArchivo) {
+async function reporteMapExcel(datosTotal, anio, mes, nombreArchivo) {
   const rutaEntrada = path.join(__dirname, '..', 'Reportes', nombreArchivo);
   const rutaBase = path.join(__dirname, '..', 'Resultados');
   const nombreArchivoDinamico = nombreArchivo
-      .replace('{ZZZ_ANIO}', ZZZ_ANIO)
-      .replace('{ZZZ_MES}', ZZZ_MES)
+      .replace('{ZZZ_ANIO}', anio)
+      .replace('{ZZZ_MES}', mes)
       .replace('.xls', '.xlsx');
   const rutaSalida = path.join(rutaBase, nombreArchivoDinamico);
 
@@ -424,115 +454,149 @@ async function reporteMapExcel(datosTotal, nombreArchivo) {
   return rutaSalida;
 }
 
+async function procesaReporte(pIdArch, pAnio, pMes, pAnioAnt) {
+  let datosTotal = [];
+  try {
+    const resultadoEnc = await getEnc(pIdArch);
+    const resultadoTab = await nombreTab(resultadoEnc.id);
+  
+    nombreArchivo = resultadoEnc.tab_dest;
+  
+    if(resultadoEnc.tipo_proc=="V") {
+      for (let tabElem of resultadoTab) {
+        let datosTab = {
+          tab_num: tabElem.tab_num,
+          tab_nombre: tabElem.tab_nombre,
+          encabezado: [],
+          detalle: [],
+        };
+        const resultadoSeqLine = await seqLine(resultadoEnc.id, tabElem.tab_num);
+        let encabezadoCompleto = [];
+
+        for (let lineaEnc of resultadoSeqLine) {
+          const encabezado = await obtenerEncabezados(
+            resultadoEnc.id,
+            tabElem.tab_num,
+            lineaEnc.num_linea
+          );
+          encabezadoCompleto.push(encabezado);
+        }
+        datosTab.encabezado.push(encabezadoCompleto);
+  
+        const companias = await obtenerCompaniasActivas();
+        const detallesD = await obtenerDetallesD(resultadoEnc.id, tabElem.tab_num);
+  
+        const consultas = companias.map((compania) =>
+          consultaDinamica(compania.id_cia, pAnio, pMes, pAnioAnt, detallesD)
+        );
+  
+        const resultadosDetalles = await Promise.all(consultas);
+  
+        datosTab.detalle.push(...resultadosDetalles);
+
+        datosTotal.push(datosTab);
+      }
+    } else {
+      let colEncNum;
+      let aliasCol;
+      for (let tabElem of resultadoTab) {
+        let datosTab = {
+          tab_num: tabElem.tab_num,
+          tab_nombre: tabElem.tab_nombre,
+          encabezado: [],
+          detalle: [],
+        };
+        const resultadoSeqLine = await seqLine(resultadoEnc.id, tabElem.tab_num);
+        let encabezadoCompleto = [];
+        for (let lineaEnc of resultadoSeqLine) {
+          const encabezado = await obtenerEncabezados(
+            resultadoEnc.id,
+            tabElem.tab_num,
+            lineaEnc.num_linea
+          );
+          let colEncNum = 1;
+          let encabezadoLin = [];
+          for (let encabezadoVal of encabezado) {
+            aliasCol = "col" + colEncNum;
+            encabezadoLin.push({ [aliasCol]: reempParam(encabezadoVal.val_fijo, 0, pAnio, pMes, pAnioAnt, []) });
+            colEncNum++;
+          }
+          encabezadoCompleto.push(encabezadoLin);
+        }
+        datosTab.encabezado.push(encabezadoCompleto);
+  
+        const companias = await obtenerCompaniasActivas();
+        const detallesD = await obtenerDetallesD(resultadoEnc.id, tabElem.tab_num);
+  
+        const consultas = companias.map((compania) =>
+          consultaDinamica(compania.id_cia, pAnio, pMes, pAnioAnt, detallesD)
+        );
+  
+        const resultadosDetalles = await Promise.all(consultas);
+  
+        datosTab.detalle.push(...resultadosDetalles);
+
+        datosTotal.push(datosTab);
+      }
+    }
+  } catch (error) {
+    console.error('Error al procesar los datos:', error);
+  }
+  console.log("Termina procesamiento.");
+  return datosTotal;
+};
 
 exports.generarYDescargarExcel = async (req, res) => {
   try {
-    const id = req.query.id_arch
+    const id = req.query.id_arch;
+    const anio = req.query.anio;
+    const mes = req.query.mes;
+    const anioAnt = anio - 1;
+    let datosGen = [];
+  
+    datosGen = await procesaReporte(id, anio, mes, anioAnt);
 
-    const resultadoId = await getId(id);
-    const resultadoTab = await nombreTab(resultadoId.id);
-    let datosTotal = [];
-
-    for (let tabElem of resultadoTab) {
-      let datosTab = {
-        tab_num: tabElem.tab_num,
-        tab_nombre: tabElem.tab_nombre,
-        encabezado: [],
-        detalle: [],
-      };
-      const resultadoSeqLine = await seqLine(resultadoId.id, tabElem.tab_num);
-      let encabezadoCompleto = [];
-
-      for (let lineaEnc of resultadoSeqLine) {
-        const encabezado = await obtenerEncabezados(
-          resultadoId.id,
-          tabElem.tab_num,
-          lineaEnc.seq_lin
-        );
-        encabezadoCompleto.push(...encabezado);
+    if(datosGen) {
+      const rutaSalida = await reporteMapExcel(datosGen, anio, mes, nombreArchivo);
+  
+      const nombreArchivo = path.basename(rutaSalida);
+    
+      if (rutaSalida) {
+        console.log("Enviando archivo:", nombreArchivo);
+        res.sendFile(rutaSalida, nombreArchivo);
+      } else {
+        throw new Error('No se pudo generar el archivo Excel.');
       }
-      datosTab.encabezado.push(...encabezadoCompleto);
-
-      const companias = await obtenerCompaniasActivas();
-      const detallesD = await obtenerDetallesD(resultadoId.id, tabElem.tab_num);
-
-      const consultas = companias.map((compania) =>
-        consultaDinamica(compania.id_cia, detallesD)
-      );
-
-      const resultadosDetalles = await Promise.all(consultas);
-
-      datosTab.detalle.push(...resultadosDetalles);
-      datosTotal.push(datosTab);
-    }
-
-    const rutaSalida = await reporteMapExcel(datosTotal, resultadoId.tab_dest);
-
-    const nombreArchivo = path.basename(rutaSalida);
-
-    if (rutaSalida) {
-      console.log("Enviando archivo:", nombreArchivo);
-
-      res.sendFile(rutaSalida, nombreArchivo);
-
     } else {
-      throw new Error('No se pudo generar el archivo Excel.');
+      console.error('No se generaron datos de salida.');
+      res.status(500).send('Ocurrió un error al generar los datos para el reporte en Excel.');
     }
   } catch (error) {
     console.error('Error al generar y descargar Excel:', error);
-    res.status(500).send('Ocurrió un error al generar el reporte');
+    res.status(500).send('Ocurrió un error al generar el reporte en Excel.');
   }
 };
 
 //ejecutar OK
 exports.ejecutarFunciones = async (req, res) => {
   try {
-    const id = req.query.id_arch
+    const id = req.query.id_arch;
+    const anio = req.query.anio;
+    const mes = req.query.mes;
+    const anioAnt = anio - 1;
+    let datosGen = [];
 
-    const resultadoId = await getId(id);
-    const resultadoTab = await nombreTab(resultadoId.id);
-    let datosTotal = [];
+    datosGen = await procesaReporte(id, anio, mes, anioAnt);
 
-    for (let tabElem of resultadoTab) {
-      let datosTab = {
-        tab_num: tabElem.tab_num,
-        tab_nombre: tabElem.tab_nombre,
-        encabezado: [],
-        detalle: [],
-      };
-      const resultadoSeqLine = await seqLine(resultadoId.id, tabElem.tab_num);
-      let encabezadoCompleto = [];
-
-      for (let lineaEnc of resultadoSeqLine) {
-        const encabezado = await obtenerEncabezados(
-          resultadoId.id,
-          tabElem.tab_num,
-          lineaEnc.seq_lin
-        );
-        encabezadoCompleto.push(...encabezado);
-      }
-      datosTab.encabezado.push(...encabezadoCompleto);
-
-      const companias = await obtenerCompaniasActivas();
-      const detallesD = await obtenerDetallesD(resultadoId.id, tabElem.tab_num);
-
-      const consultas = companias.map((compania) =>
-        consultaDinamica(compania.id_cia, detallesD)
-      );
-
-      const resultadosDetalles = await Promise.all(consultas);
-
-      datosTab.detalle.push(...resultadosDetalles);
-
-      datosTotal.push(datosTab);
+    if(datosGen) {
+      res.status(200).json(datosGen);
+    } else {
+      console.error('No se generaron datos de salida.');
+      res.status(500).send('Ocurrió un error al generar los datos para el reporte.');
     }
-    // console.log(datosTotal)
-
-    console.log('termina');
-    res.status(200).json(datosTotal);
   } catch (error) {
-    console.error('Error al ejecutar funciones:', error);
-    res.status(500).send('Ocurrió un error al generar el reporte');
+    console.error('Error al generar los datos de salida:', error);
+    res.status(500).send('Ocurrió un error al generar los datos para el reporte.');
   }
 };
 
