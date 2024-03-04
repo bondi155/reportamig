@@ -48,7 +48,7 @@ function App() {
         Swal.fire({
           icon: 'error',
           title: 'Security Message',
-          text: 'Token expire, please login again',
+          text: 'El token expiró, por favor inicie sesión nuevamente',
         });
 
         localStorage.removeItem('jwtToken');
@@ -112,8 +112,8 @@ function App() {
               </PrivateRoute>
             }
           />
-                    <Route
-            path='/reporteCreac'
+          <Route
+            path='/reporteTotal'
             element={
               <PrivateRoute islogin={islogin}>
                 <ReportCreate
@@ -124,7 +124,7 @@ function App() {
               </PrivateRoute>
             }
           />
-                          <Route
+          <Route
             path='/ramoAdministrativo'
             element={
               <PrivateRoute islogin={islogin}>
