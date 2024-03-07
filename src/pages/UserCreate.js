@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Container, Row, Col, Button, Card } from 'react-bootstrap';
+import { Form, Container, Row, Col, Button, Card, Tabs, Tab } from 'react-bootstrap';
 import axios from 'axios';
 //import { useNavigate } from 'react-router-dom';  USUARIO CON RECOIL O SECUENCIAL , VER ESO PARA LOS ROLES
 import { API_URL } from '../config/config.js';
@@ -135,6 +135,9 @@ function UserCreate({ userCreate, setUserCreate, form }) {
     <>
       {form.role === 'admin' ? (
         <Container className='container-custom'>
+                    <Tabs defaultActiveKey="resetPassword" id="uncontrolled-tab-example" className="mb-3">
+
+           <Tab eventKey="createUser" title="Creación de Usuario"> 
           <form onSubmit={addNewUser}>
             <Card>
               <Card.Header>
@@ -204,6 +207,44 @@ function UserCreate({ userCreate, setUserCreate, form }) {
               </Row>
             </Card>
           </form>
+          </Tab>
+        <Tab eventKey="resetPassword" title="Reseteo de Contraseña">
+          <form onSubmit={passReset}>
+              <Card>
+                <Card.Header>
+                  <h3>Administración de Usuario</h3>{' '}
+                </Card.Header>
+                <Card.Body>
+        <Card.Title>Reseteo de Contraseña</Card.Title>
+        </Card.Body>
+                <Row>
+                  <Col lg={{ span: 4, offset: 3 }}>
+                    <Form.Group className='mb-3'>
+                      <Form.Control
+                        type='password'
+                        required
+                        placeholder='Contraseña Nueva'
+                        size='sm'
+                        onChange={(e) => setNewPass(e.target.value)}
+                      />
+                    </Form.Group>
+                  </Col>
+                  <Col lg={{ span: 2 }}>
+                    <Button
+                      className='mb-5'
+                      variant='outline-secondary'
+                      type='submit'
+                      size='sm'
+                    >
+                      <GoPasskeyFill/> Actualizar
+
+                    </Button>{' '}
+                  </Col>
+                </Row>
+              </Card>
+            </form>
+            </Tab>
+      </Tabs>
           <div className='evaluation-grid'>
             <Row className='mt-5'>
               <Col md={{ span: 10, offset: 1 }} lg={{ span: 8, offset: 2 }}>
@@ -217,6 +258,7 @@ function UserCreate({ userCreate, setUserCreate, form }) {
               </Col>
             </Row>
           </div>
+          
         </Container>
       ) : (
         <>
