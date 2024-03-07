@@ -91,7 +91,7 @@ function EstadoResultados() {
         <Form>
           <Col>
             <Card className=''>
-              <Card.Header><h3>Total</h3></Card.Header>
+              <Card.Header><h3>Estado de Resultados</h3></Card.Header>
               <Row style={{ display: "grid", gridTemplateColumns: '2fr 2fr 1fr', padding: '0 25px' }}>
                 <Col>
                   <Form.Group controlId='formAnioSelect'>
