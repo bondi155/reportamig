@@ -66,6 +66,9 @@ function NavigationBar({ setIslogin, form }) {
                   <NavDropdown.Item as={Link} to="/reporteTotal">
                     Total
                   </NavDropdown.Item>
+                  <NavDropdown.Item as={Link} to="/estadoResultados">
+                    Estado Resultados
+                  </NavDropdown.Item>
                   <NavDropdown.Item as={Link} to="/ramoAdministrativo">
                     Ramo Administrativo{' '}
                   </NavDropdown.Item>

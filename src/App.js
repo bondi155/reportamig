@@ -12,8 +12,9 @@ import axios from 'axios';
 import Swal from 'sweetalert2';
 import PlaneSpinner from './components/planeSpinner';
 import ConsultaGrid from './pages/ConsultaGrid';
-import ReportCreate from './pages/ReportCreate';
 import RamoAdministrativo from './pages/RamoAdministrativo';
+import ReporteTotal from './pages/ReporteTotal';
+import EstadoResultados from './pages/EstadosResultados';
 function App() {
   const [islogin, setIslogin] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -116,7 +117,7 @@ function App() {
             path='/reporteTotal'
             element={
               <PrivateRoute islogin={islogin}>
-                <ReportCreate
+                <ReporteTotal
                   form={form}
                   userCreate={userCreate}
                   setUserCreate={setUserCreate}
@@ -129,6 +130,18 @@ function App() {
             element={
               <PrivateRoute islogin={islogin}>
                 <RamoAdministrativo
+                  form={form}
+                  userCreate={userCreate}
+                  setUserCreate={setUserCreate}
+                />{' '}
+              </PrivateRoute>
+            }
+          />
+              <Route
+            path='/estadoResultados'
+            element={
+              <PrivateRoute islogin={islogin}>
+                <EstadoResultados
                   form={form}
                   userCreate={userCreate}
                   setUserCreate={setUserCreate}

@@ -3,9 +3,9 @@ import { Form, Container, Tabs, Tab, Button, Col, Row, Card } from 'react-bootst
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { API_URL } from '../config/config.js';
-import GridEval from '../charts/GridEval.js';
+//import GridEval from '../charts/GridEval.js';
 import '../css/App.css';
-import { CiSearch, CiSaveDown2 } from "react-icons/ci";
+import {  CiSaveDown2 } from "react-icons/ci";
 import SecondGridEval from '../charts/SecondGridEval.js';
 import { pdTableHeadersAdministrativo, cobexcTableHeadersAdministrativo, gtosopTableHeadersAdministrativo, orvasTableHeadersAdministrativo } from '../charts/SecondGridEvalData.js'
 import PlaneSpinner from '../components/planeSpinner.js';
@@ -42,7 +42,7 @@ const downloadExcel = async (e, setDownloadStatus, anio, mes) => {
 
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', 'ramo_adm2023_06.xlsx');
+    link.setAttribute('download', `ramo_adm${anio}_${mes}.xlsx`);
 
     document.body.appendChild(link);
     link.click();
@@ -68,60 +68,31 @@ const RamoAdministrativo = () => {
   const [axiosResponse, setAxiosResponse] = useState();
 
   useEffect(() => {
-    const asyncCall = async () => {
-      const response = await axios.get(`${API_URL}/getReport`, {
-        params: { id_arch: 3, anio, mes }
-      })
-      setAxiosResponse(response)
-      setIsLoading(false)
+    try {
+      const asyncCall = async () => {
+        const response = await axios.get(`${API_URL}/getReport`, {
+          params: { id_arch: 3, anio, mes },
+        });
+        console.log(response);
+        setAxiosResponse(response);
+        setIsLoading(false);
+      };
+      asyncCall();
+    } catch (error) {
+      setIsLoading(false);
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: error,
+      });
     }
-    asyncCall()
-  }, [])
+  }, [anio, mes]);
 
   const handleDownload = (e) => {
     setDownloadStatus(true)
     downloadExcel(e, setDownloadStatus, anio, mes)
   }
-
-  // const getResponse = async () => {
-  //   const response = await axios.get(`${API_URL}/getReport`, {
-  //     params: { anio, mes }
-  //   })
-  //   return response
-  // }
-
-  // const response = getResponse();
-
-  {
-    /* 
-  const getCmerData = async () => {
-    try {
-      setIsLoading(true); 
-      const response = await axios.get(`${API_URL}/getData`, {
-        params: { anio, mes }
-      });
-      setConsultaEntrada(response.data);
-    } catch (err) {
-      if (err.response && err.response.status === 403) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Security Message',
-          text: 'El token expiró, por favor inicie sesión nuevamente',
-        });
-      } else {
-        console.error(err);
-        Swal.fire('Ooops', 'Unable to get data', 'error');
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    getCmerData();
-  }, [anio, mes]);
-*/
-  }
+  
 
   return (
     <>
