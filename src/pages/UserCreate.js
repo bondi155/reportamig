@@ -135,7 +135,7 @@ function UserCreate({ userCreate, setUserCreate, form }) {
     <>
       {form.role === 'admin' ? (
         <Container className='container-custom'>
-                    <Tabs defaultActiveKey="resetPassword" id="uncontrolled-tab-example" className="mb-3">
+                    <Tabs defaultActiveKey="createUser" id="uncontrolled-tab-example" className="mb-3">
 
            <Tab eventKey="createUser" title="Creación de Usuario"> 
           <form onSubmit={addNewUser}>
