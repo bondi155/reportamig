@@ -112,7 +112,7 @@ export default function SecondGridEval(props) {
             {firstRowHeaders.map((elementData, index) => {
               return index <= 1
                 ? (
-                  <TableCell colSpan={elementData.span} rowSpan={elementData.span === 1 ? 2 : 1} style={{ color: '#002248' }}>
+                  <TableCell key={index} colSpan={elementData.span} rowSpan={elementData.span === 1 ? 2 : 1} style={{ color: '#002248' }}>
                     <TableSortLabel active={orderFieldIndex === index} direction={orderDirection} onClick={() => sortingHandler(index)}>
                       {elementData.name}
                     </TableSortLabel>
@@ -138,9 +138,9 @@ export default function SecondGridEval(props) {
           </TableRow>
         </TableHead>
         <TableBody>
-          {orderedData && orderedData.map(rowData => {
+          {orderedData && orderedData.map((rowData, rowIndex) => {
             return (
-              <TableRow>
+              <TableRow key={rowIndex}>
                 {rowData.map((data, indexData) => {
                   let information = data && Object.values(data)
                   if (Array.isArray(information)) information = information[0]

@@ -1,26 +1,17 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { API_URL } from '../config/config.js';
-import { Form, Container, Button, Col, Row, Card } from 'react-bootstrap';
-import PlaneSpinner from '../components/planeSpinner.js';
-import {CiSaveDown2 } from "react-icons/ci";
+import {
+  Form,
+  Container,
+  Button,
+  Col,
+  Row,
+  Card,
+  Spinner,
+} from 'react-bootstrap';
+import { CiSaveDown2 } from 'react-icons/ci';
 
-const buttonsStyles = {
-    primary: {
-      width: '100%',
-      backgroundColor: 'var(--amig-vivid-blue)',
-      "&:hover": {
-        backgroundColor: 'var(--amig-ligth-blue)',
-      },
-    },
-    secondary: {
-      width: '100%',
-      backgroundColor: 'var(--amig-vivid-green)',
-      "&:hover": {
-        backgroundColor: 'var(--amig-ligth-green)',
-      }
-    },
-  }
 
 function EstadoResultados() {
   const [anio, setAnio] = useState(2023);
@@ -87,80 +78,111 @@ function EstadoResultados() {
 
   return (
     <>
-   <Container className='container-custom'>
+      <Container className='container-custom'>
         <Form>
           <Col>
-            <Card className=''>
-              <Card.Header><h3>Estado de Resultados</h3></Card.Header>
-              <Row style={{ display: "grid", gridTemplateColumns: '2fr 2fr 1fr', padding: '0 25px' }}>
-                <Col>
-                  <Form.Group controlId='formAnioSelect'>
-                    <Form.Control
-                      as='select'
-                      value={anio}
-                      onChange={(e) => setAnio(e.target.value)}
-                      className='mt-4 mb-3'
-                      disabled
+            <Card>
+              <Card.Header>
+                <h3>Estado de Resultados</h3>
+              </Card.Header>
+              <Card.Body>
+                  <Row className='gx-2 gy-3 justify-content-center'>
+                    {/* Año */}
+                    <Col lg={3} md={4} sm={6} xs={12}>
+                      <Form.Group
+                        controlId='formAnioSelect'
+                        className='mb-lg-0'
+                      >
+                        <Form.Control
+                          as='select'
+                          value={anio}
+                          onChange={(e) => setAnio(e.target.value)}
+                          disabled
+                        >
+                          {[2022, 2023, 2024, 2025, 2026, 2027].map((year) => (
+                            <option key={year} value={year}>
+                              {year}
+                            </option>
+                          ))}
+                        </Form.Control>
+                      </Form.Group>
+                    </Col>
+                    {/* Mes */}
+                    <Col lg={3} md={4} sm={6} xs={12}>
+                      <Form.Group controlId='formMesSelect' className='mb-lg-0'>
+                        <Form.Control
+                          as='select'
+                          value={mes}
+                          onChange={(e) => setMes(e.target.value)}
+                          disabled
+                        >
+                          {[
+                            'Enero',
+                            'Febrero',
+                            'Marzo',
+                            'Abril',
+                            'Mayo',
+                            'Junio',
+                            'Julio',
+                            'Agosto',
+                            'Septiembre',
+                            'Octubre',
+                            'Noviembre',
+                            'Diciembre',
+                          ].map((month, index) => (
+                            <option key={month} value={index + 1}>
+                              {month}
+                            </option>
+                          ))}
+                        </Form.Control>
+                      </Form.Group>
+                    </Col>
+                    {/* Botón Descargar */}
+                    <Col
+                      lg={{ span: 3, offset: 0 }}
+                      md={4}
+                      sm={12}
+                      xs={12}
+                      className='d-flex justify-content-lg-start justify-content-center'
                     >
-                      {[2022, 2023, 2024, 2025, 2026, 2027].map((year) => (
-                        <option key={year} value={year}>
-                          {year}
-                        </option>
-                      ))}
-                    </Form.Control>
-                  </Form.Group>
-                </Col>
-                <Col>
-                  <Form.Group controlId='formMesSelect'>
-                    <Form.Control
-                      as='select'
-                      className='mt-4 mb-3'
-                      value={mes}
-                      onChange={(e) => setMes(e.target.value)}
-                      disabled
-                    >
-                      {[
-                        'Enero',
-                        'Febrero',
-                        'Marzo',
-                        'Abril',
-                        'Mayo',
-                        'Junio',
-                        'Julio',
-                        'Agosto',
-                        'Septiembre',
-                        'Octubre',
-                        'Noviembre',
-                        'Diciembre',
-                      ].map((month, index) => (
-                        <option key={month} value={index + 1}>
-                          {month}
-                        </option>
-                      ))}
-                    </Form.Control>
-                  </Form.Group>
-                </Col>
-                {/* <Col style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
-                  <Button className='mt-4 mb-3' variant='secondary' size='md' type='submit' style={buttonsStyles.primary} disabled={isLoading}>
-                    <CiSearch className='mb-1' /> Buscar
-                  </Button>
-                </Col> */}
-                <Col style={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-start' }}>
-                  <Button className='mt-4 mb-3' variant='secondary' size='md' type='submit' style={buttonsStyles.secondary} onClick={(e) => { handleDownload(e) }} disabled={!axiosResponse || isDownloading}>
-                    {isDownloading ? <><div style={{ position: 'absolute', top: '-10px' }}><PlaneSpinner /></div> Descargando reporte</> : <><CiSaveDown2 className='mb-1' /> Descargar reporte</>}
-                  </Button>
-                </Col>
-              </Row>
+                      {isDownloading ? (
+                        <>
+                          <Button className='button-custom-gradient' disabled>
+                            <Spinner
+                              as='span'
+                              animation='grow'
+                              size='sm'
+                              role='status'
+                              aria-hidden='true'
+                            />{' '}
+                            Descargando...
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <Button
+                            className='button-custom-gradient'
+                            size='md'
+                            onClick={(e) => {
+                              handleDownload(e);
+                            }}
+                            disabled={!axiosResponse || isDownloading}
+                          >
+                            <CiSaveDown2 className='mb-1' /> Descargar Reporte
+                          </Button>
+                        </>
+                      )}
+                    </Col>
+                  </Row>
+              </Card.Body>
             </Card>
           </Col>
         </Form>
-        </Container>
-          { /*   {isLoading && <PlaneSpinner />}
-          Activar cuando hagamos la llamada*/}   
-             </>
-
-   );
-  
+      </Container>
+      {/*   {isLoading && <PlaneSpinner />}
+          Activar cuando hagamos la llamada*/}
+    </>
+  );
 }
 
 export default EstadoResultados;

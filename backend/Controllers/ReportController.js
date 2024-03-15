@@ -586,7 +586,6 @@ async function reporteMapExcel(
     .replace('{ZZZ_MES}', mes)
     .replace('.xls', '.xlsx');
   const rutaSalida = path.join(rutaBase, nombreArchivoDinamico);
-  console.log('esto es EL CONSOLE LOG ', tipoArchivo);
   const workbook = new Excel.Workbook();
   await workbook.xlsx.readFile(rutaEntrada);
   console.log('TIPO DE ARCHIVO!!!!!!', tipoArchivo);
@@ -624,6 +623,10 @@ async function reporteMapExcel(
         });
         filaActual++;
       });
+      const anioNumero = +anio; // Usando el operador unario + y convirtiendolo en numero
+
+      const cellAnio = 'B35'; 
+      sheet.getCell(cellAnio).value = anioNumero; // En el B35 ponemos el año del archivo para que haga comparacion formula de - en año anterior
     });
   } else {
     const pestaña = datosTotal[0];

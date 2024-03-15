@@ -236,20 +236,19 @@ h6 {
 /*Button logout*/
 .logout-button {
   border: 2px solid rgba(255, 255, 255, 0.5);
-  background-color: #373737;
+  background-color: #074a77;
   color: white;
-  transition: all 0.3s ease;
   border-radius: 20px;
   font-weight: bold;
 }
 
 .logout-button:hover {
-  background-color: #737373;
+  background-color: #7287b5;
   border: 2px solid white;
 }
 
 .logout-button:active {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: #074a77;
 }
 
 /*termina Button logout*/
@@ -365,61 +364,59 @@ body {
   box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-
-.navbar-custom {
-  padding-left: 5px;
-  padding-right: 5px;
-  min-height: 60px;
-}
-
-.MuiDataGrid-columnHeader--alignCenter .MuiDataGrid-columnHeaderTitleContainer {
-  justify-content: center !important;
-  text-align: center !important;
-}
-
-.MuiDataGrid-columnHeaderTitle {
-  text-align: center !important;
-  flex-grow: 1 !important;
-}
-
-.nav-link {
-  color: #002248;
-}
-
-.nav-link:hover {
-  color: #002248;
-}
-
-.nav-link:active {
-  color: #002248;
-}
+/* hover y estilo navbar letras */
 
 li.nav-item {
   padding: 5px 5px 0;
   background-color: #cfcfcf;
 }
 
-.nav-link.show {
-  color: #002248 !important;
-}
 
-.nav-link:focus,
+
 .nav-link:hover {
   color: #002248 !important;
   font-weight: 600;
 }
 
-.active {
-  color: #002248;
-  font-weight: 800;
-}
 
-.inactive {
-  color: #737373 !important;
-  font-weight: 600;
-}
 
 a.dropdown-item:hover {
   font-weight: 600;
   background-color: var(--amig-bg-color);
+}
+
+
+.navbar-custom-bg {
+  background: linear-gradient(rgba(7, 74, 119, 0.6), rgba(7, 74, 119, 0.1)), #d9edf9;
+}
+
+/* Termina hover y estilo navbar letras */
+
+/* Estilo y color botones */
+
+.button-custom-gradient {
+  background: linear-gradient(rgba(7, 74, 119, 0.6), rgba(7, 74, 119, 0.8)), #d9edf9;
+  border: none;
+  color: #fff;
+}
+
+.button-custom-gradient:hover,
+.button-custom-gradient:focus {
+  background: linear-gradient(rgba(7, 74, 119, 0.7), rgba(7, 74, 119, 0.2)), #d9edf9;
+}
+
+/* Termina Estilo y color botones */
+
+/* margen cards */
+
+.card-body-xs-padding {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+@media (min-width: 576px) {
+  .card-body-xs-padding {
+    padding-left: 0;
+    padding-right: 0;
+  }
 }

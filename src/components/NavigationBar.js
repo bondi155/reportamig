@@ -33,10 +33,9 @@ function NavigationBar({ setIslogin, form }) {
         collapseOnSelect
         fixed='top'
         expand='md'
-        variant='dark'
-        className='mb-3 navbar-custom'
+        data-bs-theme='light'
+        className='mb-3 navbar-custom-bg px-2'
         expanded={navOpen}
-        style={{ backgroundColor: 'var(--amig-bg-color)' }}
       >
         <Link to='/home' className='nav-link'>
           <Navbar.Brand className='font-weight-bold text-muted'>
@@ -58,18 +57,29 @@ function NavigationBar({ setIslogin, form }) {
                   to='/userCreation'
                   className='nav-link'
                   onClick={handleLinkClick}
-                  style={{ color: '#002248' }}
                 >
                   Admin. de Usuarios
                 </Link>
-                <NavDropdown title="Reportes" id='basic-nav-dropdown'>
-                  <NavDropdown.Item as={Link} to="/reporteTotal">
+                <NavDropdown title='Reportes' id='basic-nav-dropdown'>
+                  <NavDropdown.Item
+                    as={Link}
+                    onClick={handleToggleClick}
+                    to='/reporteTotal'
+                  >
                     Total
                   </NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="/estadoResultados">
+                  <NavDropdown.Item
+                    as={Link}
+                    onClick={handleToggleClick}
+                    to='/estadoResultados'
+                  >
                     Estado Resultados
                   </NavDropdown.Item>
-                  <NavDropdown.Item as={Link} to="/ramoAdministrativo">
+                  <NavDropdown.Item
+                    as={Link}
+                    onClick={handleToggleClick}
+                    to='/ramoAdministrativo'
+                  >
                     Ramo Administrativo{' '}
                   </NavDropdown.Item>
                   {/* <NavDropdown.Item href='#action/3.3'>
@@ -85,7 +95,6 @@ function NavigationBar({ setIslogin, form }) {
                   to='/entrada_txt_cmer_cmbg'
                   className='nav-link'
                   onClick={handleLinkClick}
-                  style={{ color: '#002248' }}
                 >
                   Conf. Archivo de entrada
                 </Link>
@@ -151,8 +160,9 @@ function NavigationBar({ setIslogin, form }) {
             )}
             <Button
               variant='dark'
-              className='logout-button'
+              className='logout-button mx-auto'
               onClick={handleLogout}
+              style={{ width: 'auto' }}
               size='sm'
             >
               <FiLogOut className='me-1 mb-1' />{' '}

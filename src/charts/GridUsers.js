@@ -36,12 +36,13 @@ function CustomToolbar() {
   );
 }
 
-function GridEval({
+function GridUsers({
   rows,
   columnsVar,
   onDelete,
   showDeleteColumn = false,
   columnGroupingModel,
+  getRowId
 }) {
   let columns = [...columnsVar];
   if (showDeleteColumn) {
@@ -92,7 +93,7 @@ function GridEval({
           rowHeight={35} //height de rows
           rows={rows}
           columns={columns}
-          getRowId={(row) => row.col1}
+          getRowId={(row) => row.id}
           initialState={{
             columns: {
               columnVisibilityModel: {
@@ -120,4 +121,4 @@ function GridEval({
   );
 }
 
-export default GridEval;
+export default GridUsers;
