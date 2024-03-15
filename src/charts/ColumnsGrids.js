@@ -1,19 +1,29 @@
 import '../css/App.css';
 
 
-const currencyFormatter = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-});
+const withNumberFormatter = (columns) => {
+  return columns.map((column) => {
+    // Verifica si el tipo de la columna es 'number' para aplicar el formateador
+    if (column.type === 'number') {
+      return {
+        ...column,
+        valueFormatter: (params) => {
+          return new Intl.NumberFormat('en-US', { style: 'decimal' }).format(params.value);
+        },
+      };
+    }
+    return column;
+  });
+};
 
 
 // COLUMNAS PARA TOTAL PD
-export const columnasPD = [
+export const columnasPD = withNumberFormatter([
   { field: 'col1', headerName: 'Posición', align: 'center', width: 80 }, 
   { field: 'col2', headerName: 'Empresa', width: 230 },
   // Columnas para "Prima directa"
   { field: 'col3', headerName: 'Importe 2023', type: 'number', width: 130 },
-  { field: 'col4', headerName: 'Importe 2022', type: 'number', width: 130 },
+  { field: 'col4', headerName: 'Importe 2022', type: 'number', width: 130,  },
   {
     field: 'col5',
     type: 'number',
@@ -96,7 +106,7 @@ export const columnasPD = [
     type: 'number',
     width: 140,
   },
-];
+]);
 //grupos para total PD
 export const ColumnaGrupoPd = [
   {
@@ -158,7 +168,7 @@ export const ColumnaGrupoPd = [
   },
 ];
 //columnas para COB_EXC PD
-export const columnasCOB_EXC = [
+export const columnasCOB_EXC = withNumberFormatter([
   { field: 'col1', headerName: 'Posición', align: 'center', width: 80 },
   { field: 'col2', headerName: 'Empresa', width: 230 },
   // Columnas para "Cobertura Exc. de Pérdida"
@@ -227,7 +237,7 @@ export const columnasCOB_EXC = [
     type: 'number',
     width: 140,
   },
-];
+]);
 // grupo para COB_EXC
 export const ColumnaGrupoCOB_EXC = [
   {
@@ -277,7 +287,7 @@ export const ColumnaGrupoCOB_EXC = [
 ];
 
 //columnas para GTOSOP
-export const columnasGTOSOP = [
+export const columnasGTOSOP = withNumberFormatter([
   { field: 'col1', headerName: 'Posición', type: 'number', align: 'center', width: 80 },
   { field: 'col2', headerName: 'Empresa', width: 230 },
 
@@ -345,7 +355,7 @@ export const columnasGTOSOP = [
     type: 'number',
     width: 140,
   },
-];
+]);
 
 // grupo para GTOSOP
 export const ColumnaGrupoGTOSOP = [
@@ -397,7 +407,7 @@ export const ColumnaGrupoGTOSOP = [
 ];
 
 //columnas para ORVAS
-export const columnasORVAS = [
+export const columnasORVAS = withNumberFormatter([
   { field: 'col1', headerName: 'Posición', type: 'number', width: 80 },
   { field: 'col2', headerName: 'Empresa', width: 230 },
   // Columnas para "Otras Reservas"
@@ -476,7 +486,7 @@ export const columnasORVAS = [
     type: 'number',
     width: 140,
   },
-];
+]);
 
 // grupo para ORVAS
 export const ColumnaGrupoORVAS = [
@@ -537,7 +547,7 @@ export const ColumnaGrupoORVAS = [
 ];
 
 //columnas para IND GESTION
-export const columnasINDGESTION = [
+export const columnasINDGESTION = withNumberFormatter([
   { field: 'col1', headerName: 'Posición', width: 80 },
   { field: 'col2', headerName: 'Empresa', width: 230 },
   // Columnas para "Otras Reservas"
@@ -591,7 +601,7 @@ export const columnasINDGESTION = [
     type: 'number',
     width: 140,
   },
-];
+]);
 
 //grupo para IND GESTION
 
@@ -641,7 +651,7 @@ export const ColumnaGrupoINDGESTION = [
 ];
 
 //columnas para ROE
-export const columnasROE = [
+export const columnasROE =withNumberFormatter([
   { field: 'col1', headerName: 'Posición', type: 'number', align: 'center', width: 80 },
   { field: 'col2', headerName: 'Empresa', width: 230 },
   // Columnas para "Otras Reservas"
@@ -661,7 +671,7 @@ export const columnasROE = [
 
   // Columnas para "Rtado Particp. Inv. Perman."
   { field: 'col6', headerName: 'ROE', type: 'number', width: 110 },
-];
+]);
 
 export const ColumnaGrupoROE = [
   {
@@ -684,7 +694,7 @@ export const ColumnaGrupoROE = [
 
 // Columnas Administrativas cob_Exc
 
-export const columnas_COB_EXC_admins = [
+export const columnas_COB_EXC_admins = withNumberFormatter([
   { field: 'col1', headerName: 'Posición', align: 'center', width: 80 },
   { field: 'col2', headerName: 'Empresa', width: 230 },
   // Columnas para "Cobertura Exc. de Pérdida"
@@ -766,7 +776,7 @@ export const columnas_COB_EXC_admins = [
     type: 'number',
     width: 140,
   },
-];
+]);
 
 
 // grupo para COB_EXC administrativas
