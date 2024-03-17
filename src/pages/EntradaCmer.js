@@ -120,21 +120,21 @@ function EntradaCmer({ form }) {
                   {/* Input de archivo */}
                   <Col lg={7} md={8} sm={12} className='mt-3'>
                     <Form.Group controlId='formFileLg' className='mb-3'>
-                      <Form.Control type='file' size='md' onChange={saveFile} />
+                      <Form.Control type='file' size='sm' onChange={saveFile} />
                     </Form.Group>
                   </Col>
                   {/* Selector de tipo de archivo */}
                   <Col lg={3} md={4} sm={6} xs={12} className='mt-0'>
-                    <select
-                    size="sm"
-                      required
-                      className='form-select'
-                      onChange={handleChange}
+                    <Form.Group
+                      controlId='formFileTypeSelect'
+                      className='mb-lg-0'
                     >
-                      <option value=''>Tipo de Archivo</option>
-                      <option value='cmer'>Resultados</option>
-                      <option value='cmbg'>Balance</option>
-                    </select>
+                      <Form.Select size='sm' required onChange={handleChange}>
+                        <option value=''>Tipo de Archivo</option>
+                        <option value='cmer'>Resultados</option>
+                        <option value='cmbg'>Balance</option>
+                      </Form.Select>
+                    </Form.Group>
                   </Col>
                   {/* Botón */}
                   <Col
@@ -149,7 +149,7 @@ function EntradaCmer({ form }) {
                       size='sm'
                       type='submit'
                     >
-                       <FaUpload className='mb-1' /> Cargar Archivo
+                      <FaUpload className='mb-1' /> Cargar Archivo
                     </Button>
                   </Col>
                 </Row>

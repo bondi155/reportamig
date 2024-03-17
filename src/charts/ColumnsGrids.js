@@ -3,7 +3,7 @@ import '../css/App.css';
 
 const withNumberFormatter = (columns) => {
   return columns.map((column) => {
-    // Verifica si el tipo de la columna es 'number' para aplicar el formateador
+    // Verifica si el tipo de la columna es number si no no aplica nada
     if (column.type === 'number') {
       return {
         ...column,
@@ -93,7 +93,7 @@ export const columnasPD = withNumberFormatter([
     width: 140,
   },
   // Columnas para Prima Devengada Retenida
-  { field: 'col19', headerName: 'Importe', type: 'number', align: 'center', width: 110 },
+  { field: 'col19', headerName: 'Importe', type: 'number', width: 110 },
   {
     field: 'col20',
     headerName: '% 2023',

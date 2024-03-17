@@ -85,9 +85,11 @@ async function cargaTxt__(req, res) {
     const codigoCompaniaMatch = fileName.match(/([A-Z])(\d{4})/);
     const fechaMatch = fileName.match(/(\d{8})\.txt$/);
 
-    //extraer el tipo_comp y cod_comp
+    //extraer el tipo_comp y cod_comp  //probar ESTO CON BASE DE DATOS PLANETSCALE 
     const tipoCompania = codigoCompaniaMatch ? codigoCompaniaMatch[1] : null;
-    const codigoCompania = codigoCompaniaMatch ? codigoCompaniaMatch[2] : null;
+    // Captura solo el último dígito osea el digito 3 y el 2 (ya que el 1 es S y el completo es S0802)
+    const codigoCompania = codigoCompaniaMatch ? codigoCompaniaMatch[2][3] : null; 
+
     const fecha = fechaMatch ? fechaMatch[1] : null;
 
     //extrae año, mes y dia
@@ -120,12 +122,6 @@ async function cargaTxt__(req, res) {
     });
   }
 }
-
-//ahora lo que tengo que hacer es meter en la base de datos esto que estoy haciendo y validar , tienen q entrar bien en los campos
-//si da error de eso ya parar el proceso , entonces primer paso es insert y error
-//acordarse de hacer un select en el front para decir que archivo es y asi usar un query o el otro para el insert ya que tienen difer nº de camp
-//Agregar el año y el mes en las tablas de cmbg y cmer y el codigo de la empresa
-//Estos datos sacarlos del archivo osea del titulo del txt
 
 //guardar nombre de archivo y id_proceso en map en cmer
 async function saveDBtxtCmbg(

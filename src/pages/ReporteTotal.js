@@ -229,8 +229,8 @@ const ReporteTotal = () => {
                   {/* Año */}
                   <Col lg={{ span: 3, offset: 2 }} md={4} sm={6} xs={12}>
                     <Form.Group controlId='formAnioSelect' className='mb-lg-0'>
-                      <Form.Control
-                        as='select'
+                      <Form.Select
+                        size='sm'
                         value={anio}
                         onChange={(e) => setAnio(e.target.value)}
                         disabled
@@ -240,18 +240,19 @@ const ReporteTotal = () => {
                             {year}
                           </option>
                         ))}
-                      </Form.Control>
+                      </Form.Select>
                     </Form.Group>
                   </Col>
                   {/* Mes */}
                   <Col lg={{ span: 3, offset: 0 }} md={4} sm={6} xs={12}>
                     <Form.Group controlId='formMesSelect' className='mb-lg-0'>
-                      <Form.Control
-                        as='select'
+                      <Form.Select
+                        size='sm'
                         value={mes}
                         onChange={(e) => setMes(e.target.value)}
                         disabled
                       >
+                        <option value=''>Seleccione un mes</option>
                         {[
                           'Enero',
                           'Febrero',
@@ -266,11 +267,11 @@ const ReporteTotal = () => {
                           'Noviembre',
                           'Diciembre',
                         ].map((month, index) => (
-                          <option key={month} value={index + 1}>
+                          <option key={index} value={index + 1}>
                             {month}
                           </option>
                         ))}
-                      </Form.Control>
+                      </Form.Select>
                     </Form.Group>
                   </Col>
                   {/* Botón Descargar */}
@@ -283,7 +284,11 @@ const ReporteTotal = () => {
                   >
                     {isDownloading ? (
                       <>
-                        <Button className='button-custom-gradient' disabled>
+                        <Button
+                          size='sm'
+                          className='button-custom-gradient'
+                          disabled
+                        >
                           <Spinner
                             as='span'
                             animation='grow'
@@ -298,7 +303,7 @@ const ReporteTotal = () => {
                       <>
                         <Button
                           className='button-custom-gradient'
-                          size='md'
+                          size='sm'
                           onClick={(e) => {
                             handleDownload(e);
                           }}
@@ -334,7 +339,7 @@ const ReporteTotal = () => {
               flexGrow: '0',
             },
             '.MuiTab-root': {
-              minWidth: 0, 
+              minWidth: 0,
               padding: '6px 12px',
             },
           }}
@@ -367,7 +372,6 @@ const ReporteTotal = () => {
                 rows={axiosResponse[1]}
                 columnsVar={columnasCOB_EXC}
                 fileNameVar='COB_EXC'
-                autoHeight
                 columnGroupingModel={ColumnaGrupoCOB_EXC}
               />
             </Box>
@@ -380,7 +384,6 @@ const ReporteTotal = () => {
                 rows={axiosResponse[2]}
                 columnsVar={columnasGTOSOP}
                 fileNameVar='GTOSOP'
-                autoHeight
                 columnGroupingModel={ColumnaGrupoGTOSOP}
               />
             </Box>
@@ -394,7 +397,6 @@ const ReporteTotal = () => {
                 rows={axiosResponse[4]}
                 columnsVar={columnasINDGESTION}
                 fileNameVar='IND. GESTION'
-                autoHeight
                 columnGroupingModel={ColumnaGrupoINDGESTION}
               />
             </Box>
@@ -407,7 +409,6 @@ const ReporteTotal = () => {
                 rows={axiosResponse[3]}
                 columnsVar={columnasORVAS}
                 fileNameVar='ORVAS'
-                autoHeight
                 columnGroupingModel={ColumnaGrupoORVAS}
               />
             </Box>
@@ -420,7 +421,6 @@ const ReporteTotal = () => {
                 rows={axiosResponse[5]}
                 columnsVar={columnasROE}
                 fileNameVar='ROE'
-                autoHeight
                 columnGroupingModel={ColumnaGrupoROE}
               />
             </Box>

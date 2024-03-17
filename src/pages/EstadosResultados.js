@@ -12,7 +12,6 @@ import {
 } from 'react-bootstrap';
 import { CiSaveDown2 } from 'react-icons/ci';
 
-
 function EstadoResultados() {
   const [anio, setAnio] = useState(2023);
   const [mes, setMes] = useState(6);
@@ -86,94 +85,96 @@ function EstadoResultados() {
                 <h3>Estado de Resultados</h3>
               </Card.Header>
               <Card.Body>
-                  <Row className='gx-2 gy-3 justify-content-center'>
-                    {/* Año */}
-                    <Col lg={3} md={4} sm={6} xs={12}>
-                      <Form.Group
-                        controlId='formAnioSelect'
-                        className='mb-lg-0'
+                <Row className='gx-2 gy-3 justify-content-center'>
+                  {/* Año */}
+                  <Col lg={3} md={4} sm={6} xs={12}>
+                    <Form.Group controlId='formAnioSelect' className='mb-lg-0'>
+                      <Form.Select
+                        value={anio}
+                        size='sm'
+                        onChange={(e) => setAnio(e.target.value)}
+                        disabled
                       >
-                        <Form.Control
-                          as='select'
-                          value={anio}
-                          onChange={(e) => setAnio(e.target.value)}
+                        {[2022, 2023, 2024, 2025, 2026, 2027].map((year) => (
+                          <option key={year} value={year}>
+                            {year}
+                          </option>
+                        ))}
+                      </Form.Select>
+                    </Form.Group>
+                  </Col>
+                  {/* Mes */}
+                  <Col lg={3} md={4} sm={6} xs={12}>
+                    <Form.Group controlId='formMesSelect' className='mb-lg-0'>
+                      <Form.Select
+                        size='sm'
+                        value={mes}
+                        onChange={(e) => setMes(e.target.value)}
+                        disabled
+                      >
+                        <option value=''>Seleccione un mes</option>
+                        {[
+                          'Enero',
+                          'Febrero',
+                          'Marzo',
+                          'Abril',
+                          'Mayo',
+                          'Junio',
+                          'Julio',
+                          'Agosto',
+                          'Septiembre',
+                          'Octubre',
+                          'Noviembre',
+                          'Diciembre',
+                        ].map((month, index) => (
+                          <option key={index} value={index + 1}>
+                            {month}
+                          </option>
+                        ))}
+                      </Form.Select>
+                    </Form.Group>
+                  </Col>
+                  {/* Botón Descargar */}
+                  <Col
+                    lg={{ span: 3, offset: 0 }}
+                    md={4}
+                    sm={12}
+                    xs={12}
+                    className='d-flex justify-content-lg-start justify-content-center'
+                  >
+                    {isDownloading ? (
+                      <>
+                        <Button
+                          size='sm'
+                          className='button-custom-gradient'
                           disabled
                         >
-                          {[2022, 2023, 2024, 2025, 2026, 2027].map((year) => (
-                            <option key={year} value={year}>
-                              {year}
-                            </option>
-                          ))}
-                        </Form.Control>
-                      </Form.Group>
-                    </Col>
-                    {/* Mes */}
-                    <Col lg={3} md={4} sm={6} xs={12}>
-                      <Form.Group controlId='formMesSelect' className='mb-lg-0'>
-                        <Form.Control
-                          as='select'
-                          value={mes}
-                          onChange={(e) => setMes(e.target.value)}
-                          disabled
+                          <Spinner
+                            as='span'
+                            animation='grow'
+                            size='sm'
+                            role='status'
+                            aria-hidden='true'
+                          />{' '}
+                          Descargando...
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <Button
+                          className='button-custom-gradient'
+                          size='sm'
+                          onClick={(e) => {
+                            handleDownload(e);
+                          }}
+                          disabled={!axiosResponse || isDownloading}
                         >
-                          {[
-                            'Enero',
-                            'Febrero',
-                            'Marzo',
-                            'Abril',
-                            'Mayo',
-                            'Junio',
-                            'Julio',
-                            'Agosto',
-                            'Septiembre',
-                            'Octubre',
-                            'Noviembre',
-                            'Diciembre',
-                          ].map((month, index) => (
-                            <option key={month} value={index + 1}>
-                              {month}
-                            </option>
-                          ))}
-                        </Form.Control>
-                      </Form.Group>
-                    </Col>
-                    {/* Botón Descargar */}
-                    <Col
-                      lg={{ span: 3, offset: 0 }}
-                      md={4}
-                      sm={12}
-                      xs={12}
-                      className='d-flex justify-content-lg-start justify-content-center'
-                    >
-                      {isDownloading ? (
-                        <>
-                          <Button className='button-custom-gradient' disabled>
-                            <Spinner
-                              as='span'
-                              animation='grow'
-                              size='sm'
-                              role='status'
-                              aria-hidden='true'
-                            />{' '}
-                            Descargando...
-                          </Button>
-                        </>
-                      ) : (
-                        <>
-                          <Button
-                            className='button-custom-gradient'
-                            size='md'
-                            onClick={(e) => {
-                              handleDownload(e);
-                            }}
-                            disabled={!axiosResponse || isDownloading}
-                          >
-                            <CiSaveDown2 className='mb-1' /> Descargar Reporte
-                          </Button>
-                        </>
-                      )}
-                    </Col>
-                  </Row>
+                          <CiSaveDown2 className='mb-1' /> Descargar Reporte
+                        </Button>
+                      </>
+                    )}
+                  </Col>
+                </Row>
               </Card.Body>
             </Card>
           </Col>
