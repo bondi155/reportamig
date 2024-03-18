@@ -153,7 +153,7 @@ function UserCreate({ userCreate, setUserCreate, form }) {
               <div>
                 <form onSubmit={addNewUser}>
                   <Row className="justify-content-md-center" > 
-                  <Col lg={10}> 
+                  <Col lg={8} md={12}> 
                   <Card className='card-body-xs-padding'>
                     <Card.Header>
                       <h3> Administración de Usuarios</h3>
@@ -227,7 +227,7 @@ function UserCreate({ userCreate, setUserCreate, form }) {
                           type='submit'
                           size='sm'
                         >
-                          <FaUserPlus className='mb-1' /> Crear Usuario
+                          <FaUserPlus className='mb-1' /> Crear
                         </Button>
                       </Col>
                     </Row>
@@ -241,10 +241,10 @@ function UserCreate({ userCreate, setUserCreate, form }) {
               <div>
                 <form onSubmit={passReset}>
                 <Row className="justify-content-md-center" > 
-                  <Col lg={10}> 
+                  <Col lg={8} md={12}> 
                   <Card>
                     <Card.Header>
-                      <h3>Administración de Usuario</h3>{' '}
+                      <h3>Administración de Usuarios</h3>{' '}
                     </Card.Header>
                     <Card.Body>
                       <Card.Title>Reseteo de Contraseña</Card.Title>
@@ -292,8 +292,8 @@ function UserCreate({ userCreate, setUserCreate, form }) {
             )}
           </Box>
           <div className='usuarios-grid'>
-            <Row className='mt-5'>
-            <Col md={{ span: 10, offset: 1 }} lg={{ span: 8, offset: 2 }}>
+            <Row className='mt-5 justify-content-md-center'>  
+            <Col md={12} lg={8}>
         <Card>
           <Card.Header className='justify-content-center' as="h3">Lista de Usuarios</Card.Header>
           <Card.Body>

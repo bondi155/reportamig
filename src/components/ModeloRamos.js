@@ -119,7 +119,7 @@ const ModeloRamos = ({id_arch, NombreArchivo, titulo}) => {
       <Container className='container-custom'>
         <Form>
             <Row className='justify-content-center'> 
-          <Col lg={10}>
+            <Col lg={8} md={12}>
             <Card>
               <Card.Header>
                 <h3>{titulo}</h3>
@@ -127,7 +127,7 @@ const ModeloRamos = ({id_arch, NombreArchivo, titulo}) => {
               <Card.Body>
                 <Row className='gx-2 gy-3 justify-content-center'>
                   {/* Año */}
-                  <Col lg={{ span: 3, offset: 2 }} md={4} sm={6} xs={12}>
+                  <Col lg={{ span: 3, offset: 1 }} md={4} sm={6} xs={12}>
                     <Form.Group controlId='formAnioSelect' className='mb-lg-0'>
                       <Form.Select
                         size='sm'
@@ -145,7 +145,7 @@ const ModeloRamos = ({id_arch, NombreArchivo, titulo}) => {
                   </Col>
                   {/* Mes */}
                   <Col lg={3} md={4} sm={6} xs={12}>
-                    <Form.Group controlId='formMesSelect' className='mb-lg-0'>
+                    <Form.Group controlId='formMesSelect' className='mb-lg-0 ms-2'>
                       <Form.Select
                         size='sm'
                         value={mes}

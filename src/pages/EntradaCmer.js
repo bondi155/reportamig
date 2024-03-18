@@ -109,14 +109,14 @@ function EntradaCmer({ form }) {
         <Container className='container-custom'>
           <Form onSubmit={uploadFile}>
             <Row className='justify-content-center'>
-              <Col lg={10}> 
+              <Col lg={8}> 
             <Card>
               <Card.Header>
                 <h3>Carga de archivo de entrada</h3>
               </Card.Header>
               <Card.Body>
                 <Card.Text>
-                  Seleccione el archivo TXT correspondiente a CMER o CMBG.
+                <strong>  Carga de Archivo CMER o CMBG.</strong>
                 </Card.Text>
                 <Row className='gx-2 gy-3 align-items-center'>
                   {/* Input de archivo */}
@@ -151,7 +151,7 @@ function EntradaCmer({ form }) {
                       size='sm'
                       type='submit'
                     >
-                      <FaUpload className='mb-1' /> Cargar Archivo
+                      <FaUpload className='mb-1' /> Subir TXT
                     </Button>
                   </Col>
                 </Row>
