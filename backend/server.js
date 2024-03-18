@@ -10,7 +10,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const getDataController = require('./Controllers/GetFuncData');
 const PostDataController = require('./Controllers/PostFuncData');
-const ReportController = require ('./Controllers/ReportController') ;
+const ReportController = require('./Controllers/ReportController');
 //const mysql = require('mysql2');
 const txtController = require('./Controllers/CargaTxt');
 //const { ejecutarFunciones } = require('./Controllers/ReportController'); //siempre hay que exportar las funciones para ejecutarlas en cada pantalla aunque no se usen todavia
@@ -42,7 +42,6 @@ function authenticateToken(req, res, next) {
   }
 }
 
-
 //limitador de tasa contra ddos
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutos
@@ -59,9 +58,11 @@ app.post('/loginUsers', authenticateToken, getDataController.loginUsers__); //lo
 app.get('/getUserList', authenticateToken, getDataController.listUsers__); //lista de ususarios
 app.put('/resetPass', authenticateToken, PostDataController.resetPassword__); //reseteo password
 app.get('/getReport', authenticateToken, ReportController.ejecutarFunciones); //ejecutar funcion general que hace el response del json
-app.post('/descargarExcel', authenticateToken, ReportController.generarYDescargarExcel); //descarga excel con datosTotal
-
-
+app.post(
+  '/descargarExcel',
+  authenticateToken,
+  ReportController.generarYDescargarExcel
+); //descarga excel con datosTotal
 
 //post y put functions
 app.post('/createUser', authenticateToken, PostDataController.userCreate__); //creacion de usuarios
@@ -72,7 +73,6 @@ app.delete(
   PostDataController.deleteUser__
 ); //delete usuarios por id
 app.post('/uploadfile', upload.single('file'), txtController.execFuncsTxt);
-
 
 app.get('/limpiar-cache', authenticateToken, (req, res) => {
   limpiarCache();

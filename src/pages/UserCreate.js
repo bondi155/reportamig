@@ -152,6 +152,8 @@ function UserCreate({ userCreate, setUserCreate, form }) {
             {valueTab === 'createUser' && (
               <div>
                 <form onSubmit={addNewUser}>
+                  <Row className="justify-content-md-center" > 
+                  <Col lg={10}> 
                   <Card className='card-body-xs-padding'>
                     <Card.Header>
                       <h3> Administración de Usuarios</h3>
@@ -230,12 +232,16 @@ function UserCreate({ userCreate, setUserCreate, form }) {
                       </Col>
                     </Row>
                   </Card>
+                  </Col>
+                  </Row>
                 </form>
               </div>
             )}
             {valueTab === 'resetPassword' && (
               <div>
                 <form onSubmit={passReset}>
+                <Row className="justify-content-md-center" > 
+                  <Col lg={10}> 
                   <Card>
                     <Card.Header>
                       <h3>Administración de Usuario</h3>{' '}
@@ -279,21 +285,28 @@ function UserCreate({ userCreate, setUserCreate, form }) {
                       </Col>
                     </Row>
                   </Card>
+                  </Col>
+                  </Row>
                 </form>
               </div>
             )}
           </Box>
-          <div className='evaluation-grid'>
+          <div className='usuarios-grid'>
             <Row className='mt-5'>
-              <Col md={{ span: 10, offset: 1 }} lg={{ span: 8, offset: 2 }}>
-                <GridUsers
-                  rows={listUser}
-                  columnsVar={userColumns}
-                  onDelete={handleDelete}
-                  fileNameVar='UserList'
-                  showDeleteColumn={true}
-                />
-              </Col>
+            <Col md={{ span: 10, offset: 1 }} lg={{ span: 8, offset: 2 }}>
+        <Card>
+          <Card.Header className='justify-content-center' as="h3">Lista de Usuarios</Card.Header>
+          <Card.Body>
+            <GridUsers
+              rows={listUser}
+              columnsVar={userColumns}
+              onDelete={handleDelete}
+              fileNameVar='UserList'
+              showDeleteColumn={true}
+            />
+          </Card.Body>
+        </Card>
+      </Col>
             </Row>
           </div>
         </Container>
@@ -301,6 +314,8 @@ function UserCreate({ userCreate, setUserCreate, form }) {
         <>
           <Container className='container-custom'>
             <form onSubmit={passReset}>
+            <Row className="justify-content-md-center" > 
+                  <Col lg={10}> 
               <Card>
                 <Card.Header>
                   <h3>Administración de Usuario</h3>{' '}
@@ -332,6 +347,8 @@ function UserCreate({ userCreate, setUserCreate, form }) {
                   </Col>
                 </Row>
               </Card>
+              </Col>
+              </Row>
             </form>
           </Container>
         </>

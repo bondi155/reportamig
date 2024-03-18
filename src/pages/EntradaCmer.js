@@ -108,6 +108,8 @@ function EntradaCmer({ form }) {
       <div>
         <Container className='container-custom'>
           <Form onSubmit={uploadFile}>
+            <Row className='justify-content-center'>
+              <Col lg={10}> 
             <Card>
               <Card.Header>
                 <h3>Carga de archivo de entrada</h3>
@@ -155,6 +157,8 @@ function EntradaCmer({ form }) {
                 </Row>
               </Card.Body>
             </Card>
+            </Col>
+            </Row>
           </Form>
           <Modal show={isLoading} centered backdrop='static' keyboard={false}>
             <Modal.Body>

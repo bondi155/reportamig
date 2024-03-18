@@ -79,7 +79,8 @@ function EstadoResultados() {
     <>
       <Container className='container-custom'>
         <Form>
-          <Col>
+          <Row className='justify-content-center'>
+          <Col lg={10}>
             <Card>
               <Card.Header>
                 <h3>Estado de Resultados</h3>
@@ -136,7 +137,7 @@ function EstadoResultados() {
                   </Col>
                   {/* Botón Descargar */}
                   <Col
-                    lg={{ span: 3, offset: 0 }}
+                    lg={3}
                     md={4}
                     sm={12}
                     xs={12}
@@ -178,6 +179,7 @@ function EstadoResultados() {
               </Card.Body>
             </Card>
           </Col>
+          </Row>
         </Form>
       </Container>
       {/*   {isLoading && <PlaneSpinner />}

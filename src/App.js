@@ -15,6 +15,10 @@ import ConsultaGrid from './pages/ConsultaGrid';
 import RamoAdministrativo from './pages/RamoAdministrativo';
 import ReporteTotal from './pages/ReporteTotal';
 import EstadoResultados from './pages/EstadosResultados';
+import RamoJudicial from './pages/RamoJudicial';
+import RamoCaucion from './pages/RamoCaucion';
+import RamoCredito  from './pages/RamoCredito';
+import RamoFidelidad from  './pages/RamoFidelidad';
 function App() {
   const [islogin, setIslogin] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -137,7 +141,7 @@ function App() {
               </PrivateRoute>
             }
           />
-              <Route
+          <Route
             path='/estadoResultados'
             element={
               <PrivateRoute islogin={islogin}>
@@ -149,6 +153,53 @@ function App() {
               </PrivateRoute>
             }
           />
+                  <Route
+            path='/ramoCredito'
+            element={
+              <PrivateRoute islogin={islogin}>
+                <RamoCredito
+                  form={form}
+                  userCreate={userCreate}
+                  setUserCreate={setUserCreate}
+                />{' '}
+              </PrivateRoute>
+            }
+          />
+            <Route
+            path='/ramoFidelidad'
+            element={
+              <PrivateRoute islogin={islogin}>
+                <RamoFidelidad
+                  form={form}
+                  userCreate={userCreate}
+                  setUserCreate={setUserCreate}
+                />{' '}
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path='/ramoJudicial'
+            element={
+              <PrivateRoute islogin={islogin}>
+                <RamoJudicial
+                  form={form}
+                  userCreate={userCreate}
+                  setUserCreate={setUserCreate}
+                />{' '}
+              </PrivateRoute>
+            }
+          />    <Route
+          path='/ramoCaucion'
+          element={
+            <PrivateRoute islogin={islogin}>
+              <RamoCaucion
+                form={form}
+                userCreate={userCreate}
+                setUserCreate={setUserCreate}
+              />{' '}
+            </PrivateRoute>
+          }
+        />
           <Route
             path='/consultaGrid'
             element={

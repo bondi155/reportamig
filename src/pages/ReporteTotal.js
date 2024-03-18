@@ -219,7 +219,8 @@ const ReporteTotal = () => {
     <>
       <Container className='container-custom'>
         <Form>
-          <Col>
+          <Row className='justify-content-center'>
+          <Col lg={10}>
             <Card>
               <Card.Header>
                 <h3>Total</h3>
@@ -318,6 +319,7 @@ const ReporteTotal = () => {
               </Card.Body>
             </Card>
           </Col>
+          </Row>
         </Form>
       </Container>
       <Box

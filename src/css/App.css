@@ -178,7 +178,7 @@ h6 {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #074a77;
+  background: linear-gradient(rgba(7, 74, 119, 0.6), rgba(3, 41, 67, 0.1)), rgb(65, 101, 120);
   /* color del botón */
   color: white;
   width: 180px;
@@ -198,7 +198,7 @@ h6 {
 }
 
 .semi-circle-login-btn:hover {
-  background-color: #042f4b
+  background-color: #9fb0bc
 }
 
 /*Termina Login*/
@@ -236,14 +236,14 @@ h6 {
 /*Button logout*/
 .logout-button {
   border: 2px solid rgba(255, 255, 255, 0.5);
-  background-color: #074a77;
+  background: linear-gradient(rgba(7, 74, 119, 0.6), rgba(3, 41, 67, 0.1)), rgb(65, 101, 120);
   color: white;
   border-radius: 20px;
   font-weight: bold;
 }
 
 .logout-button:hover {
-  background-color: #7287b5;
+  background-color: #9fb0bc;
   border: 2px solid white;
 }
 
@@ -371,13 +371,17 @@ li.nav-item {
   background-color: #cfcfcf;
 }
 
+.nav-link {
+  color: rgb(222 226 230 / 55%) !important;
+
+}
 
 
 .nav-link:hover {
-  color: #002248 !important;
+  color: #f8f9fa !important;
+  /* o #23558f */
   font-weight: 600;
 }
-
 
 
 a.dropdown-item:hover {
@@ -387,7 +391,7 @@ a.dropdown-item:hover {
 
 
 .navbar-custom-bg {
-  background: linear-gradient(rgba(7, 74, 119, 0.6), rgba(7, 74, 119, 0.1)), #d9edf9;
+  background: linear-gradient(rgba(7, 74, 119, 0.6), rgba(3, 41, 67, 0.1)), #d9edf9;
 }
 
 /* Termina hover y estilo navbar letras */

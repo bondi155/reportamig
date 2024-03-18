@@ -80,17 +80,42 @@ function NavigationBar({ setIslogin, form }) {
                     onClick={handleToggleClick}
                     to='/ramoAdministrativo'
                   >
-                    Ramo Administrativo{' '}
+                    Ramo Administrativas{' '}
                   </NavDropdown.Item>
-                  {/* <NavDropdown.Item href='#action/3.3'>
-                    reporte3
-                  </NavDropdown.Item> */}
+                 
+                  <NavDropdown.Item
+                    as={Link}
+                    onClick={handleToggleClick}
+                    to='/ramoCaucion'
+                  >
+                    Ramo Caución{' '}
+                  </NavDropdown.Item>
+                  <NavDropdown.Item
+                    as={Link}
+                    onClick={handleToggleClick}
+                    to='/ramoCredito'
+                  >
+                    Ramo Credito{' '}
+                  </NavDropdown.Item>
+                  <NavDropdown.Item
+                    as={Link}
+                    onClick={handleToggleClick}
+                    to='/ramoJudicial'
+                  >
+                      Ramo Judicial{' '}
+                    </NavDropdown.Item>
+                  <NavDropdown.Item
+                    as={Link}
+                    onClick={handleToggleClick}
+                    to='/ramoFidelidad'
+                  >
+                    Ramo Fidelidad{' '}
+                  </NavDropdown.Item>
                   <NavDropdown.Divider />
                   <NavDropdown.Item href='#action/3.4'>
                     Configuracion de reportes{' '}
                   </NavDropdown.Item>
                 </NavDropdown>
-
                 <Link
                   to='/entrada_txt_cmer_cmbg'
                   className='nav-link'
