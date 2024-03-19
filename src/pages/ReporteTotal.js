@@ -28,104 +28,6 @@ import Spinner from 'react-bootstrap/Spinner';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 
-/*
-const rows = [
-  // Aquí van los datos de las filas. Por ejemplo:
-  {
-    col1: 1,
-    posicion: 1,
-    empresa: 'Empresa 1',
-    // Valores para "Prima directa"
-    PrimaDirectaImporte2023: 0,
-    PrimaDirectaImporte2022: 0,
-    PrimaDirectaImporteIncremento: 0,
-    PrimaDirectaPorcentajeIncremento: 0,
-    // Valores para "Prima tomada"
-    PrimaTomadaImporte: 0,
-    PrimaTomadaPorcentaje2023: 0,
-    PrimaTomadaPorcentaje2022: 0,
-    // Valores para "Prima cedida"
-    PrimaCedidaImporte: 0,
-    PrimaCedidaPorcentaje2023: 0,
-    PrimaCedidaPorcentaje2022: 0,
-    // Valores para "Prima retenida"
-    PrimaRetenidaImporte: 0,
-    PrimaRetenidaPorcentaje2023: 0,
-    PrimaRetenidaPorcentaje2022: 0,
-    // ... Resto de los datos...
-    IncRvaRiesgoImporte: 0,
-  },
-  {
-    col1: 2,
-    posicion: 2,
-    empresa: 'Empresa 2',
-    // Valores para "Prima directa"
-    PrimaDirectaImporte2023: 0,
-    PrimaDirectaImporte2022: 0,
-    PrimaDirectaImporteIncremento: 0,
-    PrimaDirectaPorcentajeIncremento: 0,
-    // Valores para "Prima tomada"
-    PrimaTomadaImporte: 0,
-    PrimaTomadaPorcentaje2023: 0,
-    PrimaTomadaPorcentaje2022: 0,
-    // Valores para "Prima cedida"
-    PrimaCedidaImporte: 0,
-    PrimaCedidaPorcentaje2023: 0,
-    PrimaCedidaPorcentaje2022: 0,
-    // Valores para "Prima retenida"
-    PrimaRetenidaImporte: 0,
-    PrimaRetenidaPorcentaje2023: 0,
-    PrimaRetenidaPorcentaje2022: 0,
-    // ... Resto de los datos...
-  },
-  {
-    col1: 3,
-    posicion: 3,
-    empresa: 'Empresa 3',
-    // Valores para "Prima directa"
-    PrimaDirectaImporte2023: 0,
-    PrimaDirectaImporte2022: 0,
-    PrimaDirectaImporteIncremento: 0,
-    PrimaDirectaPorcentajeIncremento: 0,
-    // Valores para "Prima tomada"
-    PrimaTomadaImporte: 0,
-    PrimaTomadaPorcentaje2023: 0,
-    PrimaTomadaPorcentaje2022: 0,
-    // Valores para "Prima cedida"
-    PrimaCedidaImporte: 0,
-    PrimaCedidaPorcentaje2023: 0,
-    PrimaCedidaPorcentaje2022: 0,
-    // Valores para "Prima retenida"
-    PrimaRetenidaImporte: 0,
-    PrimaRetenidaPorcentaje2023: 0,
-    PrimaRetenidaPorcentaje2022: 0,
-    // ... Resto de los datos...
-  },
-  {
-    col1: 4,
-    posicion: 4,
-    empresa: 'Empresa 4',
-    // Valores para "Prima directa"
-    PrimaDirectaImporte2023: 0,
-    PrimaDirectaImporte2022: 0,
-    PrimaDirectaImporteIncremento: 0,
-    PrimaDirectaPorcentajeIncremento: 0,
-    // Valores para "Prima tomada"
-    PrimaTomadaImporte: 0,
-    PrimaTomadaPorcentaje2023: 0,
-    PrimaTomadaPorcentaje2022: 0,
-    // Valores para "Prima cedida"
-    PrimaCedidaImporte: 0,
-    PrimaCedidaPorcentaje2023: 0,
-    PrimaCedidaPorcentaje2022: 0,
-    // Valores para "Prima retenida"
-    PrimaRetenidaImporte: 0,
-    PrimaRetenidaPorcentaje2023: 0,
-    PrimaRetenidaPorcentaje2022: 0,
-    // ... Resto de los datos...
-  },
-  // ... más filas ...
-];*/
 const downloadExcel = async (e, setDownloadStatus, anio, mes) => {
   e.preventDefault();
   setDownloadStatus(true);
@@ -170,18 +72,25 @@ const ReporteTotal = () => {
 
   const scrollableTabs = useMediaQuery(theme.breakpoints.down('lg'));
 
-  // Transformar  'detalle' array en row objects para que el data grid lo tome
+  // Transformar 'detalle' array en row objects para que el data grid lo tome
   const transformDetalleToRows = (detalle) => {
-    return detalle.map((row) => {
-      // Reduce cada row de detalle en un single object
-      const rowObj = row.reduce((acc, cell, index) => {
-        acc[`col${index + 1}`] = Object.values(cell)[0];
+    return detalle.map((row, index) => {
+      // Asumiendo que cada 'row' es un array de objetos y cada objeto tiene una sola propiedad
+      const rowObj = row.reduce((acc, cell, cellIndex) => {
+        // Para la primera celda de cada fila, asignar un ID único basado en el índice de la fila
+        if (cellIndex === 0) {
+          acc['id'] = `${index + 1}`; // Asegurarse de que el ID sea un string si el DataGrid espera un string
+        }
+        // La clave de cada celda se convierte en `col${cellIndex + 1}` para mantener la consistencia con tu estructura existente
+        const cellKey = `col${cellIndex + 1}`;
+        acc[cellKey] = Object.values(cell)[0];
         return acc;
       }, {});
-
+  
       return rowObj;
     });
   };
+  
 
   useEffect(() => {
     const asyncCall = async () => {
@@ -214,6 +123,7 @@ const ReporteTotal = () => {
   }, [anio, mes]);
 
   const handleDownload = (e) => downloadExcel(e, setDownloadStatus, anio, mes);
+
 
   return (
     <>
@@ -363,6 +273,7 @@ const ReporteTotal = () => {
                 fileNameVar='PD'
                 autoHeight
                 columnGroupingModel={ColumnaGrupoPd}
+                experimentalFeatures={{ columnGrouping: true }}
               />
             </Box>
           )}
@@ -375,6 +286,8 @@ const ReporteTotal = () => {
                 columnsVar={columnasCOB_EXC}
                 fileNameVar='COB_EXC'
                 columnGroupingModel={ColumnaGrupoCOB_EXC}
+                experimentalFeatures={{ columnGrouping: true }}
+
               />
             </Box>
           )}
@@ -387,6 +300,8 @@ const ReporteTotal = () => {
                 columnsVar={columnasGTOSOP}
                 fileNameVar='GTOSOP'
                 columnGroupingModel={ColumnaGrupoGTOSOP}
+                experimentalFeatures={{ columnGrouping: true }}
+
               />
             </Box>
           )}
@@ -400,6 +315,8 @@ const ReporteTotal = () => {
                 columnsVar={columnasINDGESTION}
                 fileNameVar='IND. GESTION'
                 columnGroupingModel={ColumnaGrupoINDGESTION}
+                experimentalFeatures={{ columnGrouping: true }}
+
               />
             </Box>
           )}
@@ -424,6 +341,8 @@ const ReporteTotal = () => {
                 columnsVar={columnasROE}
                 fileNameVar='ROE'
                 columnGroupingModel={ColumnaGrupoROE}
+                experimentalFeatures={{ columnGrouping: true }}
+
               />
               
             </Box>

@@ -92,11 +92,11 @@ function GridEval({
           rowHeight={35} //height de rows
           rows={rows}
           columns={columns}
-          getRowId={(row) => row.col1}
+          getRowId={(row) => row.id}
           initialState={{
             columns: {
               columnVisibilityModel: {
-                id: false,
+                col1: true,
               },
             },
             pagination: {
