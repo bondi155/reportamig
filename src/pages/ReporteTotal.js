@@ -72,12 +72,12 @@ const ReporteTotal = () => {
 
   const scrollableTabs = useMediaQuery(theme.breakpoints.down('lg'));
 
-  // Transformar 'detalle' array en row objects para que el data grid lo tome
+  // Se tramsforma 'detalle' osea array en row objects para que el data grid lo tome
   const transformDetalleToRows = (detalle) => {
     return detalle.map((row, index) => {
-      // Asumiendo que cada 'row' es un array de objetos y cada objeto tiene una sola propiedad
+      // Cada 'row' es un array de objetos(osea se dividen en 17 por tab) y cada objeto tiene una sola propiedad
       const rowObj = row.reduce((acc, cell, cellIndex) => {
-        // Para la primera celda de cada fila, asignar un ID único basado en el índice de la fila
+        // Para la primera celda osea col1 de fila, se asigna un ID único basado en el índice de la fila
         if (cellIndex === 0) {
           acc['id'] = `${index + 1}`; // Asegurarse de que el ID sea un string si el DataGrid espera un string
         }
@@ -86,11 +86,10 @@ const ReporteTotal = () => {
         acc[cellKey] = Object.values(cell)[0];
         return acc;
       }, {});
-  
+
       return rowObj;
     });
   };
-  
 
   useEffect(() => {
     const asyncCall = async () => {
@@ -124,115 +123,120 @@ const ReporteTotal = () => {
 
   const handleDownload = (e) => downloadExcel(e, setDownloadStatus, anio, mes);
 
-
   return (
     <>
       <Container className='container-custom'>
         <Form>
           <Row className='justify-content-center'>
-          <Col lg={8} md={12}>
-            <Card>
-              <Card.Header>
-                <h3>Total</h3>
-              </Card.Header>
-              <Card.Body>
-                <Row className='gx-2 gy-3 justify-content-center'>
-                  {/* Año */}
-                  <Col lg={{ span: 3, offset: 1 }} md={4} sm={6} xs={12}>
-                    <Form.Group controlId='formAnioSelect' className='mb-lg-0'>
-                      <Form.Select
-                        size='sm'
-                        value={anio}
-                        onChange={(e) => setAnio(e.target.value)}
-                        disabled
+            <Col lg={8} md={12}>
+              <Card>
+                <Card.Header>
+                  <h3>Total</h3>
+                </Card.Header>
+                <Card.Body>
+                  <Row className='gx-2 gy-3 justify-content-center'>
+                    {/* Año */}
+                    <Col lg={{ span: 3, offset: 1 }} md={4} sm={6} xs={12}>
+                      <Form.Group
+                        controlId='formAnioSelect'
+                        className='mb-lg-0'
                       >
-                        {[2022, 2023, 2024, 2025, 2026, 2027].map((year) => (
-                          <option key={year} value={year}>
-                            {year}
-                          </option>
-                        ))}
-                      </Form.Select>
-                    </Form.Group>
-                  </Col>
-                  {/* Mes */}
-                  <Col lg={{ span: 3, offset: 0 }} md={4} sm={6} xs={12}>
-                    <Form.Group controlId='formMesSelect' className='mb-lg-0 ms-2'>
-                      <Form.Select
-                        size='sm'
-                        value={mes}
-                        onChange={(e) => setMes(e.target.value)}
-                        disabled
-                      >
-                        <option value=''>Seleccione un mes</option>
-                        {[
-                          'Enero',
-                          'Febrero',
-                          'Marzo',
-                          'Abril',
-                          'Mayo',
-                          'Junio',
-                          'Julio',
-                          'Agosto',
-                          'Septiembre',
-                          'Octubre',
-                          'Noviembre',
-                          'Diciembre',
-                        ].map((month, index) => (
-                          <option key={index} value={index + 1}>
-                            {month}
-                          </option>
-                        ))}
-                      </Form.Select>
-                    </Form.Group>
-                  </Col>
-                  {/* Botón Descargar */}
-                  <Col
-                    lg={{ span: 3, offset: 0 }}
-                    md={4}
-                    sm={12}
-                    xs={12}
-                    className='d-flex justify-content-lg-start justify-content-center'
-                  >
-                    {isDownloading ? (
-                      <>
-                        <Button
+                        <Form.Select
                           size='sm'
-                          className='button-custom-gradient'
+                          value={anio}
+                          onChange={(e) => setAnio(e.target.value)}
                           disabled
                         >
-                          <Spinner
-                            as='span'
-                            animation='grow'
-                            size='sm'
-                            role='status'
-                            aria-hidden='true'
-                          />{' '}
-                          Descargando...
-                        </Button>
-                      </>
-                    ) : (
-                      <>
-                        <Button
-                          className='button-custom-gradient'
+                          {[2022, 2023, 2024, 2025, 2026, 2027].map((year) => (
+                            <option key={year} value={year}>
+                              {year}
+                            </option>
+                          ))}
+                        </Form.Select>
+                      </Form.Group>
+                    </Col>
+                    {/* Mes */}
+                    <Col lg={{ span: 3, offset: 0 }} md={4} sm={6} xs={12}>
+                      <Form.Group
+                        controlId='formMesSelect'
+                        className='mb-lg-0 ms-2'
+                      >
+                        <Form.Select
                           size='sm'
-                          onClick={(e) => {
-                            handleDownload(e);
-                          }}
-                          disabled={!axiosResponse || isDownloading}
+                          value={mes}
+                          onChange={(e) => setMes(e.target.value)}
+                          disabled
                         >
-                          <CiSaveDown2 className='mb-1' /> Descargar Reporte
-                        </Button>
-                      </>
-                    )}
-                  </Col>
-                </Row>
-              </Card.Body>
-            </Card>
-          </Col>
+                          <option value=''>Seleccione un mes</option>
+                          {[
+                            'Enero',
+                            'Febrero',
+                            'Marzo',
+                            'Abril',
+                            'Mayo',
+                            'Junio',
+                            'Julio',
+                            'Agosto',
+                            'Septiembre',
+                            'Octubre',
+                            'Noviembre',
+                            'Diciembre',
+                          ].map((month, index) => (
+                            <option key={index} value={index + 1}>
+                              {month}
+                            </option>
+                          ))}
+                        </Form.Select>
+                      </Form.Group>
+                    </Col>
+                    {/* Botón Descargar */}
+                    <Col
+                      lg={{ span: 3, offset: 0 }}
+                      md={4}
+                      sm={12}
+                      xs={12}
+                      className='d-flex justify-content-lg-start justify-content-center'
+                    >
+                      {isDownloading ? (
+                        <>
+                          <Button
+                            size='sm'
+                            className='button-custom-gradient'
+                            disabled
+                          >
+                            <Spinner
+                              as='span'
+                              animation='grow'
+                              size='sm'
+                              role='status'
+                              aria-hidden='true'
+                            />{' '}
+                            Descargando...
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <Button
+                            className='button-custom-gradient'
+                            size='sm'
+                            onClick={(e) => {
+                              handleDownload(e);
+                            }}
+                            disabled={!axiosResponse || isDownloading}
+                          >
+                            <CiSaveDown2 className='mb-1' /> Descargar Reporte
+                          </Button>
+                        </>
+                      )}
+                    </Col>
+                  </Row>
+                </Card.Body>
+              </Card>
+            </Col>
           </Row>
         </Form>
       </Container>
-      <Box  
+      <Box
         sx={{
           maxWidth: '95%',
           mt: '6rem',
@@ -287,7 +291,6 @@ const ReporteTotal = () => {
                 fileNameVar='COB_EXC'
                 columnGroupingModel={ColumnaGrupoCOB_EXC}
                 experimentalFeatures={{ columnGrouping: true }}
-
               />
             </Box>
           )}
@@ -301,7 +304,6 @@ const ReporteTotal = () => {
                 fileNameVar='GTOSOP'
                 columnGroupingModel={ColumnaGrupoGTOSOP}
                 experimentalFeatures={{ columnGrouping: true }}
-
               />
             </Box>
           )}
@@ -316,7 +318,6 @@ const ReporteTotal = () => {
                 fileNameVar='IND. GESTION'
                 columnGroupingModel={ColumnaGrupoINDGESTION}
                 experimentalFeatures={{ columnGrouping: true }}
-
               />
             </Box>
           )}
@@ -342,9 +343,7 @@ const ReporteTotal = () => {
                 fileNameVar='ROE'
                 columnGroupingModel={ColumnaGrupoROE}
                 experimentalFeatures={{ columnGrouping: true }}
-
               />
-              
             </Box>
           )}
       </Box>
@@ -354,4 +353,3 @@ const ReporteTotal = () => {
 };
 
 export default ReporteTotal;
-

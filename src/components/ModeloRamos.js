@@ -70,12 +70,19 @@ const ModeloRamos = ({id_arch, NombreArchivo, titulo}) => {
   const theme = useTheme();
 
   const scrollableTabs = useMediaQuery(theme.breakpoints.down('lg'));
-  // Transformar  'detalle' array en row objects para que el data grid lo tome
+
+
   const transformDetalleToRows = (detalle) => {
-    return detalle.map((row) => {
-      // Reduce cada row de detalle en un single object
-      const rowObj = row.reduce((acc, cell, index) => {
-        acc[`col${index + 1}`] = Object.values(cell)[0];
+    return detalle.map((row, index) => {
+      // Cada 'row' es un array de objetos(osea se dividen en 17 por tab) y cada objeto tiene una sola propiedad
+      const rowObj = row.reduce((acc, cell, cellIndex) => {
+        // Para la primera celda osea col1 de fila, se asigna un ID único basado en el índice de la fila
+        if (cellIndex === 0) {
+          acc['id'] = `${index + 1}`; // Asegurarse de que el ID sea un string si el DataGrid espera un string
+        }
+        // La clave de cada celda se convierte en `col${cellIndex + 1}` para mantener la consistencia con tu estructura existente
+        const cellKey = `col${cellIndex + 1}`;
+        acc[cellKey] = Object.values(cell)[0];
         return acc;
       }, {});
 
