@@ -151,7 +151,7 @@ function EntradaCmer({ form }) {
                       size='sm'
                       type='submit'
                     >
-                      <FaUpload className='mb-1' /> Subir TXT
+                      <FaUpload className='mb-1' /> Cargar TXT
                     </Button>
                   </Col>
                 </Row>
