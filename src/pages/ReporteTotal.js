@@ -123,6 +123,12 @@ const ReporteTotal = () => {
 
   const handleDownload = (e) => downloadExcel(e, setDownloadStatus, anio, mes);
 
+
+  const columnasPDAnio = columnasPD(anio);
+  const columnasCOB_EXCAnio = columnasCOB_EXC(anio);
+  const columnasGTOSOPAnio = columnasGTOSOP(anio);
+  const columnasORVASAnio = columnasORVAS(anio);
+  const columnasINDGESTIONAnio = columnasINDGESTION(anio);
   return (
     <>
       <Container className='container-custom'>
@@ -273,7 +279,7 @@ const ReporteTotal = () => {
             <Box className='mt-4 mb-2'>
               <GridEval
                 rows={axiosResponse[0]}
-                columnsVar={columnasPD}
+                columnsVar={columnasPDAnio}
                 fileNameVar='PD'
                 autoHeight
                 columnGroupingModel={ColumnaGrupoPd}
@@ -287,7 +293,7 @@ const ReporteTotal = () => {
             <Box className='mt-4 mb-2'>
               <GridEval
                 rows={axiosResponse[1]}
-                columnsVar={columnasCOB_EXC}
+                columnsVar={columnasCOB_EXCAnio}
                 fileNameVar='COB_EXC'
                 columnGroupingModel={ColumnaGrupoCOB_EXC}
                 experimentalFeatures={{ columnGrouping: true }}
@@ -300,23 +306,9 @@ const ReporteTotal = () => {
             <Box className='mt-4 mb-2' sx={{ height: 400, width: '100%' }}>
               <GridEval
                 rows={axiosResponse[2]}
-                columnsVar={columnasGTOSOP}
+                columnsVar={columnasGTOSOPAnio}
                 fileNameVar='GTOSOP'
                 columnGroupingModel={ColumnaGrupoGTOSOP}
-                experimentalFeatures={{ columnGrouping: true }}
-              />
-            </Box>
-          )}
-        {/* Repite para GTOSOP y ORVAS como en el ejemplo anterior */}
-        {valueTab === 'indGestion' &&
-          axiosResponse[4] &&
-          axiosResponse[4].length > 0 && (
-            <Box className='mt-4 mb-2'>
-              <GridEval
-                rows={axiosResponse[4]}
-                columnsVar={columnasINDGESTION}
-                fileNameVar='IND. GESTION'
-                columnGroupingModel={ColumnaGrupoINDGESTION}
                 experimentalFeatures={{ columnGrouping: true }}
               />
             </Box>
@@ -327,9 +319,22 @@ const ReporteTotal = () => {
             <Box className='mt-4 mb-2' sx={{ height: 400, width: '100%' }}>
               <GridEval
                 rows={axiosResponse[3]}
-                columnsVar={columnasORVAS}
+                columnsVar={columnasORVASAnio}
                 fileNameVar='ORVAS'
                 columnGroupingModel={ColumnaGrupoORVAS}
+              />
+            </Box>
+          )}{' '}
+        {valueTab === 'indGestion' &&
+          axiosResponse[4] &&
+          axiosResponse[4].length > 0 && (
+            <Box className='mt-4 mb-2'>
+              <GridEval
+                rows={axiosResponse[4]}
+                columnsVar={columnasINDGESTIONAnio}
+                fileNameVar='IND. GESTION'
+                columnGroupingModel={ColumnaGrupoINDGESTION}
+                experimentalFeatures={{ columnGrouping: true }}
               />
             </Box>
           )}

@@ -78,9 +78,9 @@ const ModeloRamos = ({id_arch, NombreArchivo, titulo}) => {
       const rowObj = row.reduce((acc, cell, cellIndex) => {
         // Para la primera celda osea col1 de fila, se asigna un ID único basado en el índice de la fila
         if (cellIndex === 0) {
-          acc['id'] = `${index + 1}`; // Asegurarse de que el ID sea un string si el DataGrid espera un string
+          acc['id'] = `${index + 1}`; // Asegurarse de que el ID sea un string 
         }
-        // La clave de cada celda se convierte en `col${cellIndex + 1}` para mantener la consistencia con tu estructura existente
+        // La clave de cada celda se convierte en `col${cellIndex + 1}` para mantener la consistencia con la estructura que tenemos
         const cellKey = `col${cellIndex + 1}`;
         acc[cellKey] = Object.values(cell)[0];
         return acc;
@@ -120,6 +120,12 @@ const ModeloRamos = ({id_arch, NombreArchivo, titulo}) => {
   }, [anio, mes, id_arch]);
 
   const handleDownload = (e) => downloadExcel(e, setDownloadStatus, anio, mes);
+
+  // Columnas con variable anio
+  const columnas_COB_EXC_adminsAnio = columnas_COB_EXC_admins(anio);
+  const columnasPDAnio = columnasPD(anio);
+  const columnasGTOSOPAnio = columnasGTOSOP(anio);
+  const columnasORVASAnio = columnasORVAS(anio);
 
   return (
     <>
@@ -259,7 +265,7 @@ const ModeloRamos = ({id_arch, NombreArchivo, titulo}) => {
             <Box className='mt-4 mb-2'>
               <GridEval
                 rows={axiosResponse[0]}
-                columnsVar={columnasPD}
+                columnsVar={columnasPDAnio}
                 fileNameVar='PD'
                 autoHeight
                 columnGroupingModel={ColumnaGrupoPd}
@@ -272,7 +278,7 @@ const ModeloRamos = ({id_arch, NombreArchivo, titulo}) => {
             <Box className='mt-4 mb-2'>
               <GridEval
                 rows={axiosResponse[1]}
-                columnsVar={columnas_COB_EXC_admins}
+                columnsVar={columnas_COB_EXC_adminsAnio}
                 fileNameVar='COB_EXC'
                 autoHeight
                 columnGroupingModel={ColumnaGrupo_COB_EXC_admins}
@@ -285,7 +291,7 @@ const ModeloRamos = ({id_arch, NombreArchivo, titulo}) => {
             <Box className='mt-4 mb-2'>
               <GridEval
                 rows={axiosResponse[2]}
-                columnsVar={columnasGTOSOP}
+                columnsVar={columnasGTOSOPAnio}
                 fileNameVar='GTOSOP'
                 autoHeight
                 columnGroupingModel={ColumnaGrupoGTOSOP}
@@ -298,7 +304,7 @@ const ModeloRamos = ({id_arch, NombreArchivo, titulo}) => {
             <Box className='mt-4 mb-2'>
               <GridEval
                 rows={axiosResponse[3]}
-                columnsVar={columnasORVAS}
+                columnsVar={columnasORVASAnio}
                 fileNameVar='ORVAS'
                 autoHeight
                 columnGroupingModel={ColumnaGrupoORVAS}
