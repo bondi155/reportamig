@@ -132,7 +132,6 @@ const ReporteTotal = () => {
 
   const handleDownload = (e) => downloadExcel(e, setDownloadStatus, anio, mes);
 
-
   const columnasPDAnio = columnasPD(anio);
   const columnasCOB_EXCAnio = columnasCOB_EXC(anio);
   const columnasGTOSOPAnio = columnasGTOSOP(anio);
@@ -140,7 +139,7 @@ const ReporteTotal = () => {
   const columnasINDGESTIONAnio = columnasINDGESTION(anio);
   return (
     <>
-         <Container className='container-custom'>
+      <Container className='container-custom'>
         <Form>
           <Row className='justify-content-center'>
             <Col lg={8} md={12}>
@@ -150,7 +149,7 @@ const ReporteTotal = () => {
                 </Card.Header>
                 <Card.Body>
                   <Row className='justify-content-center'>
-                    <Col lg={{ span: 5, offset:1 }} md={6} sm={6} xs={12}>
+                    <Col lg={{ span: 5, offset: 1 }} md={6} sm={6} xs={12}>
                       <MesAnioSelector
                         anioInicial={anio}
                         mesInicial={mes}
@@ -164,10 +163,14 @@ const ReporteTotal = () => {
                       sm={12}
                       xs={12}
                       className='d-flex justify-content-lg-start mt-4 mt-lg-0 mt-md-0 justify-content-center'
-                      >
+                    >
                       {isDownloading ? (
-                        <Button size='small' color="primary" endIcon={<CiSaveDown2 />}
-                        disabled>
+                        <Button
+                          size='small'
+                          variant='text'
+                          endIcon={<CiSaveDown2 />}
+                          disabled
+                        >
                           <Spinner
                             as='span'
                             animation='grow'
@@ -180,12 +183,13 @@ const ReporteTotal = () => {
                         <Button
                           size='small'
                           endIcon={<CiSaveDown2 />}
-                          color="primary"
+                          variant='text'
                           onClick={(e) => {
                             handleDownload(e);
                           }}
                           disabled={!axiosResponse || isDownloading}
-                        >Descargar
+                        >
+                          Descargar
                         </Button>
                       )}
                     </Col>
@@ -196,119 +200,120 @@ const ReporteTotal = () => {
           </Row>
         </Form>
       </Container>
-      {isLoading ? <PlaneSpinner /> : (
-
-      <Box
-        sx={{
-          maxWidth: '95%',
-          mt: '6rem',
-          width: '100%',
-          mx: 'auto',
-        }}
-      >
-        <Tabs
-          value={valueTab}
-          onChange={handleChange}
-          variant={scrollableTabs ? 'scrollable' : 'fullWidth'}
-          scrollButtons='auto'
-          allowScrollButtonsMobile
+      {isLoading ? (
+        <PlaneSpinner />
+      ) : (
+        <Box
           sx={{
-            '.MuiTabs-scroller': {
-              flexGrow: '0',
-            },
-            '.MuiTab-root': {
-              minWidth: 0,
-              padding: '6px 12px',
-            },
+            maxWidth: '95%',
+            mt: '6rem',
+            width: '100%',
+            mx: 'auto',
           }}
         >
-          <Tab label='PD' value='pd' />
-          <Tab label='COB_EXC' value='cobexc' />
-          <Tab label='GTOSOP' value='gtosop' />
-          <Tab label='ORVAS' value='orvas' />
-          <Tab label='IND. GESTION' value='indGestion' />
-          <Tab label='ROE' value='roe' />
-        </Tabs>
-        {valueTab === 'pd' &&
-          axiosResponse[0] &&
-          axiosResponse[0].length > 0 && (
-            <Box className='mt-4 mb-2'>
-              <GridEval
-                rows={axiosResponse[0]}
-                columnsVar={columnasPDAnio}
-                fileNameVar='PD'
-                autoHeight
-                columnGroupingModel={ColumnaGrupoPd}
-                experimentalFeatures={{ columnGrouping: true }}
-              />
-            </Box>
-          )}
-        {valueTab === 'cobexc' &&
-          axiosResponse[1] &&
-          axiosResponse[1].length > 0 && (
-            <Box className='mt-4 mb-2'>
-              <GridEval
-                rows={axiosResponse[1]}
-                columnsVar={columnasCOB_EXCAnio}
-                fileNameVar='COB_EXC'
-                columnGroupingModel={ColumnaGrupoCOB_EXC}
-                experimentalFeatures={{ columnGrouping: true }}
-              />
-            </Box>
-          )}
-        {valueTab === 'gtosop' &&
-          axiosResponse[2] &&
-          axiosResponse[2].length > 0 && (
-            <Box className='mt-4 mb-2' sx={{ height: 400, width: '100%' }}>
-              <GridEval
-                rows={axiosResponse[2]}
-                columnsVar={columnasGTOSOPAnio}
-                fileNameVar='GTOSOP'
-                columnGroupingModel={ColumnaGrupoGTOSOP}
-                experimentalFeatures={{ columnGrouping: true }}
-              />
-            </Box>
-          )}
-        {valueTab === 'orvas' &&
-          axiosResponse[3] &&
-          axiosResponse[3].length > 0 && (
-            <Box className='mt-4 mb-2' sx={{ height: 400, width: '100%' }}>
-              <GridEval
-                rows={axiosResponse[3]}
-                columnsVar={columnasORVASAnio}
-                fileNameVar='ORVAS'
-                columnGroupingModel={ColumnaGrupoORVAS}
-              />
-            </Box>
-          )}{' '}
-        {valueTab === 'indGestion' &&
-          axiosResponse[4] &&
-          axiosResponse[4].length > 0 && (
-            <Box className='mt-4 mb-2'>
-              <GridEval
-                rows={axiosResponse[4]}
-                columnsVar={columnasINDGESTIONAnio}
-                fileNameVar='IND. GESTION'
-                columnGroupingModel={ColumnaGrupoINDGESTION}
-                experimentalFeatures={{ columnGrouping: true }}
-              />
-            </Box>
-          )}
-        {valueTab === 'roe' &&
-          axiosResponse[5] &&
-          axiosResponse[5].length > 0 && (
-            <Box className='mt-4 mb-2'>
-              <GridEval
-                rows={axiosResponse[5]}
-                columnsVar={columnasROE}
-                fileNameVar='ROE'
-                columnGroupingModel={ColumnaGrupoROE}
-                experimentalFeatures={{ columnGrouping: true }}
-              />
-            </Box>
-          )}
-      </Box>
-       )}
+          <Tabs
+            value={valueTab}
+            onChange={handleChange}
+            variant={scrollableTabs ? 'scrollable' : 'fullWidth'}
+            scrollButtons='auto'
+            allowScrollButtonsMobile
+            sx={{
+              '.MuiTabs-scroller': {
+                flexGrow: '0',
+              },
+              '.MuiTab-root': {
+                minWidth: 0,
+                padding: '6px 12px',
+              },
+            }}
+          >
+            <Tab label='PD' value='pd' />
+            <Tab label='COB_EXC' value='cobexc' />
+            <Tab label='GTOSOP' value='gtosop' />
+            <Tab label='ORVAS' value='orvas' />
+            <Tab label='IND. GESTION' value='indGestion' />
+            <Tab label='ROE' value='roe' />
+          </Tabs>
+          {valueTab === 'pd' &&
+            axiosResponse[0] &&
+            axiosResponse[0].length > 0 && (
+              <Box className='mt-4 mb-2'>
+                <GridEval
+                  rows={axiosResponse[0]}
+                  columnsVar={columnasPDAnio}
+                  fileNameVar='PD'
+                  autoHeight
+                  columnGroupingModel={ColumnaGrupoPd}
+                  experimentalFeatures={{ columnGrouping: true }}
+                />
+              </Box>
+            )}
+          {valueTab === 'cobexc' &&
+            axiosResponse[1] &&
+            axiosResponse[1].length > 0 && (
+              <Box className='mt-4 mb-2'>
+                <GridEval
+                  rows={axiosResponse[1]}
+                  columnsVar={columnasCOB_EXCAnio}
+                  fileNameVar='COB_EXC'
+                  columnGroupingModel={ColumnaGrupoCOB_EXC}
+                  experimentalFeatures={{ columnGrouping: true }}
+                />
+              </Box>
+            )}
+          {valueTab === 'gtosop' &&
+            axiosResponse[2] &&
+            axiosResponse[2].length > 0 && (
+              <Box className='mt-4 mb-2' sx={{ height: 400, width: '100%' }}>
+                <GridEval
+                  rows={axiosResponse[2]}
+                  columnsVar={columnasGTOSOPAnio}
+                  fileNameVar='GTOSOP'
+                  columnGroupingModel={ColumnaGrupoGTOSOP}
+                  experimentalFeatures={{ columnGrouping: true }}
+                />
+              </Box>
+            )}
+          {valueTab === 'orvas' &&
+            axiosResponse[3] &&
+            axiosResponse[3].length > 0 && (
+              <Box className='mt-4 mb-2' sx={{ height: 400, width: '100%' }}>
+                <GridEval
+                  rows={axiosResponse[3]}
+                  columnsVar={columnasORVASAnio}
+                  fileNameVar='ORVAS'
+                  columnGroupingModel={ColumnaGrupoORVAS}
+                />
+              </Box>
+            )}{' '}
+          {valueTab === 'indGestion' &&
+            axiosResponse[4] &&
+            axiosResponse[4].length > 0 && (
+              <Box className='mt-4 mb-2'>
+                <GridEval
+                  rows={axiosResponse[4]}
+                  columnsVar={columnasINDGESTIONAnio}
+                  fileNameVar='IND. GESTION'
+                  columnGroupingModel={ColumnaGrupoINDGESTION}
+                  experimentalFeatures={{ columnGrouping: true }}
+                />
+              </Box>
+            )}
+          {valueTab === 'roe' &&
+            axiosResponse[5] &&
+            axiosResponse[5].length > 0 && (
+              <Box className='mt-4 mb-2'>
+                <GridEval
+                  rows={axiosResponse[5]}
+                  columnsVar={columnasROE}
+                  fileNameVar='ROE'
+                  columnGroupingModel={ColumnaGrupoROE}
+                  experimentalFeatures={{ columnGrouping: true }}
+                />
+              </Box>
+            )}
+        </Box>
+      )}
     </>
   );
 };

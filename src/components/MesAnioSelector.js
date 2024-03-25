@@ -28,7 +28,7 @@ const MesAnioSelector = ({ onFechaCambio, anioInicial, mesInicial }) => {
   };
   
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es_PE'>
+    <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es'>
       <Grid container spacing={2} alignItems="center">
         <Grid item xs>
           <DatePicker
@@ -36,7 +36,7 @@ const MesAnioSelector = ({ onFechaCambio, anioInicial, mesInicial }) => {
             label="Seleccione Mes y Año"
             value={fecha}
             onChange={handleFechaCambio}
-            components={{
+            renderInput={{
               TextField: (props) => <TextField {...props} />
             }}
             minDate={dayjs('2019-01-01')}

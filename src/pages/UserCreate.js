@@ -224,8 +224,8 @@ function UserCreate({ userCreate, setUserCreate, form }) {
                             className='d-flex justify-content-center mt-2 mt-lg-0 d-lg-block'
                           >
                             <Button
-                              color='primary'
-                              type='submit'
+                          variant='outlined'
+                          type='submit'
                               size='small'
                               endIcon={<FaUserPlus />}
                             >
@@ -278,8 +278,8 @@ function UserCreate({ userCreate, setUserCreate, form }) {
                               />
                             </Form.Group>
                             <Button
-                              color='primary'
-                              type='submit'
+                          variant='outlined'
+                          type='submit'
                               size='small'
                               className='mb-4'
                               endIcon={<GoPasskeyFill />}
@@ -342,7 +342,7 @@ function UserCreate({ userCreate, setUserCreate, form }) {
                       <Col lg={{ span: 2 }}>
                         <Button
                           className='mb-5'
-                          variant='outline-secondary'
+                          variant='outlined'
                           type='submit'
                           size='sm'
                         >

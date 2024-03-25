@@ -145,14 +145,16 @@ function EntradaCmer({ form }) {
                         md={12}
                         sm={12}
                         xs={12}
-                        className='d-flex justify-content-center mt-5 mt-sm-1'
+                        className='d-flex justify-content-center mt-3 mt-sm-0'
                       >
                         <Button
-                          color='primary'
+                          variant='outlined'
                           type='submit'
                           size='small'
-                          endIcon={<FaUpload />}
-                        >Cargar TXT</Button>
+                          endIcon={<FaUpload />}  
+                        >
+                          Cargar TXT
+                        </Button>
                       </Col>
                     </Row>
                   </Card.Body>

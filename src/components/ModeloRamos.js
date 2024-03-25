@@ -148,7 +148,7 @@ const ModeloRamos = ({ id_arch, NombreArchivo, titulo }) => {
                 </Card.Header>
                 <Card.Body>
                   <Row className='justify-content-center'>
-                    <Col lg={{ span: 5, offset:1 }} md={6} sm={6} xs={12}>
+                    <Col lg={{ span: 5, offset: 1 }} md={6} sm={6} xs={12}>
                       <MesAnioSelector
                         anioInicial={anio}
                         mesInicial={mes}
@@ -162,10 +162,14 @@ const ModeloRamos = ({ id_arch, NombreArchivo, titulo }) => {
                       sm={12}
                       xs={12}
                       className='d-flex justify-content-lg-start mt-4 mt-lg-0 mt-md-0 justify-content-center'
-                      >
+                    >
                       {isDownloading ? (
-                        <Button size='small' color="primary" endIcon={<CiSaveDown2 />}
-                        disabled>
+                        <Button
+                          size='small'
+                          variant='text'
+                          endIcon={<CiSaveDown2 />}
+                          disabled
+                        >
                           <Spinner
                             as='span'
                             animation='grow'
@@ -178,12 +182,13 @@ const ModeloRamos = ({ id_arch, NombreArchivo, titulo }) => {
                         <Button
                           size='small'
                           endIcon={<CiSaveDown2 />}
-                          color="primary"
+                          variant='text'
                           onClick={(e) => {
                             handleDownload(e);
                           }}
                           disabled={!axiosResponse || isDownloading}
-                        >Descargar
+                        >
+                          Descargar
                         </Button>
                       )}
                     </Col>
