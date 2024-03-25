@@ -1,14 +1,19 @@
 import React from 'react';
-import { Spinner } from 'react-bootstrap';
-import '../css/App.css';
+import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
 
-function PlaneSpinner({ size = "lg" }) {
+function PlaneSpinner({ size = 40 }) { // Puedes ajustar el tamaño predeterminado según necesites
   return (
-    <div className='spinner-consolidate spinner-principal d-flex justify-content-center align-items-center vh-50'>
-      <Spinner animation="grow" size={size} variant="secondary" role='status'>
-        <span className='visually-hidden'>Cargando...</span>
-      </Spinner>
-    </div>
+    <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '50vh', // Ajusta la altura vertical al 50% de la altura de la ventana
+      }}
+    >
+      <CircularProgress size={size} />
+    </Box>
   );
 }
 
