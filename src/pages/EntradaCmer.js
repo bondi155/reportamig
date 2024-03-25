@@ -1,14 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import '../css/App.css';
-import {
-  Container,
-  Button,
-  Row,
-  Col,
-  Form,
-  Modal,
-  Card,
-} from 'react-bootstrap';
+import { Container, Row, Col, Form, Modal, Card } from 'react-bootstrap';
+import { Button } from '@mui/material';
 import axios from 'axios';
 import { API_URL } from '../config/config';
 //import GridEval from '../charts/GridEval';
@@ -109,55 +102,62 @@ function EntradaCmer({ form }) {
         <Container className='container-custom'>
           <Form onSubmit={uploadFile}>
             <Row className='justify-content-center'>
-              <Col lg={8}> 
-            <Card>
-              <Card.Header>
-                <h3>Carga de archivo de entrada</h3>
-              </Card.Header>
-              <Card.Body>
-                <Card.Text>
-                <strong>  Carga de Archivo CMER o CMBG.</strong>
-                </Card.Text>
-                <Row className='gx-2 gy-3 align-items-center'>
-                  {/* Input de archivo */}
-                  <Col lg={7} md={8} sm={12} className='mt-3'>
-                    <Form.Group controlId='formFileLg' className='mb-3'>
-                      <Form.Control type='file' size='sm' onChange={saveFile} />
-                    </Form.Group>
-                  </Col>
-                  {/* Selector de tipo de archivo */}
-                  <Col lg={3} md={4} sm={6} xs={12} className='mt-0'>
-                    <Form.Group
-                      controlId='formFileTypeSelect'
-                      className='mb-lg-0'
-                    >
-                      <Form.Select size='sm' required onChange={handleChange}>
-                        <option value=''>Tipo de Archivo</option>
-                        <option value='cmer'>Resultados</option>
-                        <option value='cmbg'>Balance</option>
-                      </Form.Select>
-                    </Form.Group>
-                  </Col>
-                  {/* Botón */}
-                  <Col
-                    lg={2}
-                    md={12}
-                    sm={12}
-                    xs={12}
-                    className='d-flex justify-content-center mt-5 mt-sm-1'
-                  >
-                    <Button
-                      className='button-custom-gradient'
-                      size='sm'
-                      type='submit'
-                    >
-                      <FaUpload className='mb-1' /> Cargar TXT
-                    </Button>
-                  </Col>
-                </Row>
-              </Card.Body>
-            </Card>
-            </Col>
+              <Col lg={8}>
+                <Card>
+                  <Card.Header>
+                    <h3>Carga de archivo de entrada</h3>
+                  </Card.Header>
+                  <Card.Body>
+                    <Card.Text>
+                      <strong> Carga de Archivo CMER o CMBG.</strong>
+                    </Card.Text>
+                    <Row className='gx-2 gy-3 align-items-center'>
+                      {/* Input de archivo */}
+                      <Col lg={7} md={8} sm={12} className='mt-3'>
+                        <Form.Group controlId='formFileLg' className='mb-3'>
+                          <Form.Control
+                            type='file'
+                            size='sm'
+                            onChange={saveFile}
+                          />
+                        </Form.Group>
+                      </Col>
+                      {/* Selector de tipo de archivo */}
+                      <Col lg={3} md={4} sm={6} xs={12} className='mt-0'>
+                        <Form.Group
+                          controlId='formFileTypeSelect'
+                          className='mb-lg-0'
+                        >
+                          <Form.Select
+                            size='sm'
+                            required
+                            onChange={handleChange}
+                          >
+                            <option value=''>Tipo de Archivo</option>
+                            <option value='cmer'>Resultados</option>
+                            <option value='cmbg'>Balance</option>
+                          </Form.Select>
+                        </Form.Group>
+                      </Col>
+                      {/* Botón */}
+                      <Col
+                        lg={2}
+                        md={12}
+                        sm={12}
+                        xs={12}
+                        className='d-flex justify-content-center mt-5 mt-sm-1'
+                      >
+                        <Button
+                          color='primary'
+                          type='submit'
+                          size='small'
+                          endIcon={<FaUpload />}
+                        >Cargar TXT</Button>
+                      </Col>
+                    </Row>
+                  </Card.Body>
+                </Card>
+              </Col>
             </Row>
           </Form>
           <Modal show={isLoading} centered backdrop='static' keyboard={false}>

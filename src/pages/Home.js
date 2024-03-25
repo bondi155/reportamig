@@ -47,7 +47,6 @@ function Home({ form }) {
                   <Card.Body>
                     {/* Tarjetas de accesos directos */}
                   <AccesoDirecto />
-                     {/* Tarjetas de accesos directos */}
                   </Card.Body>
                 </Card>
               </Col>
@@ -71,7 +70,6 @@ function Home({ form }) {
               <Card.Body>
                   {/* Tarjetas de accesos directos */}
                   <AccesoDirecto />
-                     {/* Tarjetas de accesos directos */}
               </Card.Body>
             </Card>
           </div>
@@ -95,7 +93,6 @@ function Home({ form }) {
               <Card.Body>
                  {/* Tarjetas de accesos directos */}
                  <AccesoDirecto />
-                     {/* Tarjetas de accesos directos */}
               </Card.Body>
             </Card>
           </>

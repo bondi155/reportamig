@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Container, Row, Col, Button, Card } from 'react-bootstrap';
+import { Form, Container, Row, Col, Card } from 'react-bootstrap';
+import { Button } from '@mui/material';
 import axios from 'axios';
 //import { useNavigate } from 'react-router-dom';  USUARIO CON RECOIL O SECUENCIAL , VER ESO PARA LOS ROLES
 import { API_URL } from '../config/config.js';
@@ -152,87 +153,88 @@ function UserCreate({ userCreate, setUserCreate, form }) {
             {valueTab === 'createUser' && (
               <div>
                 <form onSubmit={addNewUser}>
-                  <Row className="justify-content-md-center" > 
-                  <Col lg={8} md={12}> 
-                  <Card className='card-body-xs-padding'>
-                    <Card.Header>
-                      <h3> Administración de Usuarios</h3>
-                    </Card.Header>
-                    <Card.Body>
-                      <Card.Title>Creación de Usuario</Card.Title>
-                    </Card.Body>
-                    <Row className='mt-1 mb-3'>
-                      {/* Usuario */}
-                      <Col
-                        lg={{ span: 3, offset: 1 }}
-                        md={{ span: 3, offset: 1 }}
-                        sm={12}
-                        xs={12}
-                      >
-                        <Form.Group className='mb-3'>
-                          <Form.Control
-                            type='text'
-                            name='username'
-                            size='sm'
-                            required
-                            placeholder='Usuario'
-                            onChange={handleUserInput}
-                          />
-                        </Form.Group>
-                      </Col>
-                      {/* Rol */}
-                      <Col lg={3} md={3} sm={12} xs={12}>
-                        <Form.Group className='mb-3'>
-                          <Form.Select
-                            aria-label='role'
-                            size='sm'
-                            value={userCreate.role}
-                            name='role'
-                            required
-                            onChange={handleUserInput}
+                  <Row className='justify-content-md-center'>
+                    <Col lg={8} md={12}>
+                      <Card className='card-body-xs-padding'>
+                        <Card.Header>
+                          <h3> Administración de Usuarios</h3>
+                        </Card.Header>
+                        <Card.Body>
+                          <Card.Title>Creación de Usuario</Card.Title>
+                        </Card.Body>
+                        <Row className='mt-1 mb-3'>
+                          {/* Usuario */}
+                          <Col
+                            lg={{ span: 3, offset: 1 }}
+                            md={{ span: 3, offset: 1 }}
+                            sm={12}
+                            xs={12}
                           >
-                            <option disabled value=''>
-                              Tipo de Usuarios
-                            </option>
-                            <option value='operador'>Operador</option>
-                            <option value='consulta'>Consulta</option>
-                            <option value='admin'>Administrador</option>
-                          </Form.Select>
-                        </Form.Group>
-                      </Col>
-                      {/* Contraseña */}
-                      <Col lg={3} md={4} sm={6} xs={12}>
-                        <Form.Group className='mb-3'>
-                          <Form.Control
-                            type='password'
-                            required
-                            size='sm'
-                            name='password'
-                            autoComplete='current-password'
-                            placeholder='Contraseña'
-                            onChange={handleUserInput}
-                          />
-                        </Form.Group>
-                      </Col>
-                      {/* Botón Crear Usuario */}
-                      <Col
-                        lg={2}
-                        md={12}
-                        sm={12}
-                        xs={12}
-                        className='d-flex justify-content-center mt-2 mt-lg-0 d-lg-block'
-                        >
-                        <Button
-                          className='button-custom-gradient' // Aquí asegúrate de que el mt-md-2 y mt-lg-0 estén en el botón si se necesita
-                          type='submit'
-                          size='sm'
-                        >
-                          <FaUserPlus className='mb-1' /> Crear
-                        </Button>
-                      </Col>
-                    </Row>
-                  </Card>
-                  </Col>
+                            <Form.Group className='mb-3'>
+                              <Form.Control
+                                type='text'
+                                name='username'
+                                size='sm'
+                                required
+                                placeholder='Usuario'
+                                onChange={handleUserInput}
+                              />
+                            </Form.Group>
+                          </Col>
+                          {/* Rol */}
+                          <Col lg={3} md={3} sm={12} xs={12}>
+                            <Form.Group className='mb-3'>
+                              <Form.Select
+                                aria-label='role'
+                                size='sm'
+                                value={userCreate.role}
+                                name='role'
+                                required
+                                onChange={handleUserInput}
+                              >
+                                <option disabled value=''>
+                                  Tipo de Usuarios
+                                </option>
+                                <option value='operador'>Operador</option>
+                                <option value='consulta'>Consulta</option>
+                                <option value='admin'>Administrador</option>
+                              </Form.Select>
+                            </Form.Group>
+                          </Col>
+                          {/* Contraseña */}
+                          <Col lg={3} md={4} sm={6} xs={12}>
+                            <Form.Group className='mb-3'>
+                              <Form.Control
+                                type='password'
+                                required
+                                size='sm'
+                                name='password'
+                                autoComplete='current-password'
+                                placeholder='Contraseña'
+                                onChange={handleUserInput}
+                              />
+                            </Form.Group>
+                          </Col>
+                          {/* Botón Crear Usuario */}
+                          <Col
+                            lg={2}
+                            md={12}
+                            sm={12}
+                            xs={12}
+                            className='d-flex justify-content-center mt-2 mt-lg-0 d-lg-block'
+                          >
+                            <Button
+                              color='primary'
+                              type='submit'
+                              size='small'
+                              endIcon={<FaUserPlus />}
+                            >
+                              Crear
+                            </Button>
+                          </Col>
+                        </Row>
+                      </Card>
+                    </Col>
                   </Row>
                 </form>
               </div>
@@ -240,73 +242,75 @@ function UserCreate({ userCreate, setUserCreate, form }) {
             {valueTab === 'resetPassword' && (
               <div>
                 <form onSubmit={passReset}>
-                <Row className="justify-content-md-center" > 
-                  <Col lg={8} md={12}> 
-                  <Card>
-                    <Card.Header>
-                      <h3>Administración de Usuarios</h3>{' '}
-                    </Card.Header>
-                    <Card.Body>
-                      <Card.Title>Reseteo de Contraseña</Card.Title>
-                    </Card.Body>
-                    <Row>
-                      <Col
-                        lg={12}
-                        md={12}
-                        sm={12}
-                        xs={12}
-                        className='d-flex justify-content-center'
-                      >
-                        <input
-                          type='hidden'
-                          name='username'
-                          value='elNombreDeUsuarioAquí'
-                        />
-                        <Form.Group
-                          className='mb-4 me-2'
-                          style={{ maxWidth: '300px' }}
-                        >
-                          <Form.Control
-                            type='password'
-                            required
-                            placeholder='Contraseña Nueva'
-                            autoComplete='new-password'
-                            size='sm'
-                            onChange={(e) => setNewPass(e.target.value)}
-                          />
-                        </Form.Group>
-                        <Button
-                          className='mb-4 button-custom-gradient'
-                          type='submit'
-                          size='sm'
-                        >
-                          <GoPasskeyFill /> Actualizar
-                        </Button>
-                      </Col>
-                    </Row>
-                  </Card>
-                  </Col>
+                  <Row className='justify-content-md-center'>
+                    <Col lg={8} md={12}>
+                      <Card>
+                        <Card.Header>
+                          <h3>Administración de Usuarios</h3>{' '}
+                        </Card.Header>
+                        <Card.Body>
+                          <Card.Title>Reseteo de Contraseña</Card.Title>
+                        </Card.Body>
+                        <Row>
+                          <Col
+                            lg={12}
+                            md={12}
+                            sm={12}
+                            xs={12}
+                            className='d-flex justify-content-center'
+                          >
+                            <input
+                              type='hidden'
+                              name='username'
+                              value='elNombreDeUsuarioAquí'
+                            />
+                            <Form.Group
+                              className='mb-4 me-2'
+                              style={{ maxWidth: '300px' }}
+                            >
+                              <Form.Control
+                                type='password'
+                                required
+                                placeholder='Contraseña Nueva'
+                                autoComplete='new-password'
+                                size='sm'
+                                onChange={(e) => setNewPass(e.target.value)}
+                              />
+                            </Form.Group>
+                            <Button
+                              color='primary'
+                              type='submit'
+                              size='small'
+                              className='mb-4'
+                              endIcon={<GoPasskeyFill />}
+                            >Actualizar</Button>
+                          </Col>
+                        </Row>
+                      </Card>
+                    </Col>
                   </Row>
                 </form>
               </div>
             )}
           </Box>
           <div className='usuarios-grid'>
-            <Row className='mt-5 justify-content-md-center'>  
-            <Col md={12} lg={8}>
-        <Card>
-          <Card.Header className='justify-content-center' as="h3">Lista de Usuarios</Card.Header>
-          <Card.Body>
-            <GridUsers
-              rows={listUser}
-              columnsVar={userColumns}
-              onDelete={handleDelete}
-              fileNameVar='UserList'
-              showDeleteColumn={true}
-            />
-          </Card.Body>
-        </Card>
-      </Col>
+            <Row className='mt-5 justify-content-md-center'>
+              <Col md={12} lg={8}>
+                <Card>
+                  <Card.Header className='justify-content-center' as='h3'>
+                    Lista de Usuarios
+                  </Card.Header>
+                  <Card.Body>
+                    <GridUsers
+                      rows={listUser}
+                      columnsVar={userColumns}
+                      onDelete={handleDelete}
+                      fileNameVar='UserList'
+                      showDeleteColumn={true}
+                    />
+                  </Card.Body>
+                </Card>
+              </Col>
             </Row>
           </div>
         </Container>
@@ -314,40 +318,40 @@ function UserCreate({ userCreate, setUserCreate, form }) {
         <>
           <Container className='container-custom'>
             <form onSubmit={passReset}>
-            <Row className="justify-content-md-center" > 
-                  <Col lg={10}> 
-              <Card>
-                <Card.Header>
-                  <h3>Administración de Usuario</h3>{' '}
-                </Card.Header>
-                <Card.Body>
-                  <Card.Title>Reseteo de Contraseña</Card.Title>
-                </Card.Body>
-                <Row>
-                  <Col lg={{ span: 4, offset: 3 }}>
-                    <Form.Group className='mb-3'>
-                      <Form.Control
-                        type='password'
-                        required
-                        placeholder='Contraseña Nueva'
-                        size='sm'
-                        onChange={(e) => setNewPass(e.target.value)}
-                      />
-                    </Form.Group>
-                  </Col>
-                  <Col lg={{ span: 2 }}>
-                    <Button
-                      className='mb-5'
-                      variant='outline-secondary'
-                      type='submit'
-                      size='sm'
-                    >
-                      <GoPasskeyFill /> Actualizar
-                    </Button>{' '}
-                  </Col>
-                </Row>
-              </Card>
-              </Col>
+              <Row className='justify-content-md-center'>
+                <Col lg={10}>
+                  <Card>
+                    <Card.Header>
+                      <h3>Administración de Usuario</h3>{' '}
+                    </Card.Header>
+                    <Card.Body>
+                      <Card.Title>Reseteo de Contraseña</Card.Title>
+                    </Card.Body>
+                    <Row>
+                      <Col lg={{ span: 4, offset: 3 }}>
+                        <Form.Group className='mb-3'>
+                          <Form.Control
+                            type='password'
+                            required
+                            placeholder='Contraseña Nueva'
+                            size='sm'
+                            onChange={(e) => setNewPass(e.target.value)}
+                          />
+                        </Form.Group>
+                      </Col>
+                      <Col lg={{ span: 2 }}>
+                        <Button
+                          className='mb-5'
+                          variant='outline-secondary'
+                          type='submit'
+                          size='sm'
+                        >
+                          <GoPasskeyFill /> Actualizar
+                        </Button>{' '}
+                      </Col>
+                    </Row>
+                  </Card>
+                </Col>
               </Row>
             </form>
           </Container>

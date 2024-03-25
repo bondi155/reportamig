@@ -1,5 +1,6 @@
 import React from 'react';
-import {Row, Col, Card, Button } from 'react-bootstrap';
+import {Row, Col, Card } from 'react-bootstrap';
+import { Button } from '@mui/material'; 
 import { FaArrowRight } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
@@ -48,11 +49,12 @@ const AccesoDirecto = () => (
         <Card.Body>
           <Card.Title>{acceso.nombre}</Card.Title>
           <Button
-            as={Link}
+            component={Link}
             to={acceso.ruta}
-            className='mt-3 button-custom-gradient'
+            className='mt-3'
+            color='primary'
           >
-            Ir <acceso.icono />
+          <acceso.icono />
           </Button>
         </Card.Body>
       </Card>

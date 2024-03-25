@@ -376,7 +376,6 @@ li.nav-item {
 
 }
 
-
 .nav-link:hover {
   color: #f8f9fa !important;
   /* o #23558f */
@@ -388,7 +387,6 @@ a.dropdown-item:hover {
   font-weight: 600;
   background-color: var(--amig-bg-color);
 }
-
 
 .navbar-custom-bg {
   background: linear-gradient(rgba(7, 74, 119, 0.6), rgba(3, 41, 67, 0.1)), #d9edf9;
@@ -424,8 +422,6 @@ a.dropdown-item:hover {
     padding-right: 0;
   }
 }
-
-
 
 /* Cards accesos directos  */
 .hover-effect:hover {

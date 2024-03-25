@@ -62,7 +62,7 @@ function GridEval({
     };
     columns.push(deleteButtonColumn);
   }
-  //console.log(columnsVar); // 
+  //console.log(columnsVar); //
   return (
     <Box
       sx={{
@@ -74,10 +74,9 @@ function GridEval({
         '& .my-super-theme--naming-group': {
           backgroundColor: '#FAF6F6',
           fontSize: 20,
-          fontWeight: 'bold'
-
+          fontWeight: 'bold',
+          border: 1,
         },
-        
       }}
     >
       <ThemeProvider theme={theme}>
@@ -106,9 +105,7 @@ function GridEval({
             },
           }}
           slots={{
-            toolbar: (props) => (
-              <CustomToolbar {...props} />
-            ),
+            toolbar: (props) => <CustomToolbar {...props} />,
           }}
           disableRowSelectionOnClick
           columnGroupingModel={columnGroupingModel}

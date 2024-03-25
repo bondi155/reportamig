@@ -625,7 +625,7 @@ async function reporteMapExcel(
       });
       const anioNumero = +anio; // Usando el operador unario + y convirtiendolo en numero
 
-      const cellAnio = 'B35'; 
+      const cellAnio = 'B35';
       sheet.getCell(cellAnio).value = anioNumero; // En el B35 ponemos el año del archivo para que haga comparacion formula de - en año anterior
     });
   } else {
@@ -643,8 +643,19 @@ async function reporteMapExcel(
         const cellRef = String.fromCharCode(currentColumnCode) + currentRow;
         const valor = Object.values(data)[0]; // Obtener el valor
 
-        // Colocar el valor en la celda correspondiente
-        sheet.getCell(cellRef).value = valor;
+        if (valor !== null) {
+          // Si el valor es num (y no empieza con letra) convierte a num
+          if (
+            !isNaN(valor) &&
+            !isNaN(parseFloat(valor)) &&
+            !/^[a-zA-Z]/.test(valor)
+          ) {
+            sheet.getCell(cellRef).value = parseFloat(valor);
+          } else {
+            // Dejarlo como string
+            sheet.getCell(cellRef).value = valor;
+          }
+        }
 
         currentColumnCode++; // Moverse a la siguiente columna para
       });

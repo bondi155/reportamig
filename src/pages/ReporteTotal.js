@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Container, Button, Col, Row, Card } from 'react-bootstrap';
+import { Form, Container, Col, Row, Card } from 'react-bootstrap';
+import { Button } from '@mui/material';
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
@@ -27,6 +28,7 @@ import PlaneSpinner from '../components/planeSpinner.js';
 import Spinner from 'react-bootstrap/Spinner';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
+import MesAnioSelector from '../components/MesAnioSelector.js';
 
 const downloadExcel = async (e, setDownloadStatus, anio, mes) => {
   e.preventDefault();
@@ -68,6 +70,13 @@ const ReporteTotal = () => {
   const handleChange = (event, newValue) => {
     setValueTab(newValue);
   };
+
+  const handleConfirmarSeleccion = ({ anio, mes }) => {
+    setAnio(anio);
+    setMes(mes);
+    // Llama a la función para actualizar el estado o realizar acciones del datepiker
+  };
+
   const theme = useTheme();
 
   const scrollableTabs = useMediaQuery(theme.breakpoints.down('lg'));
@@ -131,7 +140,7 @@ const ReporteTotal = () => {
   const columnasINDGESTIONAnio = columnasINDGESTION(anio);
   return (
     <>
-      <Container className='container-custom'>
+         <Container className='container-custom'>
         <Form>
           <Row className='justify-content-center'>
             <Col lg={8} md={12}>
@@ -140,99 +149,44 @@ const ReporteTotal = () => {
                   <h3>Total</h3>
                 </Card.Header>
                 <Card.Body>
-                  <Row className='gx-2 gy-3 justify-content-center'>
-                    {/* Año */}
-                    <Col lg={{ span: 3, offset: 1 }} md={4} sm={6} xs={12}>
-                      <Form.Group
-                        controlId='formAnioSelect'
-                        className='mb-lg-0'
-                      >
-                        <Form.Select
-                          size='sm'
-                          value={anio}
-                          onChange={(e) => setAnio(e.target.value)}
-                          disabled
-                        >
-                          {[2022, 2023, 2024, 2025, 2026, 2027].map((year) => (
-                            <option key={year} value={year}>
-                              {year}
-                            </option>
-                          ))}
-                        </Form.Select>
-                      </Form.Group>
+                  <Row className='justify-content-center'>
+                    <Col lg={{ span: 5, offset:1 }} md={6} sm={6} xs={12}>
+                      <MesAnioSelector
+                        anioInicial={anio}
+                        mesInicial={mes}
+                        onFechaCambio={handleConfirmarSeleccion}
+                      />
                     </Col>
-                    {/* Mes */}
-                    <Col lg={{ span: 3, offset: 0 }} md={4} sm={6} xs={12}>
-                      <Form.Group
-                        controlId='formMesSelect'
-                        className='mb-lg-0 ms-2'
-                      >
-                        <Form.Select
-                          size='sm'
-                          value={mes}
-                          onChange={(e) => setMes(e.target.value)}
-                          disabled
-                        >
-                          <option value=''>Seleccione un mes</option>
-                          {[
-                            'Enero',
-                            'Febrero',
-                            'Marzo',
-                            'Abril',
-                            'Mayo',
-                            'Junio',
-                            'Julio',
-                            'Agosto',
-                            'Septiembre',
-                            'Octubre',
-                            'Noviembre',
-                            'Diciembre',
-                          ].map((month, index) => (
-                            <option key={index} value={index + 1}>
-                              {month}
-                            </option>
-                          ))}
-                        </Form.Select>
-                      </Form.Group>
-                    </Col>
-                    {/* Botón Descargar */}
+                    {/* Botón Descargar  */}
                     <Col
-                      lg={{ span: 3, offset: 0 }}
-                      md={4}
+                      lg={3}
+                      md={3}
                       sm={12}
                       xs={12}
-                      className='d-flex justify-content-lg-start justify-content-center'
-                    >
+                      className='d-flex justify-content-lg-start mt-4 mt-lg-0 mt-md-0 justify-content-center'
+                      >
                       {isDownloading ? (
-                        <>
-                          <Button
+                        <Button size='small' color="primary" endIcon={<CiSaveDown2 />}
+                        disabled>
+                          <Spinner
+                            as='span'
+                            animation='grow'
                             size='sm'
-                            className='button-custom-gradient'
-                            disabled
-                          >
-                            <Spinner
-                              as='span'
-                              animation='grow'
-                              size='sm'
-                              role='status'
-                              aria-hidden='true'
-                            />{' '}
-                            Descargando...
-                          </Button>
-                        </>
+                            role='status'
+                            aria-hidden='true'
+                          />
+                        </Button>
                       ) : (
-                        <>
-                          <Button
-                            className='button-custom-gradient'
-                            size='sm'
-                            onClick={(e) => {
-                              handleDownload(e);
-                            }}
-                            disabled={!axiosResponse || isDownloading}
-                          >
-                            <CiSaveDown2 className='mb-1' /> Descargar Reporte
-                          </Button>
-                        </>
+                        <Button
+                          size='small'
+                          endIcon={<CiSaveDown2 />}
+                          color="primary"
+                          onClick={(e) => {
+                            handleDownload(e);
+                          }}
+                          disabled={!axiosResponse || isDownloading}
+                        >Descargar
+                        </Button>
                       )}
                     </Col>
                   </Row>
@@ -242,6 +196,8 @@ const ReporteTotal = () => {
           </Row>
         </Form>
       </Container>
+      {isLoading ? <PlaneSpinner /> : (
+
       <Box
         sx={{
           maxWidth: '95%',
@@ -352,7 +308,7 @@ const ReporteTotal = () => {
             </Box>
           )}
       </Box>
-      {isLoading && <PlaneSpinner />}
+       )}
     </>
   );
 };
