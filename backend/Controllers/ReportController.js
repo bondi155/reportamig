@@ -34,7 +34,7 @@ async function getEnc(id) {
   try {
     const [rows] = await pool.promise().query(sqlGetEnc, id);
     const mapeoEnc = rows[0] || [];
-    console.log(mapeoEnc);
+    //console.log(mapeoEnc);
     return mapeoEnc;
   } catch (error) {
     console.error('error', error);
@@ -43,17 +43,17 @@ async function getEnc(id) {
 }
 
 //Sacamos la Linea
-async function seqLine(idEncabezado, numTab) {
+async function seqLine(idEncabezado, numTab, tipoDet = 'H') {
   const sqlseqLine = `SELECT distinct seq_lin num_linea
                       FROM am_mapeo_det
                       WHERE id_map_enc = ?
 					            AND tab_num = ?
-                      AND tipo_det = 'H'
+                      AND tipo_det = ?
                       ORDER BY seq_lin`;
   try {
     const [rows] = await pool
       .promise()
-      .query(sqlseqLine, [idEncabezado, numTab]); //const [rows] me limpia el metadato que trae el array
+      .query(sqlseqLine, [idEncabezado, numTab, tipoDet]); //const [rows] me limpia el metadato que trae el array
     const resultadoSeqLine = rows || []; //si es rows si es vacio array vacio
     return resultadoSeqLine;
   } catch (error) {
@@ -125,7 +125,7 @@ async function obtenerDetalleTab(idEncabezado, tabs) {
 }
 
 //Detalle
-async function obtenerDetallesD(idEncabezado, numTab) {
+async function obtenerDetallesD(idEncabezado, numTab, seqLin = 1) {
   //poner idTab despues
 
   const sqlDetallesD = `
@@ -134,14 +134,14 @@ async function obtenerDetallesD(idEncabezado, numTab) {
     WHERE id_map_enc = ?
     AND tab_num = ?
     AND tipo_det = 'D'
-    AND seq_lin = 1
+    AND seq_lin = ?
     ORDER BY seq_dest, seq_orig    
   `;
 
   try {
     const [detalles] = await pool
       .promise()
-      .query(sqlDetallesD, [idEncabezado, numTab]);
+      .query(sqlDetallesD, [idEncabezado, numTab, seqLin]);
     return detalles;
   } catch (error) {
     console.error('Error al obtener detalles D:', error);
@@ -432,8 +432,147 @@ async function armaResultVert(
   return resultados;
 }
 
+async function armaResultVert2(
+  pAnio,
+  pMes,
+  pAnioAnt,
+  pArrCia,
+  pProcCia,
+  pDetalles
+) {
+  let resultados = [];
+  let valParam = [];
+  let detalle;
+  let lineaSal;
+  let idxDet;
+  let idCia;
+
+  let valIns;
+  let alias;
+  let cantCiclos;
+
+  let sqlDinamica, tablaOrig, whereCond, consultaFinal;
+
+  if(pProcCia==1) {
+    cantCiclos = pArrCia.length;
+  } else {
+    cantCiclos = 1;
+  }
+  
+  for (let idxCia = 0; idxCia < cantCiclos; idxCia++) {
+    lineaSal = [];
+    for (let i = 0; i < pDetalles.length; i++) {
+      idxDet = 1;
+  
+      detalle = pDetalles[i];
+
+      alias = 'valor';
+      valIns = null;
+     // valAComp = null;
+
+      idCia = pArrCia[idxCia].id_cia;
+      if (detalle.val_fijo !== null) {
+        let valorDinamico;
+        if (detalle.val_fijo.startsWith('=')) {
+          const expression = detalle.val_fijo.slice(1);
+          const parsedExpression = reempParam(
+            expression,
+            idCia,
+            pAnio,
+            pMes,
+            pAnioAnt,
+            valParam
+          );
+
+          const mexp = new Mexp();
+          try {
+            valorDinamico = mexp.eval(parsedExpression);
+          } catch (e) {
+            valorDinamico = null;
+          }
+        } else {
+          valorDinamico =
+            detalle.val_fijo !== '' ? reempParam(
+              detalle.val_fijo,
+              idCia,
+              pAnio,
+              pMes,
+              pAnioAnt,
+              valParam
+            ) : detalle.val_def; //
+        }
+        //resultados.push({ [alias]: valorDinamico });
+        valIns = valorDinamico;
+      } else {
+        sqlDinamica = reempParam(
+          detalle.campo_orig,
+          idCia,
+          pAnio,
+          pMes,
+          pAnioAnt,
+          valParam
+        );
+
+        tablaOrig = detalle.tabla_orig; // AGREGAR SI TABLA_ORIG ES NULL AL QUERY QUE ARMO SOLO SELECT SIN FROM NI WHERE ELSE LO DE SIEMPRE
+
+        if (tablaOrig === null) {
+          consultaFinal = `SELECT ${sqlDinamica} AS ${alias}`; //
+        } else {
+          whereCond = reempParam(
+            detalle.where_cond,
+            idCia,
+            pAnio,
+            pMes,
+            pAnioAnt,
+            valParam
+          );
+          consultaFinal = `SELECT ${sqlDinamica} AS ${alias} FROM ${tablaOrig} WHERE ${whereCond}`; //
+        }
+        try {
+          const [resultadoConsulta] = await pool.promise().query(consultaFinal);
+
+          //resultados.push(resultadoConsulta[0]);
+          if (resultadoConsulta[0]) {
+            valIns = resultadoConsulta[0][alias];
+          }
+        } catch (error) {
+          console.error('Error al ejecutar consulta dinámica:', error);
+        }
+      }
+      if (valIns == null && detalle.val_def != null) {
+        valIns = detalle.val_def;
+      } else {
+        if (
+          detalle.id_tipo_dato_orig == 1 &&
+          (isNaN(valIns) || !isFinite(valIns))
+        ) {
+          valIns = '0';
+        } else {
+          if (detalle.id_tipo_dato_orig == 1 && detalle.presic_orig_2 != null) {
+            if (detalle.presic_dato_orig_2 == 0) {
+              valIns = Math.round(valIns);
+            } else {
+              valIns = parseFloat(valIns).toFixed(
+                detalle.presic_orig_2
+              );
+            }
+          }
+        }
+      }
+      valParam[i] = valIns;
+      lineaSal.push(valIns);
+      idxDet++;
+    }
+    //pArrCia.forEach(async (compania) => {
+    //});
+    resultados.push(lineaSal);
+  }
+  return resultados;
+}
+
 async function procesaReporte(pIdArch, pAnio, pMes, pAnioAnt) {
   let datosTotal = [];
+  let lineaSal = [];
   let resultSal = [];
   let companias;
   let detallesD;
@@ -510,58 +649,115 @@ async function procesaReporte(pIdArch, pAnio, pMes, pAnioAnt) {
         datosTotal.push(datosTab);
       }
     } else {
-      let colEncNum;
-      for (let tabElem of resultadoTab) {
-        let datosTab = {
-          tab_num: tabElem.tab_num,
-          tab_nombre: tabElem.tab_nombre,
-          encabezado: [],
-          detalle: [],
-        };
-        const resultadoSeqLine = await seqLine(
-          resultadoEnc.id,
-          tabElem.tab_num
-        );
-        encabezadoCompleto = [];
-        for (let lineaEnc of resultadoSeqLine) {
-          const encabezado = await obtenerEncabezados(
+      if (resultadoEnc.tipo_proc == 'W') {
+        companias = await obtenerCompaniasActivas();
+        for (let tabElem of resultadoTab) {
+          let datosTab = {
+            tab_num: tabElem.tab_num,
+            tab_nombre: tabElem.tab_nombre,
+            encabezado: [],
+            detalle: [],
+          };
+          const resultadoSeqLine = await seqLine(
             resultadoEnc.id,
             tabElem.tab_num,
-            lineaEnc.num_linea
+            'D'
           );
-          let colEncNum = 1;
-          let encabezadoLin = [];
-          for (let encabezadoVal of encabezado) {
-            aliasCol = 'col' + colEncNum;
-            encabezadoLin.push({
-              [aliasCol]: reempParam(
-                encabezadoVal.val_fijo,
-                0,
-                pAnio,
-                pMes,
-                pAnioAnt,
-                []
-              ),
-            });
-            colEncNum++;
+
+          let lineaSal = [];
+          let detalleSal = [];
+          let primerCol = true;
+          const idxProcCia = 5;
+
+          let idxResultCol = 1;
+
+          for (let colDefDet of resultadoSeqLine) {
+
+            detallesD = await obtenerDetallesD(resultadoEnc.id, tabElem.tab_num, colDefDet.num_linea);
+
+            const consultas = await armaResultVert2(
+              pAnio,
+              pMes,
+              pAnioAnt,
+              companias,
+              colDefDet.num_linea == idxProcCia ? 1 : 0, //Es el ID de seqLin que procesa varias veces la columna, por cada compañia
+              detallesD
+            );
+  
+            let resultCol = await Promise.all(consultas);
+
+            for(let resultColLin of resultCol) {
+              let numCol = 1;
+              for(let columnaVal of resultColLin) {
+                if(primerCol) {
+                  lineaSal[numCol] = [];
+                }
+                lineaSal[numCol].push({ ['col'+idxResultCol]: columnaVal });
+                numCol++;
+              }
+              primerCol = false;
+              idxResultCol++;
+            }
           }
-          encabezadoCompleto.push(encabezadoLin);
+          lineaSal.shift();
+          detalleSal.push(lineaSal);
+          datosTab.detalle.push(...detalleSal.flat());
+          datosTotal.push(datosTab);
         }
-        //datosTab.encabezado.push(encabezadoCompleto);
-        datosTab.encabezado = encabezadoCompleto;
-
-        companias = await obtenerCompaniasActivas();
-        detallesD = await obtenerDetallesD(resultadoEnc.id, tabElem.tab_num);
-
-        const consultas = companias.map((compania) =>
-          consultaDinamica(compania.id_cia, pAnio, pMes, pAnioAnt, detallesD)
-        );
-
-        const resultadosDetalles = await Promise.all(consultas);
-
-        datosTab.detalle.push(...resultadosDetalles);
-
-        datosTotal.push(datosTab);
+      } else {
+        let colEncNum;
+        for (let tabElem of resultadoTab) {
+          let datosTab = {
+            tab_num: tabElem.tab_num,
+            tab_nombre: tabElem.tab_nombre,
+            encabezado: [],
+            detalle: [],
+          };
+          const resultadoSeqLine = await seqLine(
+            resultadoEnc.id,
+            tabElem.tab_num
+          );
+          encabezadoCompleto = [];
+          for (let lineaEnc of resultadoSeqLine) {
+            const encabezado = await obtenerEncabezados(
+              resultadoEnc.id,
+              tabElem.tab_num,
+              lineaEnc.num_linea
+            );
+            let colEncNum = 1;
+            let encabezadoLin = [];
+            for (let encabezadoVal of encabezado) {
+              aliasCol = 'col' + colEncNum;
+              encabezadoLin.push({
+                [aliasCol]: reempParam(
+                  encabezadoVal.val_fijo,
+                  0,
+                  pAnio,
+                  pMes,
+                  pAnioAnt,
+                  []
+                ),
+              });
+              colEncNum++;
+            }
+            encabezadoCompleto.push(encabezadoLin);
+          }
+          //datosTab.encabezado.push(encabezadoCompleto);
+          datosTab.encabezado = encabezadoCompleto;
+  
+          companias = await obtenerCompaniasActivas();
+          detallesD = await obtenerDetallesD(resultadoEnc.id, tabElem.tab_num);
+  
+          const consultas = companias.map((compania) =>
+            consultaDinamica(compania.id_cia, pAnio, pMes, pAnioAnt, detallesD)
+          );
+  
+          const resultadosDetalles = await Promise.all(consultas);
+  
+          datosTab.detalle.push(...resultadosDetalles);
+  
+          datosTotal.push(datosTab);
+        }
       }
     }
   } catch (error) {
@@ -604,7 +800,7 @@ async function reporteMapExcel(
             const colLetter = String.fromCharCode('A'.charCodeAt(0) + index); // Convertir indice a letra de la columna
             const cellRef = colLetter + filaActual;
             const valor = Object.values(valorColumna)[0];
-            // Comprobar si el valor es num y convertirlo
+            // Comprueba si el valor es num y convertirlo
             // console.log(`Valor antes de convertir: ${valor}`);
             if (valor !== null) {
               // Si el valor es num (y no empieza con letra) convierte a num
@@ -628,7 +824,7 @@ async function reporteMapExcel(
       const cellAnio = 'B35';
       sheet.getCell(cellAnio).value = anioNumero; // En el B35 ponemos el año del archivo para que haga comparacion formula de - en año anterior
     });
-  } else {
+  } else if (tipoArchivo === 'V') {
     const pestaña = datosTotal[0];
     const sheet = workbook.getWorksheet(pestaña.tab_nombre);
 
@@ -661,6 +857,41 @@ async function reporteMapExcel(
       });
 
       currentRow++; // Moverse a la siguiente fila después terminar un array
+    });
+  } else if (tipoArchivo === 'W') {
+    datosTotal.forEach((pestaña) => {
+      const sheet = workbook.getWorksheet(pestaña.tab_nombre);
+      let filaInicial = 11; // Iniciar en la fila 11
+  
+      // Omitir el primer elemento usando slice y luego iterar sobre los detalles restantes
+      pestaña.detalle.slice(1).forEach((filaDetalle) => {
+        filaDetalle.forEach((valorColumna, index) => {
+          // Calcula la letra de la columna correctamente, incluso después de la 'Z'
+          let numColumna = index + 3; // Inicia en la columna 'C' (3 en 0-index)
+          let colLetter = '';
+          while (numColumna > 0) {
+            let remainder = (numColumna - 1) % 26;
+            colLetter = String.fromCharCode('A'.charCodeAt(0) + remainder) + colLetter;
+            numColumna = parseInt((numColumna - remainder) / 26, 10);
+          }
+  
+          const cellRef = colLetter + filaInicial;
+          const valor = valorColumna ? Object.values(valorColumna)[0] : null;
+  
+          console.log(`Accediendo a la celda: ${cellRef} con valor: ${valor}`);
+  
+          if (valor !== null) {
+            // Si el valor es numérico y no empieza con letra, convertir a número
+            if (!isNaN(valor) && !isNaN(parseFloat(valor)) && !/^[a-zA-Z]/.test(valor)) {
+              sheet.getCell(cellRef).value = parseFloat(valor);
+            } else {
+              // De lo contrario, asignar el valor como string
+              sheet.getCell(cellRef).value = valor;
+            }
+          }
+        });
+        filaInicial++; // Moverse a la siguiente fila después de terminar con una fila de detalle
+      });
     });
   }
   await workbook.xlsx.writeFile(rutaSalida);

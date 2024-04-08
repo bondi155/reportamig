@@ -71,6 +71,13 @@ function NavigationBar({ setIslogin, form }) {
                   <NavDropdown.Item
                     as={Link}
                     onClick={handleToggleClick}
+                    to='/estadoFinanciero'
+                  >
+                    Estado Financiero
+                  </NavDropdown.Item>{' '}
+                  <NavDropdown.Item
+                    as={Link}
+                    onClick={handleToggleClick}
                     to='/estadoResultados'
                   >
                     Estado Resultados
@@ -82,7 +89,6 @@ function NavigationBar({ setIslogin, form }) {
                   >
                     Ramo Administrativas{' '}
                   </NavDropdown.Item>
-                 
                   <NavDropdown.Item
                     as={Link}
                     onClick={handleToggleClick}
@@ -102,8 +108,8 @@ function NavigationBar({ setIslogin, form }) {
                     onClick={handleToggleClick}
                     to='/ramoJudicial'
                   >
-                      Ramo Judicial{' '}
-                    </NavDropdown.Item>
+                    Ramo Judicial{' '}
+                  </NavDropdown.Item>
                   <NavDropdown.Item
                     as={Link}
                     onClick={handleToggleClick}

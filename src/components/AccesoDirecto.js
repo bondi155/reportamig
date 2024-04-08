@@ -19,6 +19,11 @@ const AccesoDirecto = () => (
       icono: FaArrowRight,
     },
     {
+      nombre: 'Estado Financiero',
+      ruta: '/estadoFinanciero',
+      icono: FaArrowRight,
+    },
+    {
       nombre: 'Ramo Administrativas',
       ruta: '/ramoAdministrativo',
       icono: FaArrowRight,
