@@ -20,6 +20,7 @@ import RamoCaucion from './pages/RamoCaucion';
 import RamoCredito  from './pages/RamoCredito';
 import RamoFidelidad from  './pages/RamoFidelidad';
 import EstadoFinanciero from './pages/EstadoFinanciero';
+import SiniestroResultados from './pages/SiniestrosResultados';
 function App() {
   const [islogin, setIslogin] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -159,6 +160,18 @@ function App() {
             element={
               <PrivateRoute islogin={islogin}>
                 <EstadoFinanciero
+                  form={form}
+                  userCreate={userCreate}
+                  setUserCreate={setUserCreate}
+                />{' '}
+              </PrivateRoute>
+            }
+          />
+                    <Route
+            path='/siniestroResultados'
+            element={
+              <PrivateRoute islogin={islogin}>
+                <SiniestroResultados
                   form={form}
                   userCreate={userCreate}
                   setUserCreate={setUserCreate}

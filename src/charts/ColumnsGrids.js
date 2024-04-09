@@ -870,3 +870,81 @@ export const ColumnaGrupo_COB_EXC_admins = [
 ];
 
 // Termina Administrativas ---------------------------------------------------------------º-------------------------------------------------------------------------------
+
+// Columnas Siniestros Resultados
+export const columnasTotalGeneral = (anio) =>
+  withNumberFormatter([
+    { field: 'col1', headerName: 'Posición', align: 'center', width: 80 },
+    { field: 'col2', headerName: 'Empresa', width: 230 },
+    // Columnas para "Cobertura Exc. de Pérdida"
+    { field: 'col3', headerName: 'Importe', type: 'number', width: 100 },
+    {
+      field: 'col4',
+      headerName: `% VS. Prima Directa ${anio}`,
+      type: 'number',
+      width: 250,
+    },
+    {
+      field: 'col5',
+      headerName: `% VS. Prima Directa ${anio - 1}`,
+      type: 'number',
+      width: 250,
+    },
+
+    // Columnas para "Cto Adquisición Directo"
+    { field: 'col6', headerName: 'Importe', type: 'number', width: 250 },
+    {
+      field: 'col7',
+      headerName: `% de Participación de Mercado`,
+      type: 'number',
+      width: 320,
+    },
+   
+  ]);
+
+
+  // grupo para total general 
+export const ColumnaGrupoTotalGeneral = [
+  {
+    groupId: 'reclamacionsiniestros',
+    headerName: 'Reclamación/Siniestros Directos',
+    headerAlign: 'center',
+    headerClassName: 'my-super-theme--naming-group',
+    description: 'Reclamación/Siniestros Directos',
+    children: [{ field: 'col3' }, { field: 'col4' }, { field: 'col5' }],
+  },
+  {
+    groupId: 'eclamacionessiniestrosretenidos',
+    headerName: 'Reclamaciones/Siniestros Retenidos',
+    headerAlign: 'center',
+    headerClassName: 'my-super-theme--naming-group',
+
+    description: 'Reclamaciones/Siniestros Retenidos',
+    children: [{ field: 'col6' }],
+  },
+ 
+];
+
+
+  // grupo para total general 
+  export const ColumnaGrupoTotalDemas = [
+    {
+      groupId: 'siniestrosdirectos',
+      headerName: 'Siniestros Directos',
+      headerAlign: 'center',
+      headerClassName: 'my-super-theme--naming-group',
+      description: 'Reclamación/Siniestros Directos',
+      children: [{ field: 'col3' }, { field: 'col4' }, { field: 'col5' }],
+    },
+    {
+      groupId: 'siniestrosretenidos',
+      headerName: 'iniestros Retenidos',
+      headerAlign: 'center',
+      headerClassName: 'my-super-theme--naming-group',
+  
+      description: 'Reclamaciones/Siniestros Retenidos',
+      children: [{ field: 'col6' }],
+    },
+   
+  ];
+  

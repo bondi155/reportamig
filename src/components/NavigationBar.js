@@ -117,6 +117,13 @@ function NavigationBar({ setIslogin, form }) {
                   >
                     Ramo Fidelidad{' '}
                   </NavDropdown.Item>
+                  <NavDropdown.Item
+                    as={Link}
+                    onClick={handleToggleClick}
+                    to='/siniestroResultados'
+                  >
+                    Siniesrtos Resultados{' '}
+                  </NavDropdown.Item>
                   <NavDropdown.Divider />
                   <NavDropdown.Item href='#action/3.4'>
                     Configuracion de reportes{' '}

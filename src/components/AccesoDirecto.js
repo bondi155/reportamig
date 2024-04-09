@@ -48,6 +48,11 @@ const AccesoDirecto = () => (
       ruta: '/ramoFidelidad',
       icono: FaArrowRight,
     },
+    {
+      nombre: 'Siniestros Resultados',
+      ruta: '/siniestroResultados',
+      icono: FaArrowRight,
+    },
   ].map((acceso, idx) => (
     <Col key={idx}>
       <Card className='h-100 text-center hover-effect'>

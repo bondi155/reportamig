@@ -19,6 +19,9 @@ import {
   ColumnaGrupoGTOSOP,
   columnasORVAS,
   ColumnaGrupoORVAS,
+  columnasTotalGeneral,
+  ColumnaGrupoTotalGeneral,
+  ColumnaGrupoTotalDemas,
 } from '../charts/ColumnsGrids.js';
 import PlaneSpinner from '../components/planeSpinner.js';
 import Spinner from 'react-bootstrap/Spinner';
@@ -33,6 +36,7 @@ const ModeloRamos = ({ id_arch, NombreArchivo, titulo }) => {
   const [isDownloading, setDownloadStatus] = useState(false);
   const [axiosResponse, setAxiosResponse] = useState([]);
   const [valueTab, setValueTab] = useState('pd');
+  const [valueTabTotales, setValueTabTotales] = useState('tgeneral');
 
   const downloadExcel = async (e, setDownloadStatus, anio, mes) => {
     e.preventDefault();
@@ -71,6 +75,9 @@ const ModeloRamos = ({ id_arch, NombreArchivo, titulo }) => {
     setValueTab(newValue);
   };
 
+  const handleChangeTotales = (event, newValue) => {
+    setValueTabTotales(newValue);
+  };
   const handleConfirmarSeleccion = ({ anio, mes }) => {
     setAnio(anio);
     setMes(mes);
@@ -135,6 +142,9 @@ const ModeloRamos = ({ id_arch, NombreArchivo, titulo }) => {
   const columnasPDAnio = columnasPD(anio);
   const columnasGTOSOPAnio = columnasGTOSOP(anio);
   const columnasORVASAnio = columnasORVAS(anio);
+
+  // Columnas con variable anio para totales
+  const columnasTotalGeneralAnio = columnasTotalGeneral(anio);
 
   return (
     <>
@@ -201,6 +211,159 @@ const ModeloRamos = ({ id_arch, NombreArchivo, titulo }) => {
       </Container>
       {isLoading ? (
         <PlaneSpinner />
+      ) : id_arch === 11 ? (
+        <>
+          <div>Tu contenido especial para id_arch 11</div>
+          <Box
+            sx={{
+              maxWidth: '95%',
+              mt: '6rem',
+              width: '100%',
+              mx: 'auto', // Centra el Box de mui como lo hace un contenedor Bootstrap
+            }}
+          >
+            <Tabs
+              value={valueTabTotales}
+              variant={scrollableTabs ? 'scrollable' : 'fullWidth'}
+              scrollButtons
+              allowScrollButtonsMobile
+              onChange={handleChangeTotales}
+              sx={{
+                '.MuiTabs-flexContainer': {
+                  justifyContent: 'space-around',
+                },
+              }}
+            >
+              <Tab label='Total General' value='tgeneral' sx={{ marginX: 2 }} />
+              <Tab label='Total Fianzas' value='tfianzas' />
+              <Tab label='Total Caución' value='tcaucion' />
+              <Tab label='Total Fidelidad' value='tfidelidad' />
+              <Tab label='Total Judiciales' value='tjudiciales' />
+              <Tab label='Total Adminitrativas' value='tadminitrativas' />
+              <Tab label='Total Credito' value='tcredito' />
+              <Tab label='Total S. Caución' value='tsegurocau' />
+              <Tab label='Total S. de Crédito' value='tsegurocred' />
+            </Tabs>
+            {valueTabTotales === 'tgeneral' &&
+              axiosResponse[0] &&
+              axiosResponse[0].length > 0 && (
+                <Box className='mt-4 mb-2'>
+                  <GridEval
+                    rows={axiosResponse[0]}
+                    columnsVar={columnasTotalGeneralAnio}
+                    fileNameVar='Total General'
+                    autoHeight
+                    columnGroupingModel={ColumnaGrupoTotalGeneral}
+                  />
+                </Box>
+              )}
+
+            {valueTabTotales === 'tfianzas' &&
+              axiosResponse[1] &&
+              axiosResponse[1].length > 0 && (
+                <Box className='mt-4 mb-2'>
+                  <GridEval
+                    rows={axiosResponse[1]}
+                    columnsVar={columnasTotalGeneralAnio}
+                    fileNameVar='Total Fianzas'
+                    autoHeight
+                    columnGroupingModel={ColumnaGrupoTotalDemas}
+                  />
+                </Box>
+              )}
+            {valueTabTotales === 'tcaucion' &&
+              axiosResponse[2] &&
+              axiosResponse[2].length > 0 && (
+                <Box className='mt-4 mb-2'>
+                  <GridEval
+                    rows={axiosResponse[2]}
+                    columnsVar={columnasTotalGeneralAnio}
+                    fileNameVar='Total Caución'
+                    autoHeight
+                    columnGroupingModel={ColumnaGrupoTotalDemas}
+                  />
+                </Box>
+              )}
+            {valueTabTotales === 'tfidelidad' &&
+              axiosResponse[3] &&
+              axiosResponse[3].length > 0 && (
+                <Box className='mt-4 mb-2'>
+                  <GridEval
+                    rows={axiosResponse[3]}
+                    columnsVar={columnasTotalGeneralAnio}
+                    fileNameVar='Total Fidelidad'
+                    autoHeight
+                    columnGroupingModel={ColumnaGrupoTotalDemas}
+                  />
+                </Box>
+              )}
+            {valueTabTotales === 'tjudiciales' &&
+              axiosResponse[4] &&
+              axiosResponse[4].length > 0 && (
+                <Box className='mt-4 mb-2'>
+                  <GridEval
+                    rows={axiosResponse[4]}
+                    columnsVar={columnasTotalGeneralAnio}
+                    fileNameVar='Total Judiciales'
+                    autoHeight
+                    columnGroupingModel={ColumnaGrupoTotalDemas}
+                  />
+                </Box>
+              )}
+            {valueTabTotales === 'tadminitrativas' &&
+              axiosResponse[5] &&
+              axiosResponse[5].length > 0 && (
+                <Box className='mt-4 mb-2'>
+                  <GridEval
+                    rows={axiosResponse[5]}
+                    columnsVar={columnasTotalGeneralAnio}
+                    fileNameVar='Total Adminitrativas'
+                    autoHeight
+                    columnGroupingModel={ColumnaGrupoTotalDemas}
+                  />
+                </Box>
+              )}
+            {valueTabTotales === 'tcredito' &&
+              axiosResponse[6] &&
+              axiosResponse[6].length > 0 && (
+                <Box className='mt-4 mb-2'>
+                  <GridEval
+                    rows={axiosResponse[6]}
+                    columnsVar={columnasTotalGeneralAnio}
+                    fileNameVar='Total Crédito'
+                    autoHeight
+                    columnGroupingModel={ColumnaGrupoTotalDemas}
+                  />
+                </Box>
+              )}
+            {valueTabTotales === 'tsegurocau' &&
+              axiosResponse[7] &&
+              axiosResponse[7].length > 0 && (
+                <Box className='mt-4 mb-2'>
+                  <GridEval
+                    rows={axiosResponse[7]}
+                    columnsVar={columnasTotalGeneralAnio}
+                    fileNameVar='Total Seguro Caución'
+                    autoHeight
+                    columnGroupingModel={ColumnaGrupoTotalDemas}
+                  />
+                </Box>
+              )}
+            {valueTabTotales === 'tsegurocred' &&
+              axiosResponse[8] &&
+              axiosResponse[8].length > 0 && (
+                <Box className='mt-4 mb-2'>
+                  <GridEval
+                    rows={axiosResponse[8]}
+                    columnsVar={columnasTotalGeneralAnio}
+                    fileNameVar='Total Seguro Crédito'
+                    autoHeight
+                    columnGroupingModel={ColumnaGrupoTotalDemas}
+                  />
+                </Box>
+              )}
+          </Box>
+        </>
       ) : (
         <Box
           sx={{
