@@ -899,11 +899,9 @@ export const columnasTotalGeneral = (anio) =>
       type: 'number',
       width: 320,
     },
-   
   ]);
 
-
-  // grupo para total general 
+// grupo para total general
 export const ColumnaGrupoTotalGeneral = [
   {
     groupId: 'reclamacionsiniestros',
@@ -922,29 +920,299 @@ export const ColumnaGrupoTotalGeneral = [
     description: 'Reclamaciones/Siniestros Retenidos',
     children: [{ field: 'col6' }],
   },
- 
 ];
 
+// grupo para total general
+export const ColumnaGrupoTotalDemas = [
+  {
+    groupId: 'siniestrosdirectos',
+    headerName: 'Siniestros Directos',
+    headerAlign: 'center',
+    headerClassName: 'my-super-theme--naming-group',
+    description: 'Reclamación/Siniestros Directos',
+    children: [{ field: 'col3' }, { field: 'col4' }, { field: 'col5' }],
+  },
+  {
+    groupId: 'siniestrosretenidos',
+    headerName: 'Siniestros Retenidos',
+    headerAlign: 'center',
+    headerClassName: 'my-super-theme--naming-group',
 
-  // grupo para total general 
-  export const ColumnaGrupoTotalDemas = [
+    description: 'Reclamaciones/Siniestros Retenidos',
+    children: [{ field: 'col6' }],
+  },
+];
+// Termina TOTALES de SINIESTROS ---------------------------------------------------------------º-------------------------------------------------------------------------------
+
+export const columnas_CuentasOrden = (anio) =>
+  withNumberFormatter([
+    { field: 'col1', headerName: 'Posición', align: 'center', width: 80 },
+    { field: 'col2', headerName: 'Empresa', width: 230 },
+    // Columnas para "Cobertura Exc. de Pérdida"
     {
-      groupId: 'siniestrosdirectos',
-      headerName: 'Siniestros Directos',
-      headerAlign: 'center',
-      headerClassName: 'my-super-theme--naming-group',
-      description: 'Reclamación/Siniestros Directos',
-      children: [{ field: 'col3' }, { field: 'col4' }, { field: 'col5' }],
+      field: 'col3',
+      headerName: ` Directas Importe ${anio}`,
+      type: 'number',
+      width: 130,
     },
     {
-      groupId: 'siniestrosretenidos',
-      headerName: 'iniestros Retenidos',
+      field: 'col4',
+      headerName: `Cedidas Importe ${anio}`,
+      type: 'number',
+      width: 130,
+    },
+    {
+      field: 'col5',
+      headerName: `% Cesión`,
+      type: 'number',
+      width: 150,
+    },
+    {
+      field: 'col6',
+      headerName: `Directas Importe ${anio - 1}`,
+      type: 'number',
+      width: 150,
+    },
+    {
+      field: 'col7',
+      headerName: `Cedidas Importe ${anio - 1}`,
+      type: 'number',
+      width: 150,
+    },
+    {
+      field: 'col8',
+      headerName: `% Cesión`,
+      type: 'number',
+      width: 150,
+    },
+    {
+      field: 'col9',
+      headerName: `Incr./Disminución`,
+      type: 'number',
+      width: 150,
+    },
+    {
+      field: 'col10',
+      headerName: `Directas Importe ${anio}`,
+      type: 'number',
+      width: 130,
+    },
+    {
+      field: 'col11',
+      headerName: `Cedidas Importe ${anio}`,
+      type: 'number',
+      width: 130,
+    },
+    {
+      field: 'col12',
+      headerName: `% Cesión`,
+      type: 'number',
+      width: 150,
+    },
+    {
+      field: 'col13',
+      headerName: `Directas Importe ${anio - 1}`,
+      type: 'number',
+      width: 150,
+    },
+    {
+      field: 'col14',
+      headerName: `Cedidas Importe ${anio - 1}`,
+      type: 'number',
+      width: 150,
+    },
+    {
+      field: 'col15',
+      headerName: `% Cesión`,
+      type: 'number',
+      width: 150,
+    },
+    {
+      field: 'col16',
+      headerName: `Incr./Disminución`,
+      type: 'number',
+      width: 150,
+    },
+    {
+      field: 'col17',
+      headerName: `Directas Importe ${anio}`,
+      type: 'number',
+      width: 130,
+    },
+    {
+      field: 'col18',
+      headerName: `Cedidas Importe ${anio}`,
+      type: 'number',
+      width: 130,
+    },
+    {
+      field: 'col19',
+      headerName: `% Cesión`,
+      type: 'number',
+      width: 150,
+    },
+    {
+      field: 'col20',
+      headerName: `Directas Importe ${anio - 1}`,
+      type: 'number',
+      width: 150,
+    },
+    {
+      field: 'col21',
+      headerName: `Cedidas Importe ${anio - 1}`,
+      type: 'number',
+      width: 150,
+    },
+    {
+      field: 'col22',
+      headerName: `% Cesión`,
+      type: 'number',
+      width: 150,
+    },
+    {
+      field: 'col23',
+      headerName: `Incr./Disminución`,
+      type: 'number',
+      width: 150,
+    },
+    {
+      field: 'col24',
+      headerName: `Directas Importe ${anio}`,
+      type: 'number',
+      width: 130,
+    },
+    {
+      field: 'col25',
+      headerName: `Cedidas Importe ${anio}`,
+      type: 'number',
+      width: 130,
+    },
+    {
+      field: 'col26',
+      headerName: `% Cesión`,
+      type: 'number',
+      width: 150,
+    },
+    {
+      field: 'col27',
+      headerName: `Directas Importe ${anio}`,
+      type: 'number',
+      width: 130,
+    },
+    {
+      field: 'col28',
+      headerName: `Cedidas Importe ${anio}`,
+      type: 'number',
+      width: 130,
+    },
+    {
+      field: 'col29',
+      headerName: `% Cesión`,
+      type: 'number',
+      width: 150,
+    },
+    {
+      field: 'col30',
+      headerName: `Incr./Disminución`,
+      type: 'number',
+      width: 150,
+    },
+  ]);
+
+  export const ColumnaGrupocCuentaOrden = [
+    {
+      groupId: 'reclarecibidas',
+      headerName: 'Reclamaciones Recibidas',
       headerAlign: 'center',
       headerClassName: 'my-super-theme--naming-group',
-  
-      description: 'Reclamaciones/Siniestros Retenidos',
-      children: [{ field: 'col6' }],
+      description: 'Reclamaciones Recibidas',
+      children: [{ field: 'col3' }, { field: 'col4' }, { field: 'col5' },{ field: 'col6' }, { field: 'col7' }, { field: 'col8' },{ field: 'col9' }],
+    },
+    {
+      groupId: 'reclacontingentes',
+      headerName: 'Reclamaciones Contingentes',
+      headerAlign: 'center',
+      headerClassName: 'my-super-theme--naming-group',
+      description: 'Reclamaciones Contingentes',
+      children: [{ field: 'col10' }, { field: 'col11' }, { field: 'col12' },{ field: 'col13' }, { field: 'col14' }, { field: 'col15' },{ field: 'col16' }],
+    },
+    {
+      groupId: 'reclapagadas',
+      headerName: 'Reclamaciones Pagadas',
+      headerAlign: 'center',
+      headerClassName: 'my-super-theme--naming-group',
+      description: 'Reclamaciones Pagadas',
+      children: [{ field: 'col17' }, { field: 'col18' }, { field: 'col19' },{ field: 'col20' }, { field: 'col21' }, { field: 'col22' },{ field: 'col23' }],
+    },
+    {
+      groupId: 'recuperacionreclapagadas',
+      headerName: 'Recuperación de Reclamaciones Pagadas',
+      headerAlign: 'center',
+      headerClassName: 'my-super-theme--naming-group',
+      description: 'Recuperación de Reclamaciones Pagadas',
+      children: [{ field: 'col24' }, { field: 'col25' }, { field: 'col26' },{ field: 'col27' }, { field: 'col28' }, { field: 'col29' },{ field: 'col30' }],
     },
    
   ];
-  
+
+  export const columnasResponsabilidadesVigentes = (anio) =>
+  withNumberFormatter([
+    { field: 'col1', headerName: 'Posición', align: 'center', width: 80 },
+    { field: 'col2', headerName: 'Empresa', width: 230 },
+    { field: 'col3', headerName: 'Importe', type: 'number', width: 100 },
+    {
+      field: 'col4',
+      headerName: `Fianzas en Vigor Importe ${anio}`,
+      type: 'number',
+      width: 150,
+    },
+    {
+      field: 'col5',
+      headerName: `Fianzas Cedidas en Vigor Importe ${anio}`,
+      type: 'number',
+      width: 150,
+    },
+    {
+      field: 'col6',
+      headerName: `% Cesión`,
+      type: 'number',
+      width: 150,
+    },
+    {
+      field: 'col7',
+      headerName: `Fianzas en Vigor Importe ${anio}`,
+      type: 'number',
+      width: 150,
+    },
+    {
+      field: 'col8',
+      headerName: `Fianzas Cedidas en Importe ${anio}`,
+      type: 'number',
+      width: 150,
+    },
+    {
+      field: 'col9',
+      headerName: `% Cesión`,
+      type: 'number',
+      width: 150,
+    },
+    {
+      field: 'col10',
+      headerName: `Incr./Disminución`,
+      type: 'number',
+      width: 150,
+    },
+  ]);
+
+  export const ColumnaGrupocResponsabilidadesVigentes = [
+    {
+      groupId: 'respvigentes',
+      headerName: 'Responsabilidades Vigentes',
+      headerAlign: 'center',
+      headerClassName: 'my-super-theme--naming-group',
+      description: 'Responsabilidades Vigentes',
+      children: [{ field: 'col3' }, { field: 'col4' }, { field: 'col5' },{ field: 'col6' }, { field: 'col7' }, { field: 'col8' },{ field: 'col9' }],
+    },
+    
+   
+  ];

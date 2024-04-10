@@ -453,22 +453,22 @@ async function armaResultVert2(
 
   let sqlDinamica, tablaOrig, whereCond, consultaFinal;
 
-  if(pProcCia==1) {
+  if (pProcCia == 1) {
     cantCiclos = pArrCia.length;
   } else {
     cantCiclos = 1;
   }
-  
+
   for (let idxCia = 0; idxCia < cantCiclos; idxCia++) {
     lineaSal = [];
     for (let i = 0; i < pDetalles.length; i++) {
       idxDet = 1;
-  
+
       detalle = pDetalles[i];
 
       alias = 'valor';
       valIns = null;
-     // valAComp = null;
+      // valAComp = null;
 
       idCia = pArrCia[idxCia].id_cia;
       if (detalle.val_fijo !== null) {
@@ -492,14 +492,16 @@ async function armaResultVert2(
           }
         } else {
           valorDinamico =
-            detalle.val_fijo !== '' ? reempParam(
-              detalle.val_fijo,
-              idCia,
-              pAnio,
-              pMes,
-              pAnioAnt,
-              valParam
-            ) : detalle.val_def; //
+            detalle.val_fijo !== ''
+              ? reempParam(
+                  detalle.val_fijo,
+                  idCia,
+                  pAnio,
+                  pMes,
+                  pAnioAnt,
+                  valParam
+                )
+              : detalle.val_def; //
         }
         //resultados.push({ [alias]: valorDinamico });
         valIns = valorDinamico;
@@ -552,9 +554,7 @@ async function armaResultVert2(
             if (detalle.presic_dato_orig_2 == 0) {
               valIns = Math.round(valIns);
             } else {
-              valIns = parseFloat(valIns).toFixed(
-                detalle.presic_orig_2
-              );
+              valIns = parseFloat(valIns).toFixed(detalle.presic_orig_2);
             }
           }
         }
@@ -672,8 +672,11 @@ async function procesaReporte(pIdArch, pAnio, pMes, pAnioAnt) {
           let idxResultCol = 1;
 
           for (let colDefDet of resultadoSeqLine) {
-
-            detallesD = await obtenerDetallesD(resultadoEnc.id, tabElem.tab_num, colDefDet.num_linea);
+            detallesD = await obtenerDetallesD(
+              resultadoEnc.id,
+              tabElem.tab_num,
+              colDefDet.num_linea
+            );
 
             const consultas = await armaResultVert2(
               pAnio,
@@ -683,16 +686,16 @@ async function procesaReporte(pIdArch, pAnio, pMes, pAnioAnt) {
               colDefDet.num_linea == idxProcCia ? 1 : 0, //Es el ID de seqLin que procesa varias veces la columna, por cada compañia
               detallesD
             );
-  
+
             let resultCol = await Promise.all(consultas);
 
-            for(let resultColLin of resultCol) {
+            for (let resultColLin of resultCol) {
               let numCol = 1;
-              for(let columnaVal of resultColLin) {
-                if(primerCol) {
+              for (let columnaVal of resultColLin) {
+                if (primerCol) {
                   lineaSal[numCol] = [];
                 }
-                lineaSal[numCol].push({ ['col'+idxResultCol]: columnaVal });
+                lineaSal[numCol].push({ ['col' + idxResultCol]: columnaVal });
                 numCol++;
               }
               primerCol = false;
@@ -744,18 +747,18 @@ async function procesaReporte(pIdArch, pAnio, pMes, pAnioAnt) {
           }
           //datosTab.encabezado.push(encabezadoCompleto);
           datosTab.encabezado = encabezadoCompleto;
-  
+
           companias = await obtenerCompaniasActivas();
           detallesD = await obtenerDetallesD(resultadoEnc.id, tabElem.tab_num);
-  
+
           const consultas = companias.map((compania) =>
             consultaDinamica(compania.id_cia, pAnio, pMes, pAnioAnt, detallesD)
           );
-  
+
           const resultadosDetalles = await Promise.all(consultas);
-  
+
           datosTab.detalle.push(...resultadosDetalles);
-  
+
           datosTotal.push(datosTab);
         }
       }
@@ -790,20 +793,24 @@ async function reporteMapExcel(
     datosTotal.forEach((pestaña) => {
       const sheet = workbook.getWorksheet(pestaña.tab_nombre);
       let filaActual = 15;
-      // console.log('DATOS TOTALES DE REPORTMAPEXCEL A VEEEEEEEEEEEEEEER', datosTotal)
-      //  console.log('ESTO es DATOS TOTALES!!', JSON.stringify(datosTotal, null, 2));
-      // console.log('Detalle de la primera pestaña:', JSON.stringify(datosTotal[0].detalle, null, 2));
 
       pestaña.detalle.forEach((detalleComp) => {
         detalleComp.forEach((valorColumna, index) => {
           if (valorColumna) {
-            const colLetter = String.fromCharCode('A'.charCodeAt(0) + index); // Convertir indice a letra de la columna
+            // Convertir índice a letra de columna, manejando correctamente más allá de 'Z'
+            let numColumna = index + 1; // Asume que 'A' es 1
+            let colLetter = '';
+            while (numColumna > 0) {
+              let remainder = (numColumna - 1) % 26;
+              colLetter =
+                String.fromCharCode('A'.charCodeAt(0) + remainder) + colLetter;
+              numColumna = parseInt((numColumna - remainder) / 26, 10);
+            }
+
             const cellRef = colLetter + filaActual;
             const valor = Object.values(valorColumna)[0];
-            // Comprueba si el valor es num y convertirlo
-            // console.log(`Valor antes de convertir: ${valor}`);
+            // Comprobar si el valor es numérico y convertirlo
             if (valor !== null) {
-              // Si el valor es num (y no empieza con letra) convierte a num
               if (
                 !isNaN(valor) &&
                 !isNaN(parseFloat(valor)) &&
@@ -814,15 +821,17 @@ async function reporteMapExcel(
                 // Dejarlo como string
                 sheet.getCell(cellRef).value = valor;
               }
+              console.log(
+                `Accediendo a la celda: ${cellRef} con valor: ${valor}`
+              );
             }
           }
         });
         filaActual++;
       });
-      const anioNumero = +anio; // Usando el operador unario + y convirtiendolo en numero
-
+      const anioNumero = +anio; // Convertir 'anio' a número
       const cellAnio = 'B35';
-      sheet.getCell(cellAnio).value = anioNumero; // En el B35 ponemos el año del archivo para que haga comparacion formula de - en año anterior
+      sheet.getCell(cellAnio).value = anioNumero; // Asignar año al archivo
     });
   } else if (tipoArchivo === 'V') {
     const pestaña = datosTotal[0];
@@ -862,7 +871,7 @@ async function reporteMapExcel(
     datosTotal.forEach((pestaña) => {
       const sheet = workbook.getWorksheet(pestaña.tab_nombre);
       let filaInicial = 11; // Iniciar en la fila 11
-  
+
       // Omitir el primer elemento usando slice y luego iterar sobre los detalles restantes
       pestaña.detalle.slice(1).forEach((filaDetalle) => {
         filaDetalle.forEach((valorColumna, index) => {
@@ -871,18 +880,23 @@ async function reporteMapExcel(
           let colLetter = '';
           while (numColumna > 0) {
             let remainder = (numColumna - 1) % 26;
-            colLetter = String.fromCharCode('A'.charCodeAt(0) + remainder) + colLetter;
+            colLetter =
+              String.fromCharCode('A'.charCodeAt(0) + remainder) + colLetter;
             numColumna = parseInt((numColumna - remainder) / 26, 10);
           }
-  
+
           const cellRef = colLetter + filaInicial;
           const valor = valorColumna ? Object.values(valorColumna)[0] : null;
-  
+
           console.log(`Accediendo a la celda: ${cellRef} con valor: ${valor}`);
-  
+
           if (valor !== null) {
             // Si el valor es numérico y no empieza con letra, convertir a número
-            if (!isNaN(valor) && !isNaN(parseFloat(valor)) && !/^[a-zA-Z]/.test(valor)) {
+            if (
+              !isNaN(valor) &&
+              !isNaN(parseFloat(valor)) &&
+              !/^[a-zA-Z]/.test(valor)
+            ) {
               sheet.getCell(cellRef).value = parseFloat(valor);
             } else {
               // De lo contrario, asignar el valor como string

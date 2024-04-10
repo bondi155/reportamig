@@ -21,6 +21,7 @@ import RamoCredito  from './pages/RamoCredito';
 import RamoFidelidad from  './pages/RamoFidelidad';
 import EstadoFinanciero from './pages/EstadoFinanciero';
 import SiniestroResultados from './pages/SiniestrosResultados';
+import SiniestrosCtaOrden from './pages/SiniestrosCtaOrden';
 function App() {
   const [islogin, setIslogin] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -172,6 +173,18 @@ function App() {
             element={
               <PrivateRoute islogin={islogin}>
                 <SiniestroResultados
+                  form={form}
+                  userCreate={userCreate}
+                  setUserCreate={setUserCreate}
+                />{' '}
+              </PrivateRoute>
+            }
+          />
+           <Route
+            path='/siniestroCtaOrden'
+            element={
+              <PrivateRoute islogin={islogin}>
+                <SiniestrosCtaOrden
                   form={form}
                   userCreate={userCreate}
                   setUserCreate={setUserCreate}

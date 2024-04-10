@@ -22,6 +22,10 @@ import {
   columnasTotalGeneral,
   ColumnaGrupoTotalGeneral,
   ColumnaGrupoTotalDemas,
+  columnas_CuentasOrden,
+  columnasResponsabilidadesVigentes,
+  ColumnaGrupocCuentaOrden,
+  ColumnaGrupocResponsabilidadesVigentes
 } from '../charts/ColumnsGrids.js';
 import PlaneSpinner from '../components/planeSpinner.js';
 import Spinner from 'react-bootstrap/Spinner';
@@ -37,6 +41,8 @@ const ModeloRamos = ({ id_arch, NombreArchivo, titulo }) => {
   const [axiosResponse, setAxiosResponse] = useState([]);
   const [valueTab, setValueTab] = useState('pd');
   const [valueTabTotales, setValueTabTotales] = useState('tgeneral');
+  const [valueTabCtaord , setValueTabCtaord] = useState('reclacuentaorden');
+
 
   const downloadExcel = async (e, setDownloadStatus, anio, mes) => {
     e.preventDefault();
@@ -78,11 +84,16 @@ const ModeloRamos = ({ id_arch, NombreArchivo, titulo }) => {
   const handleChangeTotales = (event, newValue) => {
     setValueTabTotales(newValue);
   };
+
+  const handleChangeCtaOrd = (event, newValue) => {
+    setValueTabCtaord(newValue);
+  };
   const handleConfirmarSeleccion = ({ anio, mes }) => {
     setAnio(anio);
     setMes(mes);
     // Llama a la función para actualizar el estado o realizar acciones del datepiker
   };
+
 
   const theme = useTheme();
 
@@ -142,9 +153,12 @@ const ModeloRamos = ({ id_arch, NombreArchivo, titulo }) => {
   const columnasPDAnio = columnasPD(anio);
   const columnasGTOSOPAnio = columnasGTOSOP(anio);
   const columnasORVASAnio = columnasORVAS(anio);
-
   // Columnas con variable anio para totales
   const columnasTotalGeneralAnio = columnasTotalGeneral(anio);
+
+  // Columnas con variable anio para Cuenta Orden
+const columnas_CuentasOrdenAnio = columnas_CuentasOrden(anio);
+  const columnasResponsabilidadesVigentesAnio = columnasResponsabilidadesVigentes(anio);
 
   return (
     <>
@@ -359,6 +373,64 @@ const ModeloRamos = ({ id_arch, NombreArchivo, titulo }) => {
                     fileNameVar='Total Seguro Crédito'
                     autoHeight
                     columnGroupingModel={ColumnaGrupoTotalDemas}
+                  />
+                </Box>
+              )}
+          </Box>
+        </>
+      ) : id_arch === 12 ? (
+        <>
+          <div>Tu contenido especial para id_arch 12</div>
+          <Box
+            sx={{
+              maxWidth: '95%',
+              mt: '6rem',
+              width: '100%',
+              mx: 'auto', // Centra el Box de mui como lo hace un contenedor Bootstrap
+            }}
+          >
+            <Tabs
+              value={valueTabCtaord}
+              variant={scrollableTabs ? 'scrollable' : 'fullWidth'}
+              scrollButtons
+              allowScrollButtonsMobile
+              onChange={handleChangeCtaOrd}
+              sx={{
+                '.MuiTabs-flexContainer': {
+                  justifyContent: 'space-around',
+                },
+              }}
+            >
+              <Tab
+                label='Reclamaciones Cuentas de Orden'
+                value='reclacuentaorden'
+                sx={{ marginX: 2 }}
+              />
+              <Tab label='Responsabilidades Vigentes' value='reclavigentes' />
+            </Tabs>
+            {valueTabCtaord === 'reclacuentaorden' &&
+              axiosResponse[0] &&
+              axiosResponse[0].length > 0 && (
+                <Box className='mt-4 mb-2'>
+                  <GridEval
+                    rows={axiosResponse[0]}
+                    columnsVar={columnas_CuentasOrdenAnio}
+                    fileNameVar='Reclamaciones Cuenta Orden'
+                    autoHeight
+                    columnGroupingModel={ColumnaGrupocCuentaOrden}
+                  />
+                </Box>
+              )}
+            {valueTabCtaord === 'reclavigentes' &&
+              axiosResponse[1] &&
+              axiosResponse[1].length > 0 && (
+                <Box className='mt-4 mb-2'>
+                  <GridEval
+                    rows={axiosResponse[1]}
+                    columnsVar={columnasResponsabilidadesVigentesAnio}
+                    fileNameVar='Responsabilidades Vigentes'
+                    autoHeight
+                    columnGroupingModel={ColumnaGrupocResponsabilidadesVigentes}
                   />
                 </Box>
               )}

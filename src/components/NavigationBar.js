@@ -122,7 +122,14 @@ function NavigationBar({ setIslogin, form }) {
                     onClick={handleToggleClick}
                     to='/siniestroResultados'
                   >
-                    Siniesrtos Resultados{' '}
+                    Siniestros Resultados{' '}
+                  </NavDropdown.Item>
+                  <NavDropdown.Item
+                    as={Link}
+                    onClick={handleToggleClick}
+                    to='/siniestroCtaOrden'
+                  >
+                    Siniestros Cuenta Orden{' '}
                   </NavDropdown.Item>
                   <NavDropdown.Divider />
                   <NavDropdown.Item href='#action/3.4'>

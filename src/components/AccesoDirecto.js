@@ -53,6 +53,11 @@ const AccesoDirecto = () => (
       ruta: '/siniestroResultados',
       icono: FaArrowRight,
     },
+    {
+      nombre: 'Siniestros Cuenta Orden',
+      ruta: '/siniestroCtaOrden',
+      icono: FaArrowRight,
+    },
   ].map((acceso, idx) => (
     <Col key={idx}>
       <Card className='h-100 text-center hover-effect'>
