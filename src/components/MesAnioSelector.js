@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { Grid, TextField, Button } from '@mui/material';
+import { Grid, Button } from '@mui/material';
 import { CiCircleCheck  } from 'react-icons/ci';
 import dayjs from 'dayjs';
 import 'dayjs/locale/es'; 
@@ -26,6 +26,7 @@ const MesAnioSelector = ({ onFechaCambio, anioInicial, mesInicial }) => {
       });
     }
   };
+   console.log(mesInicial, anioInicial);
   
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es'>
@@ -36,8 +37,10 @@ const MesAnioSelector = ({ onFechaCambio, anioInicial, mesInicial }) => {
             label="Seleccione Mes y Año"
             value={fecha}
             onChange={handleFechaCambio}
-            renderInput={{
-              TextField: (props) => <TextField {...props} />
+            slotProps={{
+              textField: {
+                variant: 'outlined',
+              }
             }}
             minDate={dayjs('2019-01-01')}
             maxDate={dayjs('2030-12-31')}
@@ -49,7 +52,7 @@ const MesAnioSelector = ({ onFechaCambio, anioInicial, mesInicial }) => {
             endIcon={<CiCircleCheck />}
             onClick={handleConfirmarClick}
             size="small"
-          > Periodo
+          > Confirmar
           </Button>
         </Grid>
       </Grid>
