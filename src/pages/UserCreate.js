@@ -11,7 +11,7 @@ import { FaUserPlus } from 'react-icons/fa6';
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-
+import ClearCacheButton from './ClearCacheButton.js';
 const userColumns = [
   { field: 'id', headerName: 'ID', width: 150 },
   {
@@ -224,8 +224,8 @@ function UserCreate({ userCreate, setUserCreate, form }) {
                             className='d-flex justify-content-center mt-2 mt-lg-0 d-lg-block'
                           >
                             <Button
-                          variant='outlined'
-                          type='submit'
+                              variant='outlined'
+                              type='submit'
                               size='small'
                               endIcon={<FaUserPlus />}
                             >
@@ -278,12 +278,14 @@ function UserCreate({ userCreate, setUserCreate, form }) {
                               />
                             </Form.Group>
                             <Button
-                          variant='outlined'
-                          type='submit'
+                              variant='outlined'
+                              type='submit'
                               size='small'
                               className='mb-4'
                               endIcon={<GoPasskeyFill />}
-                            >Actualizar</Button>
+                            >
+                              Actualizar
+                            </Button>
                           </Col>
                         </Row>
                       </Card>
@@ -292,6 +294,12 @@ function UserCreate({ userCreate, setUserCreate, form }) {
                 </form>
               </div>
             )}
+            <Row className='justify-content-center mt-4'> 
+            <Col lg={2}> 
+            <ClearCacheButton />
+            </Col>
+
+            </Row>
           </Box>
           <div className='usuarios-grid'>
             <Row className='mt-5 justify-content-md-center'>

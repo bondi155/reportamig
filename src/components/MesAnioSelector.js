@@ -1,33 +1,31 @@
-// MesAnioSelector.js
 import React, { useState } from 'react';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { Grid, Button } from '@mui/material';
-import { CiCircleCheck  } from 'react-icons/ci';
+import { CiCircleCheck } from 'react-icons/ci';
 import dayjs from 'dayjs';
 import 'dayjs/locale/es'; 
 
 const MesAnioSelector = ({ onFechaCambio, anioInicial, mesInicial }) => {
   dayjs.locale('es_PE');
-// Pasamos como props Mes y Año
   const [fecha, setFecha] = useState(dayjs(new Date(anioInicial, mesInicial - 1)));
+  const [confirmado, setConfirmado] = useState(true);
 
   const handleFechaCambio = (nuevaFecha) => {
-    // Actualiza la fecha cada vez que el usuario elige un nuevo mes/año
     setFecha(nuevaFecha);
+    setConfirmado(false);  // Reset confirmación al cambiar fecha
   };
 
   const handleConfirmarClick = () => {
-    // Llama al método onFechaCambio cuando el usuario hace clic en el botón de confirmación
     if (fecha) {
       onFechaCambio({
         anio: fecha.year(),
-        mes: fecha.month() + 1, // Sumamos uno porque dayjs empieza los meses desde 0
+        mes: fecha.month() + 1,
       });
+      setConfirmado(true);
     }
   };
-   console.log(mesInicial, anioInicial);
-  
+
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es'>
       <Grid container spacing={2} alignItems="center">
@@ -40,7 +38,10 @@ const MesAnioSelector = ({ onFechaCambio, anioInicial, mesInicial }) => {
             slotProps={{
               textField: {
                 variant: 'outlined',
-              }
+                sx: {
+                  input: { color: confirmado ? 'green' : 'default' },  // Cambio de color según estado
+                },
+              },
             }}
             minDate={dayjs('2019-01-01')}
             maxDate={dayjs('2030-12-31')}

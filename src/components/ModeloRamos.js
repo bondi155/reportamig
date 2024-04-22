@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Form, Container, Col, Row, Card } from 'react-bootstrap';
+import { Form, Container, Col, Row, Card, Table } from 'react-bootstrap';
 import { Button } from '@mui/material';
-import Box from '@mui/material/Box';
+import { Box } from '@mui/material';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import axios from 'axios';
@@ -48,6 +48,7 @@ const ModeloRamos = ({ id_arch, NombreArchivo, titulo }) => {
     e.preventDefault();
     setDownloadStatus(true);
     console.log('Descargando...');
+    
     try {
       const config = { responseType: 'blob', params: { id_arch, anio, mes } };
 
@@ -56,10 +57,10 @@ const ModeloRamos = ({ id_arch, NombreArchivo, titulo }) => {
         {},
         config
       );
-
       const url = window.URL.createObjectURL(new Blob([response.data]));
 
       const link = document.createElement('a');
+      
       link.href = url;
       link.setAttribute('download', `${NombreArchivo}${anio}_${mes}.xlsx`);
 
@@ -93,7 +94,6 @@ const ModeloRamos = ({ id_arch, NombreArchivo, titulo }) => {
     setMes(mes);
     // Llama a la función para actualizar el estado o realizar acciones del datepiker
   };
-
 
   const theme = useTheme();
 
@@ -160,6 +160,7 @@ const ModeloRamos = ({ id_arch, NombreArchivo, titulo }) => {
 const columnas_CuentasOrdenAnio = columnas_CuentasOrden(anio);
   const columnasResponsabilidadesVigentesAnio = columnasResponsabilidadesVigentes(anio);
 
+  console.log(axiosResponse[0]);
   return (
     <>
       <Container className='container-custom'>
@@ -223,11 +224,11 @@ const columnas_CuentasOrdenAnio = columnas_CuentasOrden(anio);
           </Row>
         </Form>
       </Container>
+
       {isLoading ? (
         <PlaneSpinner />
       ) : id_arch === 11 ? (
         <>
-          <div>Tu contenido especial para id_arch 11</div>
           <Box
             sx={{
               maxWidth: '95%',
@@ -378,9 +379,40 @@ const columnas_CuentasOrdenAnio = columnas_CuentasOrden(anio);
               )}
           </Box>
         </>
+      ) : id_arch === 10 ? (
+        <>
+         <Container fluid className="mt-5">
+      <Row>
+        <Col>
+        <div style={{ overflow: 'auto', maxHeight: '60vh', width: '80%', margin: '0 auto' }}>
+            <Table hover bordered>
+              <thead>
+                <tr>
+                  {/* Añade más <th> según sea necesario */}
+                </tr>
+              </thead>
+              <tbody>
+                {axiosResponse[0].map((item, index) => (
+                  <tr key={index} style={index === 0 ? { fontWeight: 'bold' } : undefined}>
+                    <th scope="row" style={{ fontSize: '16px' }}>{item.col1}</th>
+                    {Array.from({ length: 28 }, (_, i) => i + 2).map(
+                      (colIndex) => (
+                        <td key={colIndex} style={(colIndex === 24 || index === 0 || index === 1) ? { fontWeight: 'bold'} : undefined}>
+                          {item[`col${colIndex}`]}
+                        </td>
+                      )
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+          </div>
+        </Col>
+      </Row>
+    </Container>
+        </>
       ) : id_arch === 12 ? (
         <>
-          <div>Tu contenido especial para id_arch 12</div>
           <Box
             sx={{
               maxWidth: '95%',
@@ -435,8 +467,7 @@ const columnas_CuentasOrdenAnio = columnas_CuentasOrden(anio);
                 </Box>
               )}
           </Box>
-        </>
-      ) : (
+        </>) : (
         <Box
           sx={{
             maxWidth: '95%',

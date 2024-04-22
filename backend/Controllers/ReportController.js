@@ -5,7 +5,7 @@ const path = require('path');
 const Mexp = require('math-expression-evaluator');
 const { Console } = require('console');
 let nombreArchivo;
-//const { getCache, updateCache } = require('./CacheManager');
+const { getCache, updateCache } = require('./CacheManager');
 
 async function obtenerCompaniasActivas() {
   const sqlCompaniasActivas = `
@@ -917,20 +917,27 @@ async function reporteMapExcel(
 // Pasamos las variables de las funciones y ejecutamos la funcion del excel reportMapExcel
 exports.generarYDescargarExcel = async (req, res) => {
   try {
-    const id = req.query.id_arch; //me falta este id ?
+    const id = req.query.id_arch;
     const anio = req.query.anio;
     const mes = req.query.mes;
     const anioAnt = anio - 1;
-    // let datosGen = [];
 
     const mapeoEnc = await getEnc(id);
     nombreArchivo = mapeoEnc.tab_dest;
 
-    const datosTotal = await procesaReporte(id, anio, mes, anioAnt);
+    const datosEnCache = getCache(); // Obtiene todo el objeto de caché
+    let datosTotal;
+
+    if (datosEnCache[id]) {
+      console.log('Datos obtenidos de la caché');
+      datosTotal = datosEnCache[id]; // Usa los datos de la caché si están disponibles
+    } else {
+      // Si no hay datos en la caché, genera los datos
+      datosTotal = await procesaReporte(id, anio, mes, anioAnt);
+      updateCache(id, datosTotal); // Actualiza la caché con los nuevos datos
+    }
 
     console.log('ESTE ES NOMBRE DE ARCHIVO ', nombreArchivo);
-    // console.log('ESTO es DATOS TOTALES!!', JSON.stringify(datosTotal, null, 2));
-    // console.log('Detalle de la primera pestaña:', JSON.stringify(datosTotal[0].detalle, null, 2));
 
     if (datosTotal) {
       const rutaSalida = await reporteMapExcel(
@@ -951,11 +958,7 @@ exports.generarYDescargarExcel = async (req, res) => {
       }
     } else {
       console.error('No se generaron datos de salida.');
-      res
-        .status(500)
-        .send(
-          'Ocurrió un error al generar los datos para el reporte en Excel.'
-        );
+      res.status(500).send('Ocurrió un error al generar los datos para el reporte en Excel.');
     }
   } catch (error) {
     console.error('Error al generar y descargar Excel:', error);
@@ -970,9 +973,20 @@ exports.ejecutarFunciones = async (req, res) => {
     const anio = req.query.anio;
     const mes = req.query.mes;
     const anioAnt = anio - 1;
+
+    const datosEnCache = getCache(); // Obtiene todo el objeto de caché con cache
+    if (datosEnCache[id]) {
+      console.log('Datos obtenidos de la caché');
+      return res.status(200).json(datosEnCache[id]);
+    }
+
+
     let datosGen = [];
 
     datosGen = await procesaReporte(id, anio, mes, anioAnt);
+
+    updateCache(id, datosGen); 
+
 
     if (datosGen) {
       res.status(200).json(datosGen);

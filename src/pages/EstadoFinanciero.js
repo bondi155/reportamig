@@ -11,6 +11,4 @@ const EstadoFinanciero = () => {
   );
 };
 
-
-
 export default EstadoFinanciero;
