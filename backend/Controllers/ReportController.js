@@ -49,6 +49,7 @@ async function seqLine(idEncabezado, numTab, tipoDet = 'H') {
                       WHERE id_map_enc = ?
 					            AND tab_num = ?
                       AND tipo_det = ?
+                      AND activo = 1
                       ORDER BY seq_lin`;
   try {
     const [rows] = await pool
@@ -76,6 +77,7 @@ async function obtenerEncabezados(idMapeo, numTab, lineaEnc) {
 	    	AND tab_num = ?
         AND tipo_det = 'H'
         AND seq_lin = ?
+        AND activo = 1
         ORDER BY seq_lin, seq_dest, seq_orig`;
 
     const [rows] = await pool
@@ -96,7 +98,7 @@ async function nombreTab(idEncabezado) {
   try {
     const sqlGetTab = `SELECT DISTINCT tab_num, tab_nombre
   FROM amigdb.am_mapeo_det
-  WHERE id_map_enc = ? AND tipo_det = 'D'
+  WHERE id_map_enc = ? AND tipo_det = 'D' AND activo = 1
   ORDER BY 1`;
 
     //  console.log(sqlGetTab);
@@ -135,6 +137,7 @@ async function obtenerDetallesD(idEncabezado, numTab, seqLin = 1) {
     AND tab_num = ?
     AND tipo_det = 'D'
     AND seq_lin = ?
+    AND activo = 1
     ORDER BY seq_dest, seq_orig    
   `;
 
@@ -973,20 +976,22 @@ exports.ejecutarFunciones = async (req, res) => {
     const anio = req.query.anio;
     const mes = req.query.mes;
     const anioAnt = anio - 1;
-
-    const datosEnCache = getCache(); // Obtiene todo el objeto de caché con cache
+    
+    // Obtiene todo el objeto de caché con cache
+    const datosEnCache = getCache(); 
     if (datosEnCache[id]) {
       console.log('Datos obtenidos de la caché');
       return res.status(200).json(datosEnCache[id]);
     }
-
+    //termina cache
 
     let datosGen = [];
 
     datosGen = await procesaReporte(id, anio, mes, anioAnt);
 
+    // hace update del id en el cache 
     updateCache(id, datosGen); 
-
+//termina update de caché
 
     if (datosGen) {
       res.status(200).json(datosGen);

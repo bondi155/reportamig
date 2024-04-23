@@ -258,7 +258,6 @@ const ModeloRamos = ({ id_arch, NombreArchivo, titulo }) => {
               <Tab label='Total Judiciales' value='tjudiciales' />
               <Tab label='Total Adminitrativas' value='tadminitrativas' />
               <Tab label='Total Credito' value='tcredito' />
-              <Tab label='Total S. Caución' value='tsegurocau' />
               <Tab label='Total S. de Crédito' value='tsegurocred' />
             </Tabs>
             {valueTabTotales === 'tgeneral' &&
@@ -353,25 +352,12 @@ const ModeloRamos = ({ id_arch, NombreArchivo, titulo }) => {
                   />
                 </Box>
               )}
-            {valueTabTotales === 'tsegurocau' &&
+            {valueTabTotales === 'tsegurocred' &&
               axiosResponse[7] &&
               axiosResponse[7].length > 0 && (
                 <Box className='mt-4 mb-2'>
                   <GridEval
                     rows={axiosResponse[7]}
-                    columnsVar={columnasTotalGeneralAnio}
-                    fileNameVar='Total Seguro Caución'
-                    autoHeight
-                    columnGroupingModel={ColumnaGrupoTotalDemas}
-                  />
-                </Box>
-              )}
-            {valueTabTotales === 'tsegurocred' &&
-              axiosResponse[8] &&
-              axiosResponse[8].length > 0 && (
-                <Box className='mt-4 mb-2'>
-                  <GridEval
-                    rows={axiosResponse[8]}
                     columnsVar={columnasTotalGeneralAnio}
                     fileNameVar='Total Seguro Crédito'
                     autoHeight

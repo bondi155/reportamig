@@ -875,27 +875,19 @@ export const ColumnaGrupo_COB_EXC_admins = [
 export const columnasTotalGeneral = (anio) =>
   withNumberFormatter([
     { field: 'col1', headerName: 'Posición', align: 'center', width: 80 },
-    { field: 'col2', headerName: 'Empresa', width: 230 },
-    // Columnas para "Cobertura Exc. de Pérdida"
-    { field: 'col3', headerName: 'Importe', type: 'number', width: 100 },
+    { field: 'col2', headerName: 'Empresa', width: 350 },
+    // Columnas para "resultados"
+    {
+      field: 'col3',
+      headerName: 'Importe',
+      headerAlign: 'center',
+      type: 'number',
+      width: 390,
+    },
     {
       field: 'col4',
-      headerName: `% VS. Prima Directa ${anio}`,
-      type: 'number',
-      width: 250,
-    },
-    {
-      field: 'col5',
-      headerName: `% VS. Prima Directa ${anio - 1}`,
-      type: 'number',
-      width: 250,
-    },
-
-    // Columnas para "Cto Adquisición Directo"
-    { field: 'col6', headerName: 'Importe', type: 'number', width: 250 },
-    {
-      field: 'col7',
-      headerName: `% de Participación de Mercado`,
+      headerName: `%`,
+      headerAlign: 'center',
       type: 'number',
       width: 320,
     },
@@ -904,42 +896,44 @@ export const columnasTotalGeneral = (anio) =>
 // grupo para total general
 export const ColumnaGrupoTotalGeneral = [
   {
-    groupId: 'reclamacionsiniestros',
-    headerName: 'Reclamación/Siniestros Directos',
-    headerAlign: 'center',
-    headerClassName: 'my-super-theme--naming-group',
-    description: 'Reclamación/Siniestros Directos',
-    children: [{ field: 'col3' }, { field: 'col4' }, { field: 'col5' }],
-  },
-  {
     groupId: 'eclamacionessiniestrosretenidos',
     headerName: 'Reclamaciones/Siniestros Retenidos',
     headerAlign: 'center',
     headerClassName: 'my-super-theme--naming-group',
 
     description: 'Reclamaciones/Siniestros Retenidos',
-    children: [{ field: 'col6' }],
+    children: [{ field: 'col3' }],
+  },
+  {
+    groupId: 'participaciondelmercado%',
+    headerName: 'Participación de Mercado',
+    headerAlign: 'center',
+    headerClassName: 'my-super-theme--naming-group',
+
+    description: 'Reclamaciones/Siniestros Retenidos',
+    children: [{ field: 'col4' }],
   },
 ];
 
 // grupo para total general
 export const ColumnaGrupoTotalDemas = [
-  {
-    groupId: 'siniestrosdirectos',
-    headerName: 'Siniestros Directos',
-    headerAlign: 'center',
-    headerClassName: 'my-super-theme--naming-group',
-    description: 'Reclamación/Siniestros Directos',
-    children: [{ field: 'col3' }, { field: 'col4' }, { field: 'col5' }],
-  },
+
   {
     groupId: 'siniestrosretenidos',
     headerName: 'Siniestros Retenidos',
     headerAlign: 'center',
     headerClassName: 'my-super-theme--naming-group',
+    description: 'Reclamaciones/Siniestros Retenidos',
+    children: [{ field: 'col3' }],
+  },
+  {
+    groupId: 'participaciondelmercado%',
+    headerName: 'Participación de Mercado',
+    headerAlign: 'center',
+    headerClassName: 'my-super-theme--naming-group',
 
     description: 'Reclamaciones/Siniestros Retenidos',
-    children: [{ field: 'col6' }],
+    children: [{ field: 'col4' }],
   },
 ];
 // Termina TOTALES de SINIESTROS ---------------------------------------------------------------º-------------------------------------------------------------------------------
@@ -1119,43 +1113,74 @@ export const columnas_CuentasOrden = (anio) =>
     },
   ]);
 
-  export const ColumnaGrupocCuentaOrden = [
-    {
-      groupId: 'reclarecibidas',
-      headerName: 'Reclamaciones Recibidas',
-      headerAlign: 'center',
-      headerClassName: 'my-super-theme--naming-group',
-      description: 'Reclamaciones Recibidas',
-      children: [{ field: 'col3' }, { field: 'col4' }, { field: 'col5' },{ field: 'col6' }, { field: 'col7' }, { field: 'col8' },{ field: 'col9' }],
-    },
-    {
-      groupId: 'reclacontingentes',
-      headerName: 'Reclamaciones Contingentes',
-      headerAlign: 'center',
-      headerClassName: 'my-super-theme--naming-group',
-      description: 'Reclamaciones Contingentes',
-      children: [{ field: 'col10' }, { field: 'col11' }, { field: 'col12' },{ field: 'col13' }, { field: 'col14' }, { field: 'col15' },{ field: 'col16' }],
-    },
-    {
-      groupId: 'reclapagadas',
-      headerName: 'Reclamaciones Pagadas',
-      headerAlign: 'center',
-      headerClassName: 'my-super-theme--naming-group',
-      description: 'Reclamaciones Pagadas',
-      children: [{ field: 'col17' }, { field: 'col18' }, { field: 'col19' },{ field: 'col20' }, { field: 'col21' }, { field: 'col22' },{ field: 'col23' }],
-    },
-    {
-      groupId: 'recuperacionreclapagadas',
-      headerName: 'Recuperación de Reclamaciones Pagadas',
-      headerAlign: 'center',
-      headerClassName: 'my-super-theme--naming-group',
-      description: 'Recuperación de Reclamaciones Pagadas',
-      children: [{ field: 'col24' }, { field: 'col25' }, { field: 'col26' },{ field: 'col27' }, { field: 'col28' }, { field: 'col29' },{ field: 'col30' }],
-    },
-   
-  ];
+export const ColumnaGrupocCuentaOrden = [
+  {
+    groupId: 'reclarecibidas',
+    headerName: 'Reclamaciones Recibidas',
+    headerAlign: 'center',
+    headerClassName: 'my-super-theme--naming-group',
+    description: 'Reclamaciones Recibidas',
+    children: [
+      { field: 'col3' },
+      { field: 'col4' },
+      { field: 'col5' },
+      { field: 'col6' },
+      { field: 'col7' },
+      { field: 'col8' },
+      { field: 'col9' },
+    ],
+  },
+  {
+    groupId: 'reclacontingentes',
+    headerName: 'Reclamaciones Contingentes',
+    headerAlign: 'center',
+    headerClassName: 'my-super-theme--naming-group',
+    description: 'Reclamaciones Contingentes',
+    children: [
+      { field: 'col10' },
+      { field: 'col11' },
+      { field: 'col12' },
+      { field: 'col13' },
+      { field: 'col14' },
+      { field: 'col15' },
+      { field: 'col16' },
+    ],
+  },
+  {
+    groupId: 'reclapagadas',
+    headerName: 'Reclamaciones Pagadas',
+    headerAlign: 'center',
+    headerClassName: 'my-super-theme--naming-group',
+    description: 'Reclamaciones Pagadas',
+    children: [
+      { field: 'col17' },
+      { field: 'col18' },
+      { field: 'col19' },
+      { field: 'col20' },
+      { field: 'col21' },
+      { field: 'col22' },
+      { field: 'col23' },
+    ],
+  },
+  {
+    groupId: 'recuperacionreclapagadas',
+    headerName: 'Recuperación de Reclamaciones Pagadas',
+    headerAlign: 'center',
+    headerClassName: 'my-super-theme--naming-group',
+    description: 'Recuperación de Reclamaciones Pagadas',
+    children: [
+      { field: 'col24' },
+      { field: 'col25' },
+      { field: 'col26' },
+      { field: 'col27' },
+      { field: 'col28' },
+      { field: 'col29' },
+      { field: 'col30' },
+    ],
+  },
+];
 
-  export const columnasResponsabilidadesVigentes = (anio) =>
+export const columnasResponsabilidadesVigentes = (anio) =>
   withNumberFormatter([
     { field: 'col1', headerName: 'Posición', align: 'center', width: 80 },
     { field: 'col2', headerName: 'Empresa', width: 230 },
@@ -1204,15 +1229,21 @@ export const columnas_CuentasOrden = (anio) =>
     },
   ]);
 
-  export const ColumnaGrupocResponsabilidadesVigentes = [
-    {
-      groupId: 'respvigentes',
-      headerName: 'Responsabilidades Vigentes',
-      headerAlign: 'center',
-      headerClassName: 'my-super-theme--naming-group',
-      description: 'Responsabilidades Vigentes',
-      children: [{ field: 'col3' }, { field: 'col4' }, { field: 'col5' },{ field: 'col6' }, { field: 'col7' }, { field: 'col8' },{ field: 'col9' }],
-    },
-    
-   
-  ];
+export const ColumnaGrupocResponsabilidadesVigentes = [
+  {
+    groupId: 'respvigentes',
+    headerName: 'Responsabilidades Vigentes',
+    headerAlign: 'center',
+    headerClassName: 'my-super-theme--naming-group',
+    description: 'Responsabilidades Vigentes',
+    children: [
+      { field: 'col3' },
+      { field: 'col4' },
+      { field: 'col5' },
+      { field: 'col6' },
+      { field: 'col7' },
+      { field: 'col8' },
+      { field: 'col9' },
+    ],
+  },
+];
