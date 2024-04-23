@@ -25,14 +25,14 @@ import {
   columnas_CuentasOrden,
   columnasResponsabilidadesVigentes,
   ColumnaGrupocCuentaOrden,
-  ColumnaGrupocResponsabilidadesVigentes
+  ColumnaGrupocResponsabilidadesVigentes,
 } from '../charts/ColumnsGrids.js';
 import PlaneSpinner from '../components/planeSpinner.js';
 import Spinner from 'react-bootstrap/Spinner';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import MesAnioSelector from './MesAnioSelector.js';
-
+import TablaFinanciera from './TablaFinanciera.js';
 const ModeloRamos = ({ id_arch, NombreArchivo, titulo }) => {
   const [anio, setAnio] = useState(2023);
   const [mes, setMes] = useState(6);
@@ -41,14 +41,13 @@ const ModeloRamos = ({ id_arch, NombreArchivo, titulo }) => {
   const [axiosResponse, setAxiosResponse] = useState([]);
   const [valueTab, setValueTab] = useState('pd');
   const [valueTabTotales, setValueTabTotales] = useState('tgeneral');
-  const [valueTabCtaord , setValueTabCtaord] = useState('reclacuentaorden');
-
+  const [valueTabCtaord, setValueTabCtaord] = useState('reclacuentaorden');
 
   const downloadExcel = async (e, setDownloadStatus, anio, mes) => {
     e.preventDefault();
     setDownloadStatus(true);
     console.log('Descargando...');
-    
+
     try {
       const config = { responseType: 'blob', params: { id_arch, anio, mes } };
 
@@ -60,7 +59,7 @@ const ModeloRamos = ({ id_arch, NombreArchivo, titulo }) => {
       const url = window.URL.createObjectURL(new Blob([response.data]));
 
       const link = document.createElement('a');
-      
+
       link.href = url;
       link.setAttribute('download', `${NombreArchivo}${anio}_${mes}.xlsx`);
 
@@ -153,14 +152,17 @@ const ModeloRamos = ({ id_arch, NombreArchivo, titulo }) => {
   const columnasPDAnio = columnasPD(anio);
   const columnasGTOSOPAnio = columnasGTOSOP(anio);
   const columnasORVASAnio = columnasORVAS(anio);
+  
   // Columnas con variable anio para totales
   const columnasTotalGeneralAnio = columnasTotalGeneral(anio);
 
   // Columnas con variable anio para Cuenta Orden
-const columnas_CuentasOrdenAnio = columnas_CuentasOrden(anio);
-  const columnasResponsabilidadesVigentesAnio = columnasResponsabilidadesVigentes(anio);
+  const columnas_CuentasOrdenAnio = columnas_CuentasOrden(anio);
+  const columnasResponsabilidadesVigentesAnio =
+    columnasResponsabilidadesVigentes(anio);
 
-  console.log(axiosResponse[0]);
+  //console.log(axiosResponse[0]);
+
   return (
     <>
       <Container className='container-custom'>
@@ -381,35 +383,7 @@ const columnas_CuentasOrdenAnio = columnas_CuentasOrden(anio);
         </>
       ) : id_arch === 10 ? (
         <>
-         <Container fluid className="mt-5">
-      <Row>
-        <Col>
-        <div style={{ overflow: 'auto', maxHeight: '60vh', width: '80%', margin: '0 auto' }}>
-            <Table hover bordered>
-              <thead>
-                <tr>
-                  {/* Añade más <th> según sea necesario */}
-                </tr>
-              </thead>
-              <tbody>
-                {axiosResponse[0].map((item, index) => (
-                  <tr key={index} style={index === 0 ? { fontWeight: 'bold' } : undefined}>
-                    <th scope="row" style={{ fontSize: '16px' }}>{item.col1}</th>
-                    {Array.from({ length: 28 }, (_, i) => i + 2).map(
-                      (colIndex) => (
-                        <td key={colIndex} style={(colIndex === 24 || index === 0 || index === 1) ? { fontWeight: 'bold'} : undefined}>
-                          {item[`col${colIndex}`]}
-                        </td>
-                      )
-                    )}
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
-          </div>
-        </Col>
-      </Row>
-    </Container>
+          <TablaFinanciera axiosResponse={axiosResponse} />
         </>
       ) : id_arch === 12 ? (
         <>
@@ -467,7 +441,8 @@ const columnas_CuentasOrdenAnio = columnas_CuentasOrden(anio);
                 </Box>
               )}
           </Box>
-        </>) : (
+        </>
+      ) : (
         <Box
           sx={{
             maxWidth: '95%',
