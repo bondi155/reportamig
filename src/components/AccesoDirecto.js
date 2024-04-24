@@ -7,25 +7,9 @@ import { Link } from 'react-router-dom';
 
 const AccesoDirecto = () => (
   <Row xs={1} md={2} lg={4} className='g-4'>
-  {[
-    {
+  {[  {
       nombre: 'Total',
       ruta: '/reporteTotal',
-      icono: FaArrowRight,
-    },
-    {
-      nombre: 'Estado Resultados',
-      ruta: '/estadoResultados',
-      icono: FaArrowRight,
-    },
-    {
-      nombre: 'Estado de Situación Financiera',
-      ruta: '/estadoFinanciero',
-      icono: FaArrowRight,
-    },
-    {
-      nombre: 'Ramo Administrativas',
-      ruta: '/ramoAdministrativo',
       icono: FaArrowRight,
     },
     {
@@ -49,6 +33,11 @@ const AccesoDirecto = () => (
       icono: FaArrowRight,
     },
     {
+      nombre: 'Ramo Administrativas',
+      ruta: '/ramoAdministrativo',
+      icono: FaArrowRight,
+    },
+    {
       nombre: 'Siniestros Resultados',
       ruta: '/siniestroResultados',
       icono: FaArrowRight,
@@ -58,14 +47,27 @@ const AccesoDirecto = () => (
       ruta: '/siniestroCtaOrden',
       icono: FaArrowRight,
     },
+  
+    {
+      nombre: 'Estado de Resultados',
+      ruta: '/estadoResultados',
+      icono: FaArrowRight,
+    },
+    {
+      nombre: 'Estado de Situación Financiera',
+      ruta: '/estadoFinanciero',
+      icono: FaArrowRight,
+    },
+    
+   
   ].map((acceso, idx) => (
     <Col key={idx}>
-  <Link to={acceso.ruta} style={{ textDecoration: 'none' }}> {/* Envuelve el Card con Link y elimina la decoración del texto */}
-    <Card className='h-100 text-center hover-effect'>
+  <Link to={acceso.ruta} style={{ textDecoration: 'none' }}>
+    <Card className='h-100 text-center hover-effect' style={{ minHeight: '90px' }}>
       <Card.Body>
         <Card.Title>{acceso.nombre}</Card.Title>
         <Button
-          className='mt-3'
+          className='mt-1'
           color='primary'
         >
         <acceso.icono />
