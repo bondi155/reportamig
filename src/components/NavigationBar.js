@@ -73,7 +73,7 @@ function NavigationBar({ setIslogin, form }) {
                     onClick={handleToggleClick}
                     to='/estadoFinanciero'
                   >
-                    Estado Financiero
+                    Estado Sit. Financiera
                   </NavDropdown.Item>{' '}
                   <NavDropdown.Item
                     as={Link}
@@ -108,7 +108,7 @@ function NavigationBar({ setIslogin, form }) {
                     onClick={handleToggleClick}
                     to='/ramoJudicial'
                   >
-                    Ramo Judicial{' '}
+                    Ramo Judiciales{' '}
                   </NavDropdown.Item>
                   <NavDropdown.Item
                     as={Link}

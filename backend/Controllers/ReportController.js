@@ -790,7 +790,7 @@ async function reporteMapExcel(
   const rutaSalida = path.join(rutaBase, nombreArchivoDinamico);
   const workbook = new Excel.Workbook();
   await workbook.xlsx.readFile(rutaEntrada);
-  console.log('TIPO DE ARCHIVO!!!!!!', tipoArchivo);
+  //console.log('TIPO DE ARCHIVO!!!!!!', tipoArchivo);
 
   if (tipoArchivo === 'H') {
     datosTotal.forEach((pestaña) => {
@@ -824,9 +824,9 @@ async function reporteMapExcel(
                 // Dejarlo como string
                 sheet.getCell(cellRef).value = valor;
               }
-              console.log(
-                `Accediendo a la celda: ${cellRef} con valor: ${valor}`
-              );
+          //    console.log(
+            //    `Accediendo a la celda: ${cellRef} con valor: ${valor}`
+              //);
             }
           }
         });

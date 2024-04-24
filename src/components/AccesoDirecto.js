@@ -9,7 +9,7 @@ const AccesoDirecto = () => (
   <Row xs={1} md={2} lg={4} className='g-4'>
   {[
     {
-      nombre: 'Reporte Total',
+      nombre: 'Total',
       ruta: '/reporteTotal',
       icono: FaArrowRight,
     },
@@ -19,7 +19,7 @@ const AccesoDirecto = () => (
       icono: FaArrowRight,
     },
     {
-      nombre: 'Estado Financiero',
+      nombre: 'Estado de Situación Financiera',
       ruta: '/estadoFinanciero',
       icono: FaArrowRight,
     },
@@ -39,7 +39,7 @@ const AccesoDirecto = () => (
       icono: FaArrowRight,
     },
     {
-      nombre: 'Ramo Judicial',
+      nombre: 'Ramo Judiciales',
       ruta: '/ramoJudicial',
       icono: FaArrowRight,
     },
@@ -60,20 +60,20 @@ const AccesoDirecto = () => (
     },
   ].map((acceso, idx) => (
     <Col key={idx}>
-      <Card className='h-100 text-center hover-effect'>
-        <Card.Body>
-          <Card.Title>{acceso.nombre}</Card.Title>
-          <Button
-            component={Link}
-            to={acceso.ruta}
-            className='mt-3'
-            color='primary'
-          >
-          <acceso.icono />
-          </Button>
-        </Card.Body>
-      </Card>
-    </Col>
+  <Link to={acceso.ruta} style={{ textDecoration: 'none' }}> {/* Envuelve el Card con Link y elimina la decoración del texto */}
+    <Card className='h-100 text-center hover-effect'>
+      <Card.Body>
+        <Card.Title>{acceso.nombre}</Card.Title>
+        <Button
+          className='mt-3'
+          color='primary'
+        >
+        <acceso.icono />
+        </Button>
+      </Card.Body>
+    </Card>
+  </Link>
+</Col>
   ))}
 </Row>
 );
