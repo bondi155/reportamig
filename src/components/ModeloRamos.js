@@ -123,7 +123,6 @@ const ModeloRamos = ({ id_arch, NombreArchivo, titulo }) => {
         const response = await axios.get(`${API_URL}/getReport`, {
           params: { id_arch, anio, mes },
         });
-
         // mapear sobre la response data para transformarla cada una en 'detalle' en row objects
         const allTransformedRows = response.data.map((item) =>
           transformDetalleToRows(item.detalle)
@@ -133,7 +132,7 @@ const ModeloRamos = ({ id_arch, NombreArchivo, titulo }) => {
       } catch (error) {
         console.error('Error fetching data:', error);
         Swal.fire({
-          icon: 'error',
+          icon: 'error Modelo',
           title: 'Oops...',
           text: error.toString(),
         });
@@ -152,7 +151,7 @@ const ModeloRamos = ({ id_arch, NombreArchivo, titulo }) => {
   const columnasPDAnio = columnasPD(anio);
   const columnasGTOSOPAnio = columnasGTOSOP(anio);
   const columnasORVASAnio = columnasORVAS(anio);
-  
+
   // Columnas con variable anio para totales
   const columnasTotalGeneralAnio = columnasTotalGeneral(anio);
 

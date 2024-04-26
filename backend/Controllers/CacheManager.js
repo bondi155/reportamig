@@ -19,37 +19,45 @@ function limpiarCache() {
   console.log('Caché limpiada.');
 }
 
-function getCache() {
-  return cacheDatosTotal;
+function getCache(id, mes, anio) {
+  const cacheKey = `${id}-${mes}-${anio}`;
+  const cachedData = cacheDatosTotal[cacheKey];
+  return cachedData;
 }
 
 function evictCache() {
   let keys = Object.keys(cacheDatosTotal);
-  // Ordena por el tiempo de último acceso (suponiendo que guardamos esta información)
   keys.sort((a, b) => cacheDatosTotal[a].lastAccessed - cacheDatosTotal[b].lastAccessed);
-
   if (keys.length > 0) {
     console.log('Evicting:', keys[0]);
     delete cacheDatosTotal[keys[0]]; // Elimina la entrada más antigua
   }
 }
 
-function updateCache(id, datos) {
-  // Agrega el nuevo elemento temporalmente para calcular el tamaño correcto
-  cacheDatosTotal[id] = datos;
-  cacheDatosTotal[id].lastAccessed = Date.now(); // Actualizar el tiempo de último acceso
+function updateCache(id, datos, mes, anio) {
+  // Crear una clave única para cada combinación de id, mes y año
+  const cacheKey = `${id}-${mes}-${anio}`;
 
+  // Agrega el nuevo elemento con la clave única
+  if (!cacheDatosTotal[cacheKey]) {
+    cacheDatosTotal[cacheKey] = { data: datos, lastAccessed: Date.now() };
+  } else {
+    // Si ya existe, simplemente actualiza los datos y el tiempo de último acceso
+    cacheDatosTotal[cacheKey].data = datos;
+    cacheDatosTotal[cacheKey].lastAccessed = Date.now();
+  }
+
+  // Verificar el tamaño del caché y limpiar si es necesario
   let newSize = getSizeOfObject(cacheDatosTotal);
   while (newSize > MAX_CACHE_SIZE && Object.keys(cacheDatosTotal).length > 0) {
-      evictCache(); // Elimina una entrada si estamos sobre el límite
-      newSize = getSizeOfObject(cacheDatosTotal); // Recalcular el tamaño después de cada evicción
+    evictCache();
+    newSize = getSizeOfObject(cacheDatosTotal);
   }
 
   console.log(`Cache updated. Total keys: ${Object.keys(cacheDatosTotal).length}`);
   console.log(`Approximate size of cache: ${newSize} bytes`);
-  showCacheSize();  // Muestra el tamaño actual del caché en formato legible
+  showCacheSize();
 }
-
 /* Para Probar cache 
 
 function generateData(sizeInKB) {

@@ -928,16 +928,18 @@ exports.generarYDescargarExcel = async (req, res) => {
     const mapeoEnc = await getEnc(id);
     nombreArchivo = mapeoEnc.tab_dest;
 
-    const datosEnCache = getCache(); // Obtiene todo el objeto de caché
+    const cacheKey = `${id}-${mes}-${anio}`;
+
+    const datosEnCache = getCache(cacheKey); // Obtiene todo el objeto de caché
     let datosTotal;
 
-    if (datosEnCache[id]) {
-      console.log('Datos obtenidos de la caché');
-      datosTotal = datosEnCache[id]; // Usa los datos de la caché si están disponibles
+    if (datosEnCache) {
+      console.log('Datos obtenidos de la caché', datosEnCache);
+      datosTotal = datosEnCache.data; // Usa los datos de la caché si están disponibles
     } else {
       // Si no hay datos en la caché, genera los datos
       datosTotal = await procesaReporte(id, anio, mes, anioAnt);
-      updateCache(id, datosTotal); // Actualiza la caché con los nuevos datos
+      updateCache(cacheKey, datosTotal); // Actualiza la caché con los nuevos datos
     }
 
     console.log('ESTE ES NOMBRE DE ARCHIVO ', nombreArchivo);
@@ -976,22 +978,28 @@ exports.ejecutarFunciones = async (req, res) => {
     const anio = req.query.anio;
     const mes = req.query.mes;
     const anioAnt = anio - 1;
-    
-    // Obtiene todo el objeto de caché con cache
-    const datosEnCache = getCache(); 
-    if (datosEnCache[id]) {
-      console.log('Datos obtenidos de la caché');
-      return res.status(200).json(datosEnCache[id]);
-    }
-    //termina cache
 
+    // Clave única para cada combinación de id, mes y año
+    const cacheKey = `${id}-${mes}-${anio}`;
+    console.log(cacheKey);
+    // Agarra el objeto de la caché con la clave compuesta
+    const datosEnCache = getCache(cacheKey); 
+    
+    if (datosEnCache) {
+      console.log('Datos obtenidos de la caché');
+      //console.log('Objeto en caché no es un array:', datosEnCache);
+      return res.status(200).json(datosEnCache.data);
+    }
+
+    // Termina cache
     let datosGen = [];
 
+    // Procesar reporte con función asincrónica
     datosGen = await procesaReporte(id, anio, mes, anioAnt);
 
-    // hace update del id en el cache 
-    updateCache(id, datosGen); 
-//termina update de caché
+    // Hace update del id en el cache 
+    updateCache(cacheKey, datosGen); 
+    // Termina update de caché
 
     if (datosGen) {
       res.status(200).json(datosGen);

@@ -187,17 +187,16 @@ export const columnasCOB_EXC = (anio) =>
     { field: 'col3', headerName: 'Importe', type: 'number', width: 130 },
     {
       field: 'col4',
-      headerName: `Importe ${anio}`,
+      headerName: `% ${anio}`,
       type: 'number',
       width: 130,
     },
     {
       field: 'col5',
-      headerName: `Importe ${anio - 1}`,
+      headerName: `% ${anio - 1}`,
       type: 'number',
       width: 150,
     },
-
     // Columnas para "Cto Adquisición Directo"
     { field: 'col6', headerName: 'Importe', type: 'number', width: 110 },
     {
@@ -731,13 +730,13 @@ export const columnas_COB_EXC_admins = (anio) =>
     { field: 'col3', headerName: 'Importe', type: 'number', width: 130 },
     {
       field: 'col4',
-      headerName: `Importe ${anio}`,
+      headerName: `% ${anio}`,
       type: 'number',
       width: 130,
     },
     {
       field: 'col5',
-      headerName: `Importe ${anio - 1}`,
+      headerName: `% ${anio - 1}`,
       type: 'number',
       width: 150,
     },
@@ -917,7 +916,6 @@ export const ColumnaGrupoTotalGeneral = [
 
 // grupo para total general
 export const ColumnaGrupoTotalDemas = [
-
   {
     groupId: 'siniestrosretenidos',
     headerName: 'Siniestros Retenidos',
