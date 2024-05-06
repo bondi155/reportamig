@@ -33,6 +33,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import MesAnioSelector from './MesAnioSelector.js';
 import TablaFinanciera from './TablaFinanciera.js';
+import TablaEstadoResultados from './TablaEstadoResultados.js';
 const ModeloRamos = ({ id_arch, NombreArchivo, titulo }) => {
   const [anio, setAnio] = useState(2023);
   const [mes, setMes] = useState(6);
@@ -228,6 +229,11 @@ const ModeloRamos = ({ id_arch, NombreArchivo, titulo }) => {
 
       {isLoading ? (
         <PlaneSpinner />
+      ) : id_arch === 5 ? (
+        <>
+        <TablaEstadoResultados axiosResponse={axiosResponse} />
+
+        </>
       ) : id_arch === 11 ? (
         <>
           <Box
