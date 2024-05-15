@@ -131,6 +131,13 @@ function NavigationBar({ setIslogin, form }) {
                   >
                     Siniestros Cuenta Orden{' '}
                   </NavDropdown.Item>
+                  <NavDropdown.Item
+                    as={Link}
+                    onClick={handleToggleClick}
+                    to='/primasCantidad'
+                  >
+                    Primas Cantidad{' '}
+                  </NavDropdown.Item>
                   <NavDropdown.Divider />
                   <NavDropdown.Item href='#action/3.4'>
                     Configuracion de reportes{' '}

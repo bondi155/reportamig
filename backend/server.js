@@ -54,10 +54,12 @@ app.use(limiter);
 app.use(cors());
 app.use(express.json());
 
-app.post('/loginUsers', authenticateToken, getDataController.loginUsers__); //login
-app.get('/getUserList', authenticateToken, getDataController.listUsers__); //lista de ususarios
-app.put('/resetPass', authenticateToken, PostDataController.resetPassword__); //reseteo password
-app.get('/getReport', authenticateToken, ReportController.ejecutarFunciones); //ejecutar funcion general que hace el response del json
+app.post('/loginUsers', authenticateToken, getDataController.loginUsers__); // Login para obtener el token
+app.get('/getUserList', authenticateToken, getDataController.listUsers__); // Lista de ususarios
+app.put('/resetPass', authenticateToken, PostDataController.resetPassword__); // Reseteo password
+app.get('/getReport', authenticateToken, ReportController.ejecutarFunciones); // Ejecutar funcion general que hace el response del json
+app.get('/getPrimaPorRubro', authenticateToken, ReportController.procGrafPrimaStack); // Ejecutar funcion para la prima 
+
 app.post(
   '/descargarExcel',
   authenticateToken,

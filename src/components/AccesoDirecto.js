@@ -58,7 +58,11 @@ const AccesoDirecto = () => (
       ruta: '/estadoFinanciero',
       icono: FaArrowRight,
     },
-    
+    {
+      nombre: 'Primas : Cantidad Mensual',
+      ruta: '/primasCantidad',
+      icono: FaArrowRight,
+    },
    
   ].map((acceso, idx) => (
     <Col key={idx}>

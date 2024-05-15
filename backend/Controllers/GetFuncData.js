@@ -76,6 +76,18 @@ function download__(req, res) {
 }
 
 
+// Esta función es para borrar los archivos subidos por id de proceso , no la termine 
+function getIdProceso__(req, res) {
+  try {
+    const idProQuery = `SELECT 'am_cmbg' AS tabla, id_proceso, tipo_comp, cod_comp, mes, anio, f_carga, usr_carga FROM am_cmbg
+                        UNION ALL
+                        SELECT 'am_cmer' AS tabla, id_proceso, tipo_comp, cod_comp, mes, anio, f_carga, usr_carga FROM am_cmer
+                        ORDER BY id_proceso;`;
+
+  } catch (err) {
+    console.log(err);
+  }
+}
 
 module.exports = {
   loginUsers__,

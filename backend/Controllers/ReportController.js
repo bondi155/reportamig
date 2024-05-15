@@ -152,6 +152,39 @@ async function obtenerDetallesD(idEncabezado, numTab, seqLin = 1) {
   }
 }
 
+async function getPrimasEmitPorRamo(pCia, pAnio, pMes, pRamo, pSubRamo, pSubSubRamo, pOper, pMoneda) {
+  let valDev = 0;
+  try {
+    const sqlGetRes = `SELECT importe/1000 prima
+    FROM am_cmer
+   WHERE anio = ?
+     and mes = ?
+     and cod_comp = ?
+     and cuenta_nivel_1 = '510'
+     and cuenta_nivel_2 = '00'
+     and cuenta_nivel_3 = '00'
+     and cuenta_nivel_4 = '00'
+     and cve_ramo = ?
+     and cve_subramo = ?
+     and cve_subsubramo = ?
+     and operacion = ?
+     and cve_moneda = ?`;
+
+    //  console.log(sqlGetTab);
+    const [rows] = await pool.promise().query(sqlGetRes, [pAnio, pMes, pCia, pRamo, pSubRamo, pSubSubRamo, pOper, pMoneda]);
+    const resultCons = rows || {};
+    if(resultCons.length>0) {
+      if(!(resultCons[0].prima === null)) {
+        valDev = Math.round(resultCons[resultCons.length-1].prima);
+      }
+    }
+    return valDev;
+  } catch (error) {
+    console.error('error', error);
+    throw error;
+  }
+}
+
 function reempParam(pTexto, pCia, pAnio, pMes, pAnioAnt, pArrVal) {
   let valDev;
   try {
@@ -294,6 +327,85 @@ async function consultaDinamica(idCia, anio, mes, anioAnt, detalles) {
   //const resultadosTransformadosDetalle = transformarResultados(resultados);
 
   return resultados;
+}
+
+async function armaGrafStackPrima(
+  pAnio,
+  pMes,
+  pArrCia
+) {
+  const resultados = [];
+  let primaFid;
+  let primaJud;
+  let primaAdm;
+  let primaCred;
+  let primaTot = [];
+  let idxCia;
+  let idCia;
+  let nomCia;
+  let primerCiclo = true;
+  let tema = ['Fidelidad', 'Judiciales', 'Administrativas', 'Crédito'];
+  let idxTema;
+  let categories = [];
+  let series = [];
+  let devVal = [];
+
+  for (let idxCia = 0; idxCia < pArrCia.length; idxCia++) {
+    categories.push(pArrCia[idxCia].nombre_cia);
+  }
+  
+  for (let idxTema = 0; idxTema < tema.length; idxTema++) {
+    primaFid = [];
+    primaJud = [];
+    primaAdm = [];
+    primaCred = [];
+    for (let idxCia = 0; idxCia < pArrCia.length; idxCia++) {
+      idCia = pArrCia[idxCia].posic_cia;
+      primaFid[idxCia] = 0;
+      primaJud[idxCia] = 0;
+      primaAdm[idxCia] = 0;
+      primaCred[idxCia] = 0;
+      switch (idxTema) {
+        case 0:
+          primaFid[idxCia] = await getPrimasEmitPorRamo(idCia, pAnio, pMes, '140', '000', '0000', '5000', '10');
+          break;
+        case 1:
+          primaJud[idxCia] = await getPrimasEmitPorRamo(idCia, pAnio, pMes, '150', '000', '0000', '5000', '10');
+          break;
+        case 2:
+          primaAdm[idxCia] = await getPrimasEmitPorRamo(idCia, pAnio, pMes, '160', '000', '0000', '5000', '10');
+          break;
+        case 3:
+          primaCred[idxCia] = await getPrimasEmitPorRamo(idCia, pAnio, pMes, '170', '000', '0000', '5000', '10');
+          break;
+        //case 4:
+        //  primaTot[idxCia] = primaFid[idxCia] + primaJud[idxCia] + primaAdm[idxCia] + primaCred[idxCia];
+        //  break;
+      }
+    }
+    let data = [];
+    switch (idxTema) {
+      case 0:
+        data =  primaFid;
+        break;
+      case 1:
+        data = primaJud;
+        break;
+      case 2:
+        data = primaAdm;
+        break;
+      case 3:
+        data = primaCred;
+        break;
+      //case 4:
+      //  datosPrima = primaTot;
+      //  break;
+    }
+    series.push({name: tema[idxTema], data});
+  }
+  //series.push({xaxis: categories});
+  devVal.push({series, xaxis: {categories}});
+  return devVal;
 }
 
 async function armaResultVert(
@@ -773,6 +885,22 @@ async function procesaReporte(pIdArch, pAnio, pMes, pAnioAnt) {
   return datosTotal;
 }
 
+exports.procGrafPrimaStack = async (req, res) => {
+  let datosGraf = [];
+  let companias;
+
+  try {
+    companias = await obtenerCompaniasActivas();
+    datosGraf = await armaGrafStackPrima( req.query.anio, req.query.mes, companias);
+  } catch (error) {
+    res.status(500).send('Error al procesar los datos del gráfico:'+error);
+  }
+  //console.log('Sal:',datosGraf);
+  console.log('Termina procesamiento del gráfico.');
+
+  res.status(200).json(datosGraf);
+}
+
 // Armado de excel
 async function reporteMapExcel(
   datosTotal,
@@ -790,7 +918,7 @@ async function reporteMapExcel(
   const rutaSalida = path.join(rutaBase, nombreArchivoDinamico);
   const workbook = new Excel.Workbook();
   await workbook.xlsx.readFile(rutaEntrada);
-  //console.log('TIPO DE ARCHIVO!!!!!!', tipoArchivo);
+  console.log('TIPO DE ARCHIVO!!!!!!', tipoArchivo);
 
   if (tipoArchivo === 'H') {
     datosTotal.forEach((pestaña) => {
@@ -824,9 +952,9 @@ async function reporteMapExcel(
                 // Dejarlo como string
                 sheet.getCell(cellRef).value = valor;
               }
-          //    console.log(
-            //    `Accediendo a la celda: ${cellRef} con valor: ${valor}`
-              //);
+              console.log(
+                `Accediendo a la celda: ${cellRef} con valor: ${valor}`
+              );
             }
           }
         });
@@ -928,18 +1056,16 @@ exports.generarYDescargarExcel = async (req, res) => {
     const mapeoEnc = await getEnc(id);
     nombreArchivo = mapeoEnc.tab_dest;
 
-    const cacheKey = `${id}-${mes}-${anio}`;
-
-    const datosEnCache = getCache(cacheKey); // Obtiene todo el objeto de caché
+    const datosEnCache = getCache(); // Obtiene todo el objeto de caché
     let datosTotal;
 
-    if (datosEnCache) {
-      console.log('Datos obtenidos de la caché', datosEnCache);
-      datosTotal = datosEnCache.data; // Usa los datos de la caché si están disponibles
+    if (datosEnCache[id]) {
+      console.log('Datos obtenidos de la caché');
+      datosTotal = datosEnCache[id]; // Usa los datos de la caché si están disponibles
     } else {
       // Si no hay datos en la caché, genera los datos
       datosTotal = await procesaReporte(id, anio, mes, anioAnt);
-      updateCache(cacheKey, datosTotal); // Actualiza la caché con los nuevos datos
+      updateCache(id, datosTotal); // Actualiza la caché con los nuevos datos
     }
 
     console.log('ESTE ES NOMBRE DE ARCHIVO ', nombreArchivo);
@@ -978,28 +1104,22 @@ exports.ejecutarFunciones = async (req, res) => {
     const anio = req.query.anio;
     const mes = req.query.mes;
     const anioAnt = anio - 1;
-
-    // Clave única para cada combinación de id, mes y año
-    const cacheKey = `${id}-${mes}-${anio}`;
-    console.log(cacheKey);
-    // Agarra el objeto de la caché con la clave compuesta
-    const datosEnCache = getCache(cacheKey); 
     
-    if (datosEnCache) {
+    // Obtiene todo el objeto de caché con cache
+    const datosEnCache = getCache(); 
+    if (datosEnCache[id]) {
       console.log('Datos obtenidos de la caché');
-      //console.log('Objeto en caché no es un array:', datosEnCache);
-      return res.status(200).json(datosEnCache.data);
+      return res.status(200).json(datosEnCache[id]);
     }
+    //termina cache
 
-    // Termina cache
     let datosGen = [];
 
-    // Procesar reporte con función asincrónica
     datosGen = await procesaReporte(id, anio, mes, anioAnt);
 
-    // Hace update del id en el cache 
-    updateCache(cacheKey, datosGen); 
-    // Termina update de caché
+    // hace update del id en el cache 
+    updateCache(id, datosGen); 
+//termina update de caché
 
     if (datosGen) {
       res.status(200).json(datosGen);
