@@ -59,7 +59,7 @@ const AccesoDirecto = () => (
       icono: FaArrowRight,
     },
     {
-      nombre: 'Primas : Cantidad Mensual',
+      nombre: 'Cartera - Primas emitidas',
       ruta: '/primasCantidad',
       icono: FaArrowRight,
     },

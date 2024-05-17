@@ -28,7 +28,7 @@ function ChartPrimas({series, categories}) {
       colors: ['#fff']
     },
     title: {
-      text: 'Fiction Books Sales'
+      text: 'Cartera - Primas emitidas'
     },
     xaxis: {
       categories: categories,
@@ -55,7 +55,7 @@ function ChartPrimas({series, categories}) {
     },
     legend: {
       position: 'top',
-      horizontalAlign: 'left',
+      horizontalAlign: 'center',
       offsetX: 40
     }
   };

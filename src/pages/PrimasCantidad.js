@@ -8,7 +8,7 @@ import '../css/App.css';
 import PlaneSpinner from '../components/planeSpinner.js';
 import MesAnioSelector from '../components/MesAnioSelector.js';
 import ChartPrimas from '../charts/ChartPrimas.js';
-const PrimasCantidad = ({ id_arch, NombreArchivo, titulo }) => {
+const PrimasCantidad = () => {
   const [anio, setAnio] = useState(2023);
   const [mes, setMes] = useState(6);
   const [isLoading, setIsLoading] = useState(true);
@@ -46,6 +46,38 @@ const PrimasCantidad = ({ id_arch, NombreArchivo, titulo }) => {
   }, [anio, mes]);
   
   console.log(axiosResponse);
+
+
+  const handleDelete = async (id) => {
+    Swal.fire({
+      title: 'Estas seguro?',
+      text: "Si borra este archivo no se podra revertir",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Si, quiero borrarlo!',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        await axios.delete(`${API_URL}/borrarProceso/${id}`);
+        axiosResponse(axiosResponse.filter((proceso) => proceso.id !== id));
+        Swal.fire(
+          'Borrado!',
+          'El archivo y todas sus lineas de este mes y año han sido borrados',
+          'success'
+        );
+      }
+    });
+    try {
+    } catch (err) {
+      console.error(err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Hubo un error borrando el archivo de proceso',
+      });
+    }
+  };
 
   return (
     <>

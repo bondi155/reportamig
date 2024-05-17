@@ -136,7 +136,7 @@ function NavigationBar({ setIslogin, form }) {
                     onClick={handleToggleClick}
                     to='/primasCantidad'
                   >
-                    Primas Cantidad{' '}
+                    Cartera - Primas emitidas{' '}
                   </NavDropdown.Item>
                   <NavDropdown.Divider />
                   <NavDropdown.Item href='#action/3.4'>
