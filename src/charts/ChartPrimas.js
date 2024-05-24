@@ -32,6 +32,8 @@ function ChartPrimas({series, categories}) {
     },
     xaxis: {
       categories: categories,
+      logarithmic: true,
+      logBase: 10,
       labels: {
         formatter: function (val) {
           return val + "K"

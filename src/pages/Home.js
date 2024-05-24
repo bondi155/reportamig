@@ -11,7 +11,7 @@ function Home({ form }) {
   const domainName = domainParts[0];
   const [currentDomain] = useState(domainName);
 
-  //acordarse de setear el error en el catch
+  // Acordarse de setear el error en el catch
   return (
     <>
       <Container className='container-custom'>

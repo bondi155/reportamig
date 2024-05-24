@@ -58,7 +58,16 @@ app.post('/loginUsers', authenticateToken, getDataController.loginUsers__); // L
 app.get('/getUserList', authenticateToken, getDataController.listUsers__); // Lista de ususarios
 app.put('/resetPass', authenticateToken, PostDataController.resetPassword__); // Reseteo password
 app.get('/getReport', authenticateToken, ReportController.ejecutarFunciones); // Ejecutar funcion general que hace el response del json
-app.get('/getPrimaPorRubro', authenticateToken, ReportController.procGrafPrimaStack); // Ejecutar funcion para la prima 
+app.get(
+  '/getPrimaPorRubro',
+  authenticateToken,
+  ReportController.procGrafPrimaStack
+); // Ejecutar funcion para la prima
+app.get(
+  '/getArchivosCargados',
+  authenticateToken,
+  getDataController.ArchivosCargados__
+); // Ejecutar funcion para la prima
 
 app.post(
   '/descargarExcel',
@@ -74,7 +83,16 @@ app.delete(
   authenticateToken,
   PostDataController.deleteUser__
 ); //delete usuarios por id
+
+app.delete(
+  '/deleteArchivoTxt/:id',
+  authenticateToken,
+  PostDataController.deleteArchivoTxt__
+); //delete Archivos por id
+
 app.post('/uploadfile', upload.single('file'), txtController.execFuncsTxt);
+
+app.post('/updateTxt', upload.single('file'), txtController.execUpdateTxt);
 
 app.get('/limpiar-cache', authenticateToken, (req, res) => {
   limpiarCache();

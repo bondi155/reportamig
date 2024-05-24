@@ -75,22 +75,24 @@ function download__(req, res) {
   }
 }
 
+// Esta función es para borrar los archivos subidos por id de proceso , no la termine
+async function ArchivosCargados__(req, res) {
+  const connection = await pool.promise().getConnection();
 
-// Esta función es para borrar los archivos subidos por id de proceso , no la termine 
-function getIdProceso__(req, res) {
   try {
-    const idProQuery = `SELECT 'am_cmbg' AS tabla, id_proceso, tipo_comp, cod_comp, mes, anio, f_carga, usr_carga FROM am_cmbg
-                        UNION ALL
-                        SELECT 'am_cmer' AS tabla, id_proceso, tipo_comp, cod_comp, mes, anio, f_carga, usr_carga FROM am_cmer
-                        ORDER BY id_proceso;`;
-
+    const SqlIdProceso = `SELECT * FROM amigdb.am_proceso ORDER BY id DESC;`;
+    const [rows] = await connection.query(SqlIdProceso);
+//    console.log(rows);
+    res.send(rows);
   } catch (err) {
     console.log(err);
+  } finally {
+    connection.release();
   }
 }
-
 module.exports = {
   loginUsers__,
   listUsers__,
   download__,
+  ArchivosCargados__,
 };

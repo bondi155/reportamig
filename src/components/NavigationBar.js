@@ -60,6 +60,13 @@ function NavigationBar({ setIslogin, form }) {
                 >
                   Admin. de Usuarios
                 </Link>
+                <Link
+                  to='/gestorArchivosCargados'
+                  className='nav-link'
+                  onClick={handleLinkClick}
+                >
+                  Gestor de Archivos Cargados
+                </Link>
                 <NavDropdown title='Reportes' id='basic-nav-dropdown'>
                   <NavDropdown.Item
                     as={Link}

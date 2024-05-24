@@ -57,37 +57,71 @@ function EntradaCmer({ form }) {
       });
       if (res.status === 200 && res.data.code === 'SUCCESS') {
         Swal.fire('Procesado!!', `Archivo txt ${res.data.message}`, 'success');
+      } else if (res.data.code === 'COMPANY_CODE_NOT_FOUND') {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: ` ${res.data.message}`,
+        });
+      } else if (res.data.code === 'ALREADY_EXIST') {
+        const result = await Swal.fire({
+          title: 'Esta Seguro?',
+          text: `${res.data.message}`,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#1976d2d9',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Si, quiero sobreescribir la información!',
+        });
+        if (result.isConfirmed) {
+          const secondRes = await axios.post(
+            `${API_URL}/updateTxt`,
+            formData,
+            {
+              onUploadProgress: (progressEvent) => {
+                const percentCompleted = Math.round(
+                  (progressEvent.loaded * 100) / progressEvent.total
+                );
+                setUploadProgress(percentCompleted);
+              },
+            }
+          );
+          Swal.fire('Procesado!!', `${secondRes.data.message}`, 'success');
+          if (
+            secondRes.status === 200 &&
+            secondRes.data.code === 'UPDATE_SUCCESS'
+          ) {
+            Swal.fire('Procesado!!', `${secondRes.data.message}`, 'success');
+          } else if (secondRes.data.code === 'EMPTY_FILE') {
+            Swal.fire('Error', `error de empty${secondRes.data.message}`, 'error');
+          } else {
+            Swal.fire(
+              'Error',
+              `Hubo un error : ${secondRes.data.message}`,
+              'error'
+            );
+          }
+        }
       } else {
-        // Si la respuesta no es exitosa, muestra una alerta.
         Swal.fire(
           'Error',
           `Error al procesar el archivo: ${res.data.message}`,
           'error'
         );
       }
-      if (res.status === 500 && res.data.code === 'ERROR_READ_TXT') {
-        Swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text: `Se produjo un error. en la lectura del archivo: ${res.data.message}`,
-        });
-      }
     } catch (error) {
       console.error('Error en la respuesta:', error.response);
-      if (error.response && error.response.data.code === 'ERROR_INSERT') {
+      if (error.response && error.response.data) {
         Swal.fire({
           icon: 'error',
           title: 'Oops...',
           text: `${error.response.data.message}`,
         });
-      } else if (
-        error.response &&
-        error.response.data.code === 'ERROR_READ_TXT'
-      ) {
+      } else {
         Swal.fire({
           icon: 'error',
           title: 'Oops...',
-          text: `${error.response.data.message}`,
+          text: 'Ocurrió un error desconocido.',
         });
       }
     } finally {
@@ -95,7 +129,6 @@ function EntradaCmer({ form }) {
       setUploadProgress(0); // Resetear el progreso después de la carga
     }
   };
-
   return (
     <>
       <div>
@@ -151,7 +184,7 @@ function EntradaCmer({ form }) {
                           variant='outlined'
                           type='submit'
                           size='small'
-                          endIcon={<FaUpload />}  
+                          endIcon={<FaUpload />}
                         >
                           Cargar TXT
                         </Button>

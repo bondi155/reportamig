@@ -54,6 +54,26 @@ function deleteUser__(req, res) {
   });
 }
 
+async function deleteArchivoTxt__(req, res) {
+  const id = req.params.id;
+  const connection = await pool.promise().getConnection();
+
+  try {
+    const sqlDeleteTxt = `DELETE FROM am_proceso WHERE id = ?`;
+
+   await connection.query(sqlDeleteTxt, [id]);
+    res.status(200).json({ code :'ARCHIVO_BORRADO_SUCCESS', message: `Archivo borrado relacionado al ${id}`});
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: `Sucedio un Error al eliminar el Archivo TXT ${error}`,
+    });
+    
+  } finally {
+    if (connection) {
+      connection.release(); 
+    }  }
+}
 
 //reset password
 async function resetPassword__(req, res) {
@@ -65,24 +85,25 @@ async function resetPassword__(req, res) {
       console.error('error en brypt.hash dentro de resetpass function', err);
     }
 
-  const updatePass = `UPDATE users SET password = ? WHERE username = ?`;
-  pool.query(updatePass, [hash, username], (error, result) => {
-    if (error) {
-      console.log(error);
-      return res.status(500).json({ message: 'error', error });
-    }
-    if (result.affectedRows === 0) {
-      return res
-        .status(400)
-        .json({ message: 'No rows updated. Check the ID.' });
-    }
-    return res.status(200).json({ message: 'Password actualizada' });
+    const updatePass = `UPDATE users SET password = ? WHERE username = ?`;
+    pool.query(updatePass, [hash, username], (error, result) => {
+      if (error) {
+        console.log(error);
+        return res.status(500).json({ message: 'error', error });
+      }
+      if (result.affectedRows === 0) {
+        return res
+          .status(400)
+          .json({ message: 'No rows updated. Check the ID.' });
+      }
+      return res.status(200).json({ message: 'Password actualizada' });
+    });
   });
-});
 }
 
 module.exports = {
   userCreate__,
   resetPassword__,
   deleteUser__,
+  deleteArchivoTxt__,
 };
