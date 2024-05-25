@@ -90,9 +90,25 @@ async function ArchivosCargados__(req, res) {
     connection.release();
   }
 }
+
+async function erroresLista__(req, res) {
+  const connection = await pool.promise().getConnection();
+
+  try {
+    const SqlErrores = `SELECT * FROM amigdb.am_carga_err ORDER BY id DESC;`;
+    const [rows] = await connection.query(SqlErrores);
+//    console.log(rows);
+    res.send(rows);
+  } catch (err) {
+    console.log(err);
+  } finally {
+    connection.release();
+  }
+}
 module.exports = {
   loginUsers__,
   listUsers__,
   download__,
   ArchivosCargados__,
+  erroresLista__
 };

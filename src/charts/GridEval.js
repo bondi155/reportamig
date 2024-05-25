@@ -12,7 +12,7 @@ import {
 } from '@mui/x-data-grid';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import '../css/App.css';
-import { BsFillTrashFill } from 'react-icons/bs';
+import { RiDeleteBack2Line } from "react-icons/ri";
 import { esES as pickersBgBG } from '@mui/x-date-pickers/locales';
 
 const theme = createTheme(
@@ -52,8 +52,8 @@ function GridEval({
       sortable: false,
       filterable: false,
       renderCell: (params) => (
-        <BsFillTrashFill
-          size={25}
+        <RiDeleteBack2Line  
+          size={22}
           color='black'
           onClick={() => onDelete(params.row.id)}
           style={{ cursor: 'pointer' }}
@@ -88,7 +88,7 @@ function GridEval({
             borderRadius: '0 0 8px 8px',
           }}
           density='compact'
-          rowHeight={35} //height de rows
+          rowHeight={35} // Height de rows
           rows={rows}
           columns={columns}
           getRowId={(row) => row.id}

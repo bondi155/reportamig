@@ -1,35 +1,41 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Container, Row, Col, Card } from 'react-bootstrap';
-import GridUsers from '../charts/GridUsers';
+import GridUsers from '../charts/GridUsers.js';
 import { API_URL } from '../config/config.js';
 import Swal from 'sweetalert2';
 
-function GestorArchCargados() {
+function GestorErrores() {
   const [axiosResponse, setAxiosResponse] = useState([]);
 
   const [, setIsLoading] = useState(true);
 
   const archivosColumnas = [
     {
-      field: 'id',
+      field: 'id_proceso',
       headerName: 'ID Proceso.',
       width: 100,
       hide: true,
     },
-    {
-      field: 'estatus',
-      headerName: 'Estatus',
-      width: 90,
-    },
+
     {
       field: 'ruta_arch',
       headerName: 'Nombre Archivo',
       width: 300,
     },
     {
-      field: 'f_proc',
-      headerName: 'Fecha Procesamiento',
+      field: 'cod_err',
+      headerName: 'Cod. Error',
+      width: 250,
+    },
+    {
+      field: 'msg_err_orig',
+      headerName: 'Error',
+      width: 250,
+    },
+    {
+      field: 'f_err',
+      headerName: 'Fecha Error',
       width: 200,
       valueFormatter: ({ value }) => {
         const date = new Date(value);
@@ -49,7 +55,7 @@ function GestorArchCargados() {
     const asyncCall = async () => {
       setIsLoading(true);
       try {
-        const response = await axios.get(`${API_URL}/getArchivosCargados`, {});
+        const response = await axios.get(`${API_URL}/getErroresLista`, {});
         setAxiosResponse(response.data);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -68,33 +74,6 @@ function GestorArchCargados() {
 
   //console.log(axiosResponse);
 
-  const handleDelete = async (id) => {
-    const result = await Swal.fire({
-      title: 'Esta Seguro de Borrar este Archivo?',
-      text: 'Esta acción no se podra revertir!',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#1976d2d9',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Si, lo quiero borrar!',
-    });
-    if (result.isConfirmed) {
-      try {
-        await axios.delete(`${API_URL}/deleteArchivoTxt/${id}`, {});
-        setAxiosResponse(axiosResponse.filter((archivo) => archivo.id !== id));
-        Swal.fire('Borrado!', 'El Registro fue borrado', 'success');
-      } catch (err) {
-        console.log(err);
-        Swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text: 'Hubo un error al borrar el Archivo',
-        });
-      } finally {
-        setIsLoading(false);
-      }
-    }
-  };
 
   return (
     <>
@@ -105,17 +84,16 @@ function GestorArchCargados() {
               <Col md={12} lg={8}>
                 <Card>
                   <Card.Header className='justify-content-center' as='h3'>
-                    Gestor de Archivos Cargados
+                   Lista de errores
                   </Card.Header>
                 
                     <Card.Body>
                       <GridUsers
                         rows={axiosResponse}
                         columnsVar={archivosColumnas}
-                        fileNameVar='Gestor de Archivos'
+                        fileNameVar='Lista Errores'
                         autoHeight
-                        showDeleteColumn={true}
-                        onDelete={handleDelete}
+                        showDeleteColumn={false}
                       />
                     </Card.Body>
                 </Card>
@@ -128,4 +106,4 @@ function GestorArchCargados() {
   );
 }
 
-export default GestorArchCargados;
+export default GestorErrores;

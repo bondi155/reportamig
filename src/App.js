@@ -24,6 +24,7 @@ import SiniestroResultados from './pages/SiniestrosResultados';
 import SiniestrosCtaOrden from './pages/SiniestrosCtaOrden';
 import PrimasCantidad from './pages/PrimasCantidad';
 import GestorArchCargados from './pages/GestorArchCargados';
+import GestorErrores from './pages/GestorErrores';
 function App() {
   const [islogin, setIslogin] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -127,6 +128,18 @@ function App() {
             element={
               <PrivateRoute islogin={islogin}>
                 <GestorArchCargados
+                  form={form}
+                  userCreate={userCreate}
+                  setUserCreate={setUserCreate}
+                />{' '}
+              </PrivateRoute>
+            }
+          />
+                <Route
+            path='/listaErrores'
+            element={
+              <PrivateRoute islogin={islogin}>
+                <GestorErrores
                   form={form}
                   userCreate={userCreate}
                   setUserCreate={setUserCreate}

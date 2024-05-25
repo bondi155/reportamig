@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FiLogOut } from 'react-icons/fi';
 import '../css/App.css';
+import { RiListSettingsFill } from "react-icons/ri";
 
 function NavigationBar({ setIslogin, form }) {
   const navigate = useNavigate();
@@ -53,20 +54,30 @@ function NavigationBar({ setIslogin, form }) {
           <Nav>
             {form.role === 'admin' && (
               <>
-                <Link
-                  to='/userCreation'
-                  className='nav-link'
-                  onClick={handleLinkClick}
-                >
-                  Admin. de Usuarios
-                </Link>
-                <Link
-                  to='/gestorArchivosCargados'
-                  className='nav-link'
-                  onClick={handleLinkClick}
-                >
-                  Gestor de Archivos Cargados
-                </Link>
+         
+         <NavDropdown  title={<> <RiListSettingsFill style={{ fontSize: '1.3rem' }}/></>} id='basic-nav-dropdown'>
+                <NavDropdown.Item
+                    as={Link}
+                    onClick={handleToggleClick}
+                    to='/userCreation'
+                  >
+                      Admin. de Usuarios{' '}
+                  </NavDropdown.Item>{' '}
+                  <NavDropdown.Item
+                    as={Link}
+                    onClick={handleToggleClick}
+                    to='/gestorArchivosCargados'
+                  >
+                    Archivos Cargados
+                  </NavDropdown.Item>
+                  <NavDropdown.Item
+                    as={Link}
+                    onClick={handleToggleClick}
+                    to='/listaErrores'
+                  >
+                    Errores{' '}
+                  </NavDropdown.Item>{' '}
+                </NavDropdown>
                 <NavDropdown title='Reportes' id='basic-nav-dropdown'>
                   <NavDropdown.Item
                     as={Link}
@@ -155,8 +166,8 @@ function NavigationBar({ setIslogin, form }) {
                   className='nav-link'
                   onClick={handleLinkClick}
                 >
-                  Conf. Archivo de entrada
-                </Link>
+                  Carga Archivo TXT
+                </Link>                
               </>
             )}
             {form.role === 'consulta' && (
