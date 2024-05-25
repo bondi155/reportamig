@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FiLogOut } from 'react-icons/fi';
 import '../css/App.css';
-import { RiListSettingsFill } from "react-icons/ri";
+import { RiListSettingsFill } from 'react-icons/ri';
 
 function NavigationBar({ setIslogin, form }) {
   const navigate = useNavigate();
@@ -54,28 +54,36 @@ function NavigationBar({ setIslogin, form }) {
           <Nav>
             {form.role === 'admin' && (
               <>
-         
-         <NavDropdown  title={<> <RiListSettingsFill style={{ fontSize: '1.3rem' }}/></>} id='basic-nav-dropdown'>
-                <NavDropdown.Item
+                <NavDropdown
+                  title={
+                    <>
+                      {' '}
+                      <RiListSettingsFill style={{ fontSize: '1.3rem' }} />{' '}
+                      Menú Avanzado
+                    </>
+                  }
+                  id='basic-nav-dropdown'
+                >
+                  <NavDropdown.Item
                     as={Link}
                     onClick={handleToggleClick}
                     to='/userCreation'
                   >
-                      Admin. de Usuarios{' '}
+                    Administración de Usuarios{' '}
                   </NavDropdown.Item>{' '}
                   <NavDropdown.Item
                     as={Link}
                     onClick={handleToggleClick}
                     to='/gestorArchivosCargados'
                   >
-                    Archivos Cargados
+                    Gestor de Archivos Cargados
                   </NavDropdown.Item>
                   <NavDropdown.Item
                     as={Link}
                     onClick={handleToggleClick}
                     to='/listaErrores'
                   >
-                    Errores{' '}
+                   Listado de Errores de Carga{' '}
                   </NavDropdown.Item>{' '}
                 </NavDropdown>
                 <NavDropdown title='Reportes' id='basic-nav-dropdown'>
@@ -167,7 +175,7 @@ function NavigationBar({ setIslogin, form }) {
                   onClick={handleLinkClick}
                 >
                   Carga Archivo TXT
-                </Link>                
+                </Link>
               </>
             )}
             {form.role === 'consulta' && (
