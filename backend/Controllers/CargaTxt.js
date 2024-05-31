@@ -246,6 +246,7 @@ async function saveDBtxtCmbg(
     await gestionarProceso(idProceso, 'F', 'pendiente', fileName);
     console.log(`F FInalizada checar el id aca y en la atabla cmgb.`);
   } catch (error) {
+    console.error(`Error al insertar datos en cmbg: ${error}`);
     await connection.rollback();
     //exp regular para extraer solo el num de la lineNum del mensaje de error
     const errorMatch = error.message.match(/at row (\d+)/);
@@ -375,10 +376,44 @@ async function execFuncsTxt(req, res) {
   const usuario = req.body.usuario;
   const fileName = req.body.fileName;
   let idProceso;
+  const invalidLines = [];
+  let lineaNum = 0;
   try {
     idProceso = await gestionarProceso(null, 'I', 'pendiente', fileName);
     const { parsedData, tipoCompania, cod_cia_final, dia, mes, anio } =
       await cargaTxt__(req, res);
+
+    // Validar datos antes de intentar insertarlos
+    parsedData.forEach((row, index) => {
+      lineaNum = index + 1;
+
+      // Validar la línea (ejemplo: verificar si hay 6 elementos en la línea)
+      if (
+        row.length !== 6 ||
+        row[0].length !== 3 ||
+        row[1].length !== 2 ||
+        row[2].length !== 2 ||
+        row[3].length !== 2 ||
+        row[4].length !== 2 
+      ) {
+        invalidLines.push({
+          line: lineaNum,
+          data: row,
+          error: 'Longitud incorrecta de campos o registro',
+        });
+      }
+    });
+
+    if (invalidLines.length > 0) {
+      let errorMessage = `Longitud incorrecta de campos o registro en las siguientes líneas:\n`;
+      invalidLines.forEach((line) => {
+        errorMessage += `${line.line}-`;
+      });
+      return res.status(400).json({
+        code: 'INVALID_DATA',
+        message: errorMessage,
+      });
+    }
 
     if (!parsedData) {
       return res.status(500).json({

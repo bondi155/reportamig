@@ -74,18 +74,14 @@ function EntradaCmer({ form }) {
           confirmButtonText: 'Si, quiero sobreescribir la información!',
         });
         if (result.isConfirmed) {
-          const secondRes = await axios.post(
-            `${API_URL}/updateTxt`,
-            formData,
-            {
-              onUploadProgress: (progressEvent) => {
-                const percentCompleted = Math.round(
-                  (progressEvent.loaded * 100) / progressEvent.total
-                );
-                setUploadProgress(percentCompleted);
-              },
-            }
-          );
+          const secondRes = await axios.post(`${API_URL}/updateTxt`, formData, {
+            onUploadProgress: (progressEvent) => {
+              const percentCompleted = Math.round(
+                (progressEvent.loaded * 100) / progressEvent.total
+              );
+              setUploadProgress(percentCompleted);
+            },
+          });
           Swal.fire('Procesado!!', `${secondRes.data.message}`, 'success');
           if (
             secondRes.status === 200 &&
@@ -93,7 +89,11 @@ function EntradaCmer({ form }) {
           ) {
             Swal.fire('Procesado!!', `${secondRes.data.message}`, 'success');
           } else if (secondRes.data.code === 'EMPTY_FILE') {
-            Swal.fire('Error', `error de empty${secondRes.data.message}`, 'error');
+            Swal.fire(
+              'Error',
+              `error de empty${secondRes.data.message}`,
+              'error'
+            );
           } else {
             Swal.fire(
               'Error',
@@ -102,6 +102,8 @@ function EntradaCmer({ form }) {
             );
           }
         }
+      } else if (res.data.code === 'INVALID_DATA') {
+        Swal.fire('Error', `${res.data.message}`, 'error');
       } else {
         Swal.fire(
           'Error',
