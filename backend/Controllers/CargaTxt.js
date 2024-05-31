@@ -129,6 +129,15 @@ async function cargaTxt__(req, res) {
   try {
     //lee el archivo subido
     const dataTxt = await fs.promises.readFile(req.file.path, 'utf8');
+    
+    if(dataTxt.length === 0){
+      console.log('Archivo sin datos , por favor suba uno correcto');
+      return res.status(500).json({
+        code: 'ERROR_EMPTY',
+        message:
+          'Error en el proceso de lectura del archivo, esta vacio..',
+      });
+    }
     const fileName = req.body.fileName;
 
     //extrae el cod de compañía y la fecha
@@ -163,6 +172,7 @@ async function cargaTxt__(req, res) {
     console.log(
       `Tipo de Compañía: ${tipoCompania}, Código de Compañía: ${cod_cia_final}, Año: ${anio}, Mes: ${mes}, Día: ${dia}`
     );
+
 
     const lines = dataTxt
       .split(';')
@@ -384,17 +394,18 @@ async function execFuncsTxt(req, res) {
       await cargaTxt__(req, res);
 
     // Validar datos antes de intentar insertarlos
+    if (parsedData) { 
     parsedData.forEach((row, index) => {
       lineaNum = index + 1;
 
-      // Validar la línea (ejemplo: verificar si hay 6 elementos en la línea)
+      // Validar la línea (ejemplo: verificar si hay 6 elementos en la línea o mas de los digitos que corresponde)
       if (
         row.length !== 6 ||
         row[0].length !== 3 ||
         row[1].length !== 2 ||
         row[2].length !== 2 ||
         row[3].length !== 2 ||
-        row[4].length !== 2 
+        row[4].length !== 2
       ) {
         invalidLines.push({
           line: lineaNum,
@@ -404,17 +415,27 @@ async function execFuncsTxt(req, res) {
       }
     });
 
+    let errorMessageComplete;
     if (invalidLines.length > 0) {
+      await gestionarProceso(idProceso, 'E', fileName);
       let errorMessage = `Longitud incorrecta de campos o registro en las siguientes líneas:\n`;
       invalidLines.forEach((line) => {
-        errorMessage += `${line.line}-`;
+        errorMessageComplete = errorMessage += `${line.line}-`;
       });
+      await registrarError(
+        idProceso,
+        fileName,
+        'INVALID_DATA',
+        '5',
+        errorMessageComplete,
+        errorMessageComplete
+      );
       return res.status(400).json({
         code: 'INVALID_DATA',
         message: errorMessage,
       });
     }
-
+  }
     if (!parsedData) {
       return res.status(500).json({
         code: 'EMPTY_FILE',
@@ -519,13 +540,59 @@ async function execUpdateTxt(req, res) {
   const usuario = req.body.usuario;
   const fileName = req.body.fileName;
   let idProceso;
+  let lineaNum = 0;
+  let invalidLines = [];
+
   try {
     idProceso = await gestionarProceso(null, 'I', 'pendiente', fileName);
     const { parsedData, tipoCompania, cod_cia_final, dia, mes, anio } =
       await cargaTxt__(req, res);
+
+    // Validar datos antes de intentar insertarlos
+    parsedData.forEach((row, index) => {
+      lineaNum = index + 1;
+
+      // Validar la línea (ejemplo: verificar si hay 6 elementos en la línea o mas de los digitos que corresponde)
+      if (
+        row.length !== 6 ||
+        row[0].length !== 3 ||
+        row[1].length !== 2 ||
+        row[2].length !== 2 ||
+        row[3].length !== 2 ||
+        row[4].length !== 2
+      ) {
+        invalidLines.push({
+          line: lineaNum,
+          data: row,
+          error: 'Longitud incorrecta de campos o registro',
+        });
+      }
+    });
+
+    let errorMessageComplete;
+    if (invalidLines.length > 0) {
+      await gestionarProceso(idProceso, 'E', fileName);
+      let errorMessage = `Longitud incorrecta de campos o registro en las siguientes líneas:\n`;
+      invalidLines.forEach((line) => {
+        errorMessageComplete = errorMessage += `${line.line}-`;
+      });
+      await registrarError(
+        idProceso,
+        fileName,
+        'INVALID_DATA',
+        '5',
+        errorMessageComplete,
+        errorMessageComplete
+      );
+      return res.status(400).json({
+        code: 'INVALID_DATA',
+        message: errorMessage,
+      });
+    }
+
     if (!parsedData) {
       return res.status(500).json({
-        code: 'EMPTY_File',
+        code: 'EMPTY_FILE',
         message: 'No hay datos en este archivo',
       });
     }
