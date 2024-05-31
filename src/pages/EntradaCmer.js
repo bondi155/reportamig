@@ -104,6 +104,8 @@ function EntradaCmer({ form }) {
         }
       } else if (res.data.code === 'INVALID_DATA') {
         Swal.fire('Error', `${res.data.message}`, 'error');
+      } else if (res.data.code === 'ERROR_EMPTY') {
+        Swal.fire('Error', `${res.data.message}`, 'error');
       } else {
         Swal.fire(
           'Error',
