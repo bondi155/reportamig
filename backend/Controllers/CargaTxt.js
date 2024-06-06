@@ -129,13 +129,12 @@ async function cargaTxt__(req, res) {
   try {
     //lee el archivo subido
     const dataTxt = await fs.promises.readFile(req.file.path, 'utf8');
-    
-    if(dataTxt.length === 0){
+
+    if (dataTxt.length === 0) {
       console.log('Archivo sin datos , por favor suba uno correcto');
       return res.status(500).json({
         code: 'ERROR_EMPTY',
-        message:
-          'Error en el proceso de lectura del archivo, esta vacio..',
+        message: 'Error en el proceso de lectura del archivo, esta vacio..',
       });
     }
     const fileName = req.body.fileName;
@@ -172,7 +171,6 @@ async function cargaTxt__(req, res) {
     console.log(
       `Tipo de Compañía: ${tipoCompania}, Código de Compañía: ${cod_cia_final}, Año: ${anio}, Mes: ${mes}, Día: ${dia}`
     );
-
 
     const lines = dataTxt
       .split(';')
@@ -392,50 +390,80 @@ async function execFuncsTxt(req, res) {
     idProceso = await gestionarProceso(null, 'I', 'pendiente', fileName);
     const { parsedData, tipoCompania, cod_cia_final, dia, mes, anio } =
       await cargaTxt__(req, res);
+    let tipoArchivo = fileName.includes('CMBG') ? 'CMBG' : 'CMER';
 
     // Validar datos antes de intentar insertarlos
-    if (parsedData) { 
-    parsedData.forEach((row, index) => {
-      lineaNum = index + 1;
+    if (parsedData) {
+      parsedData.forEach((row, index) => {
+        lineaNum = index + 1;
+        let errorFound = false;
 
-      // Validar la línea (ejemplo: verificar si hay 6 elementos en la línea o mas de los digitos que corresponde)
-      if (
-        row.length !== 6 ||
-        row[0].length !== 3 ||
-        row[1].length !== 2 ||
-        row[2].length !== 2 ||
-        row[3].length !== 2 ||
-        row[4].length !== 2
-      ) {
-        invalidLines.push({
-          line: lineaNum,
-          data: row,
-          error: 'Longitud incorrecta de campos o registro',
+        // Validar la línea (ejemplo: verificar si hay 6 elementos en la línea o mas de los digitos que corresponde)
+        switch (tipoArchivo) {
+          case 'CMBG':
+            if (
+              row.length !== 6 ||
+              row[0].length !== 3 ||
+              row[1].length !== 2 ||
+              row[2].length !== 2 ||
+              row[3].length !== 2 ||
+              row[4].length !== 2
+            ) {
+              errorFound = true;
+            }
+            break;
+          case 'CMER':
+            if (
+              row.length !== 10 ||
+              row[0].length !== 3 ||
+              row[1].length !== 2 ||
+              row[2].length !== 2 ||
+              row[3].length !== 2 ||
+              row[4].length !== 2 ||
+              row[5].length !== 4 ||
+              row[6].length !== 3 ||
+              row[7].length !== 3 ||
+              row[8].length !== 4
+            ) {
+              errorFound = true;
+            }
+            break;
+          default:
+            console.error(`Tipo de archivo desconocido: ${tipoArchivo}`);
+            errorFound = true;
+            break;
+        }
+
+        if (errorFound) {
+          invalidLines.push({
+            line: lineaNum,
+            data: row,
+            error: 'Longitud incorrecta de campos o registro',
+          });
+        }
+      });
+
+      let errorMessageComplete;
+      if (invalidLines.length > 0) {
+        await gestionarProceso(idProceso, 'E', fileName);
+        let errorMessage = `Longitud incorrecta de campos o registro en las siguientes líneas:\n`;
+        invalidLines.forEach((line) => {
+          errorMessageComplete = errorMessage += `${line.line}-`;
+        });
+        await registrarError(
+          idProceso,
+          fileName,
+          'INVALID_DATA',
+          '5',
+          errorMessageComplete,
+          errorMessageComplete
+        );
+        return res.status(400).json({
+          code: 'INVALID_DATA',
+          message: errorMessage,
         });
       }
-    });
-
-    let errorMessageComplete;
-    if (invalidLines.length > 0) {
-      await gestionarProceso(idProceso, 'E', fileName);
-      let errorMessage = `Longitud incorrecta de campos o registro en las siguientes líneas:\n`;
-      invalidLines.forEach((line) => {
-        errorMessageComplete = errorMessage += `${line.line}-`;
-      });
-      await registrarError(
-        idProceso,
-        fileName,
-        'INVALID_DATA',
-        '5',
-        errorMessageComplete,
-        errorMessageComplete
-      );
-      return res.status(400).json({
-        code: 'INVALID_DATA',
-        message: errorMessage,
-      });
     }
-  }
     if (!parsedData) {
       return res.status(500).json({
         code: 'EMPTY_FILE',
@@ -548,19 +576,51 @@ async function execUpdateTxt(req, res) {
     const { parsedData, tipoCompania, cod_cia_final, dia, mes, anio } =
       await cargaTxt__(req, res);
 
+    let tipoArchivo = fileName.includes('CMBG') ? 'CMBG' : 'CMER';
+
     // Validar datos antes de intentar insertarlos
     parsedData.forEach((row, index) => {
       lineaNum = index + 1;
 
       // Validar la línea (ejemplo: verificar si hay 6 elementos en la línea o mas de los digitos que corresponde)
-      if (
-        row.length !== 6 ||
-        row[0].length !== 3 ||
-        row[1].length !== 2 ||
-        row[2].length !== 2 ||
-        row[3].length !== 2 ||
-        row[4].length !== 2
-      ) {
+      let errorFound = false;
+
+      switch (tipoArchivo) {
+        case 'CMBG':
+          if (
+            row.length !== 6 ||
+            row[0].length !== 3 ||
+            row[1].length !== 2 ||
+            row[2].length !== 2 ||
+            row[3].length !== 2 ||
+            row[4].length !== 2
+          ) {
+            errorFound = true;
+          }
+          break;
+        case 'CMER':
+          if (
+            row.length !== 10 ||
+            row[0].length !== 3 ||
+            row[1].length !== 2 ||
+            row[2].length !== 2 ||
+            row[3].length !== 2 ||
+            row[4].length !== 2 ||
+            row[5].length !== 4 ||
+            row[6].length !== 3 ||
+            row[7].length !== 3 ||
+            row[8].length !== 4
+          ) {
+            errorFound = true;
+          }
+          break;
+        default:
+          console.error(`Tipo de archivo desconocido: ${tipoArchivo}`);
+          errorFound = true;
+          break;
+      }
+
+      if (errorFound) {
         invalidLines.push({
           line: lineaNum,
           data: row,
