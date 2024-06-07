@@ -69,13 +69,13 @@ async function registrarError(
 }
 // Compara el codigo de compañia insertado si existe en la base de datos si no un mensaje de error desde el Front
 async function compareCodComp(cod_cia) {
-  const sqlGetCodCompany = 'SELECT cod_cia FROM am_compania WHERE cod_cia = ?;';
+  const sqlGetCodCompany = 'SELECT id_cia FROM am_compania WHERE cod_cia = ?;';
   try {
     const connection = await pool.promise().getConnection();
     const [rows] = await connection.query(sqlGetCodCompany, [cod_cia]);
     connection.release();
     // Devuelve directamente el código si existe, o null si no se encontraron filas.
-    return rows.length > 0 ? rows[0].cod_cia : null;
+    return rows.length > 0 ? rows[0].id_cia : null;
   } catch (err) {
     console.error('Error al consultar la compañía:', err.message);
     throw err;

@@ -241,7 +241,7 @@ async function consultaDinamica(idCia, anio, mes, anioAnt, detalles) {
       let tablaOrig = detalle.tabla_orig; // AGREGAR SI TABLA_ORIG ES NULL AL QUERY QUE ARMO SOLO SELECT SIN FROM NI WHERE ELSE LO DE SIEMPRE
 
       if (tablaOrig === null) {
-        consultaFinal = `SELECT ${sqlDinamica} AS ${alias}`; //
+        consultaFinal = `SELECT ${sqlDinamica} AS ${alias}`; //   
       } else {
         let whereCond = reempParam(
           detalle.where_cond,
@@ -263,7 +263,11 @@ async function consultaDinamica(idCia, anio, mes, anioAnt, detalles) {
           valIns = resultadoConsulta[0];
         }
       } catch (error) {
-        console.error('Error al ejecutar consulta dinámica:', error);
+        if(error.errno==1365) {
+          valIns = '0';
+        } else {
+          console.error('Error al ejecutar consulta dinámica:', error);
+        }
       }
     }
     if (valIns[alias] == null && detalle.val_def != null) {
@@ -1087,7 +1091,7 @@ async function armaGrafStackPrima(
     primaAdm = [];
     primaCred = [];
     for (let idxCia = 0; idxCia < pArrCia.length; idxCia++) {
-      idCia = pArrCia[idxCia].posic_cia;
+      idCia = pArrCia[idxCia].id_cia;
       primaFid[idxCia] = 0;
       primaJud[idxCia] = 0;
       primaAdm[idxCia] = 0;
