@@ -161,18 +161,19 @@ function reempParam(pTexto, pCia, pAnio, pMes, pAnioAnt, pArrVal) {
       .replace(/\{ZZZ_ID_CIA\}/g, pCia)
       .replace(/\{ZZZ_ANIO_ANT\}/g, pAnioAnt);
       for (let z = 0; z < pArrVal.length; z++) {
-        let expr = 'ZZZ_' + z;
-        let re = new RegExp(String.raw`\s${expr}\s`, "g");
-        valDev = valDevAux.replace(re, pArrVal[z]);
+        let expr = '\{ZZZ_' + z + '\}';
+        let re = new RegExp("/" + expr + "/", "g");
+        valDevAux = valDevAux.replace(re, pArrVal[z]);
       }
   } catch (e) {
     console.error('Error reemplazando parámetros:', e);
-    valDev = pTexto
+    valDevAux = pTexto
       .replace(/\{ZZZ_ANIO\}/g, pAnio)
       .replace(/\{ZZZ_MES\}/g, pMes)
       .replace(/\{ZZZ_ID_CIA\}/g, pCia)
       .replace(/\{ZZZ_ANIO_ANT\}/g, pAnioAnt);
   }
+  valDev = valDevAux;
   return valDev;
 }
 
