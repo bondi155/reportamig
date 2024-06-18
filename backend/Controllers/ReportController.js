@@ -154,18 +154,27 @@ async function obtenerDetallesD(idEncabezado, numTab, seqLin = 1) {
 
 function reempParam(pTexto, pCia, pAnio, pMes, pAnioAnt, pArrVal) {
   let valDevAux, valDev;
+  const busq_col = /\{ZZZ_\d+\}/g;
   try {
     valDevAux = pTexto
       .replace(/\{ZZZ_ANIO\}/g, pAnio)
       .replace(/\{ZZZ_MES\}/g, pMes)
       .replace(/\{ZZZ_ID_CIA\}/g, pCia)
       .replace(/\{ZZZ_ANIO_ANT\}/g, pAnioAnt);
-      for (let z = 0; z < pArrVal.length; z++) {
-        let expr = '{ZZZ_' + (z+1) + '}';
-        let re = new RegExp("/" + expr + "/", "g");
-        if(typeof pArrVal[z] !== 'undefined') {
-          let valArr = pArrVal[z];
-          valDevAux = valDevAux.replace(re, pArrVal[z]);
+      if(pTexto.search(busq_col) >= 0) {
+        //console.log("valores:", pArrVal);
+        
+        for (let z = 0; z < pArrVal.length; z++) {
+          let re = new RegExp("{ZZZ_" + (z+1) + "}", "g");
+          if(typeof pArrVal[z] !== 'undefined') {
+            let busq_col_def = new RegExp("{ZZZ_" + (z+1) + "}", "g");
+            //console.log("llega:", valDevAux);
+            if(pTexto.search(busq_col_def) >= 0) {
+              //console.log("llega al replace:", valDevAux, pArrVal[z]);
+              valDevAux = valDevAux.replace(re, pArrVal[z]);
+              //console.log("sale:", valDevAux);
+            }
+          }
         }
       }
   } catch (e) {
@@ -396,7 +405,11 @@ async function armaResultVert(
             valIns = resultadoConsulta[0];
           }
         } catch (error) {
-          console.error('Error al ejecutar consulta dinámica:', error);
+          if(error.errno==1365) {
+            valIns = '0';
+          } else {
+            console.error('Error al ejecutar consulta dinámica:', error);
+          }
         }
       }
       if (valIns[alias] == null && detalle.val_def != null) {
@@ -538,7 +551,11 @@ async function armaResultVert2(
             valIns = resultadoConsulta[0][alias];
           }
         } catch (error) {
-          console.error('Error al ejecutar consulta dinámica:', error);
+          if(error.errno==1365) {
+            valIns = '0';
+          } else {
+            console.error('Error al ejecutar consulta dinámica:', error);
+          }
         }
       }
       if (valIns == null && detalle.val_def != null) {
