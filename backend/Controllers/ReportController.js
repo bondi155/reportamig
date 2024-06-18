@@ -153,30 +153,18 @@ async function obtenerDetallesD(idEncabezado, numTab, seqLin = 1) {
 }
 
 function reempParam(pTexto, pCia, pAnio, pMes, pAnioAnt, pArrVal) {
-  let valDev;
+  let valDevAux, valDev;
   try {
-    valDev = pTexto
+    valDevAux = pTexto
       .replace(/\{ZZZ_ANIO\}/g, pAnio)
       .replace(/\{ZZZ_MES\}/g, pMes)
       .replace(/\{ZZZ_ID_CIA\}/g, pCia)
-      .replace(/\{ZZZ_ANIO_ANT\}/g, pAnioAnt)
-      .replace(/\{ZZZ_3\}/g, pArrVal[2])
-      .replace(/\{ZZZ_4\}/g, pArrVal[3])
-      .replace(/\{ZZZ_5\}/g, pArrVal[4])
-      .replace(/\{ZZZ_6\}/g, pArrVal[5])
-      .replace(/\{ZZZ_7\}/g, pArrVal[6])
-      .replace(/\{ZZZ_8\}/g, pArrVal[7])
-      .replace(/\{ZZZ_9\}/g, pArrVal[8])
-      .replace(/\{ZZZ_10\}/g, pArrVal[9])
-      .replace(/\{ZZZ_11\}/g, pArrVal[10])
-      .replace(/\{ZZZ_12\}/g, pArrVal[11])
-      .replace(/\{ZZZ_13\}/g, pArrVal[12])
-      .replace(/\{ZZZ_14\}/g, pArrVal[13])
-      .replace(/\{ZZZ_15\}/g, pArrVal[14])
-      .replace(/\{ZZZ_16\}/g, pArrVal[15])
-      .replace(/\{ZZZ_17\}/g, pArrVal[16])
-      .replace(/\{ZZZ_18\}/g, pArrVal[17])
-      .replace(/\{ZZZ_19\}/g, pArrVal[18]);
+      .replace(/\{ZZZ_ANIO_ANT\}/g, pAnioAnt);
+      for (let z = 0; z < pArrVal.length; z++) {
+        let expr = 'ZZZ_' + z;
+        let re = new RegExp(String.raw`\s${expr}\s`, "g");
+        valDev = valDevAux.replace(re, pArrVal[z]);
+      }
   } catch (e) {
     console.error('Error reemplazando parámetros:', e);
     valDev = pTexto
@@ -468,6 +456,7 @@ async function armaResultVert2(
 
   for (let idxCia = 0; idxCia < cantCiclos; idxCia++) {
     lineaSal = [];
+    valParam = [];
     for (let i = 0; i < pDetalles.length; i++) {
       idxDet = 1;
 
