@@ -161,7 +161,7 @@ function reempParam(pTexto, pCia, pAnio, pMes, pAnioAnt, pArrVal) {
       .replace(/\{ZZZ_ID_CIA\}/g, pCia)
       .replace(/\{ZZZ_ANIO_ANT\}/g, pAnioAnt);
       for (let z = 0; z < pArrVal.length; z++) {
-        let expr = '\{ZZZ_' + z + '\}';
+        let expr = '{ZZZ_' + (z+1) + '}';
         let re = new RegExp("/" + expr + "/", "g");
         valDevAux = valDevAux.replace(re, pArrVal[z]);
       }
