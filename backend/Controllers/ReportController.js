@@ -163,7 +163,10 @@ function reempParam(pTexto, pCia, pAnio, pMes, pAnioAnt, pArrVal) {
       for (let z = 0; z < pArrVal.length; z++) {
         let expr = '{ZZZ_' + (z+1) + '}';
         let re = new RegExp("/" + expr + "/", "g");
-        valDevAux = valDevAux.replace(re, pArrVal[z]);
+        if(typeof pArrVal[z] !== 'undefined') {
+          let valArr = pArrVal[z];
+          valDevAux = valDevAux.replace(re, pArrVal[z]);
+        }
       }
   } catch (e) {
     console.error('Error reemplazando parámetros:', e);
