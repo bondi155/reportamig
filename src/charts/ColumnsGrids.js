@@ -797,19 +797,6 @@ export const columnas_COB_EXC_admins = (anio) =>
       type: 'number',
       width: 140,
     },
-    // Columnas para Resultado Op. Analogas y C.
-    {
-      field: 'col18',
-      headerName: `Importe ${anio}`,
-      type: 'number',
-      width: 140,
-    },
-    {
-      field: 'col19',
-      headerName: `Importe ${anio - 1}`,
-      type: 'number',
-      width: 140,
-    },
   ]);
 
 // grupo para COB_EXC administrativas
@@ -857,14 +844,6 @@ export const ColumnaGrupo_COB_EXC_admins = [
     headerName: 'Resultado Técnico',
     description: 'Resultado Técnico',
     children: [{ field: 'col15' }, { field: 'col16' }, { field: 'col17' }],
-  },
-  {
-    groupId: 'ResultadoAnalogasC',
-    headerClassName: 'my-super-theme--naming-group',
-    headerAlign: 'center',
-    headerName: 'Resultado Op. Analogas y C.',
-    description: 'Resultado Op. Analogas y C.',
-    children: [{ field: 'col18' }, { field: 'col19' }],
   },
 ];
 
