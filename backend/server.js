@@ -56,6 +56,7 @@ app.use(express.json());
 
 app.post('/loginUsers', authenticateToken, getDataController.loginUsers__); // Login para obtener el token
 app.get('/getUserList', authenticateToken, getDataController.listUsers__); // Lista de ususarios
+app.get('/getRoleUsuario', authenticateToken, getDataController.validarRole__); // Validar Role
 app.get('/getErroresLista', authenticateToken, getDataController.erroresLista__); // Lista de errores
 app.put('/resetPass', authenticateToken, PostDataController.resetPassword__); // Reseteo password
 app.get('/getReport', authenticateToken, ReportController.ejecutarFunciones); // Ejecutar funcion general que hace el response del json

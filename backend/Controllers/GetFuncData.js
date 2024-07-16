@@ -24,6 +24,29 @@ function listUsers__(req, res) {
   });
 }
 
+// Validar role usuario para renderizado condicional
+
+async function validarRole__(req, res) {
+  const username = req.query.username ?? '';
+  const connection = await pool.promise().getConnection();
+
+  try {
+    const RoleUserSql = `SELECT role from users WHERE username = ? `;
+
+    const [rows] = await connection.query(RoleUserSql, [username]);
+    console.log(rows[0].role);
+
+    res.json({ role: rows[0].role });
+  } catch (err) {
+    console.log(err.message);
+    res.status(500).send('Error en el servidor');
+    throw err;
+  } finally {
+    connection.release();
+
+  }
+}
+
 //func para validar usuarios , executamos eso esto en terminal para generar el key = node -e "console.log(require('crypto').randomBytes(256).toString('base64'))
 function loginUsers__(req, res) {
   const username = req.body.username;
@@ -82,7 +105,7 @@ async function ArchivosCargados__(req, res) {
   try {
     const SqlIdProceso = `SELECT * FROM amigdb.am_proceso ORDER BY id DESC;`;
     const [rows] = await connection.query(SqlIdProceso);
-//    console.log(rows);
+    //    console.log(rows);
     res.send(rows);
   } catch (err) {
     console.log(err);
@@ -97,7 +120,7 @@ async function erroresLista__(req, res) {
   try {
     const SqlErrores = `SELECT * FROM amigdb.am_carga_err ORDER BY id DESC;`;
     const [rows] = await connection.query(SqlErrores);
-//    console.log(rows);
+    //    console.log(rows);
     res.send(rows);
   } catch (err) {
     console.log(err);
@@ -110,5 +133,6 @@ module.exports = {
   listUsers__,
   download__,
   ArchivosCargados__,
-  erroresLista__
+  erroresLista__,
+  validarRole__,
 };

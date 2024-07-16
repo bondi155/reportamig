@@ -1,15 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../css/App.css';
+import axios from 'axios';
 import { Container, Row, Col, Card } from 'react-bootstrap';
 //import axios from 'axios';
 //import { API_URL } from '../config/config';
 import { FaUserCircle} from 'react-icons/fa';
 import AccesoDirecto from '../components/AccesoDirecto';
+import { API_URL } from '../config/config';
+
 function Home({ form }) {
   const [error,] = useState(null); //pongo el error en un state para mostrarlo en pantalla
-  const domainParts = form.username.split('@')[1].split('.');
-  const domainName = domainParts[0];
-  const [currentDomain] = useState(domainName);
+  //const domainParts = form.username.split('@')[1].split('.');
+  //const domainName = domainParts[0];
+  //const [currentDomain] = useState(domainName);
+  const [role, SetRole] = useState('');
+
+  useEffect(() => {
+    const usersRole = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/getRoleUsuario`, {
+          params: { username: form.username },
+        });
+        SetRole(response.data.role);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    usersRole();
+  }, [form.username]);
 
   // Acordarse de setear el error en el catch
   return (
@@ -20,7 +38,7 @@ function Home({ form }) {
             Hubo un problema cargando el inicio graficos..error: Recargue la
             pagina por favor{error}
           </div>
-        ) : form.role === 'admin' && currentDomain === 'admin' ? (
+        ) : role === 'admin' ? (
           // Pantalla para Administrador
           <Container fluid>
             <Row className='justify-content-center'>
@@ -52,7 +70,7 @@ function Home({ form }) {
               </Col>
             </Row>
           </Container>
-        ) : form.role === 'operador' ? (
+        ) : role === 'operador' ? (
           // Pantalla para operador
           <div>
             {' '}

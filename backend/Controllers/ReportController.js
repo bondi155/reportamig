@@ -847,7 +847,7 @@ async function reporteMapExcel(
         filaActual++;
       });
       const anioNumero = +anio; // Convertir 'anio' a número
-      const cellAnio = 'B35';
+      const cellAnio = 'B38';
       sheet.getCell(cellAnio).value = anioNumero; // Asignar año al archivo
     });
   } else if (tipoArchivo === 'V') {

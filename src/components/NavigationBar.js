@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Navbar, Nav, Button, NavDropdown } from 'react-bootstrap';
 import { Outlet } from 'react-router-dom';
 import logo from '../components/img/logo.png';
@@ -8,6 +8,7 @@ import axios from 'axios';
 import { FiLogOut } from 'react-icons/fi';
 import '../css/App.css';
 import { RiListSettingsFill } from 'react-icons/ri';
+import { API_URL } from '../config/config.js';
 
 function NavigationBar({ setIslogin, form }) {
   const navigate = useNavigate();
@@ -21,6 +22,8 @@ function NavigationBar({ setIslogin, form }) {
 
   const [navOpen, setNavOpen] = useState(false);
 
+  const [role, SetRole] = useState('');
+
   const handleLinkClick = () => {
     setNavOpen(false);
   };
@@ -28,6 +31,22 @@ function NavigationBar({ setIslogin, form }) {
   const handleToggleClick = () => {
     setNavOpen((prevOpen) => !prevOpen);
   };
+
+  useEffect(() => {
+    const usersRole = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/getRoleUsuario`, {
+          params: { username: form.username },
+        });
+        SetRole(response.data.role);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    usersRole();
+  }, [form.username]);
+
+
   return (
     <>
       <Navbar
@@ -52,14 +71,14 @@ function NavigationBar({ setIslogin, form }) {
         <Navbar.Toggle onClick={handleToggleClick} />
         <Navbar.Collapse className='justify-content-end'>
           <Nav>
-            {form.role === 'admin' && (
+            {role === 'admin' && (
               <>
                 <NavDropdown
                   title={
                     <>
                       {' '}
-                      <RiListSettingsFill style={{ fontSize: '1.3rem' }} />{' '}
-                      Menú Avanzado
+                      <RiListSettingsFill style={{ fontSize: '1.3rem' }} /> Menú
+                      Avanzado
                     </>
                   }
                   id='basic-nav-dropdown'
@@ -83,7 +102,7 @@ function NavigationBar({ setIslogin, form }) {
                     onClick={handleToggleClick}
                     to='/listaErrores'
                   >
-                   Listado de Errores de Carga{' '}
+                    Listado de Errores de Carga{' '}
                   </NavDropdown.Item>{' '}
                 </NavDropdown>
                 <NavDropdown title='Reportes' id='basic-nav-dropdown'>
@@ -164,10 +183,6 @@ function NavigationBar({ setIslogin, form }) {
                   >
                     Cartera - Primas emitidas{' '}
                   </NavDropdown.Item>
-                  <NavDropdown.Divider />
-                  <NavDropdown.Item href='#action/3.4'>
-                    Configuracion de reportes{' '}
-                  </NavDropdown.Item>
                 </NavDropdown>
                 <Link
                   to='/entrada_txt_cmer_cmbg'
@@ -178,7 +193,7 @@ function NavigationBar({ setIslogin, form }) {
                 </Link>
               </>
             )}
-            {form.role === 'consulta' && (
+            {role === 'consulta' && (
               <>
                 <Link
                   to='/userCreation'
@@ -204,7 +219,7 @@ function NavigationBar({ setIslogin, form }) {
             </Link>*/}
               </>
             )}
-            {form.role === 'operador' && (
+            {role === 'operador' && (
               <>
                 <Link
                   to='/userCreation'
