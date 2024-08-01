@@ -29,6 +29,8 @@ function TablaFinanciera({ axiosResponse }) {
     return style;
   };
 
+  console.log('respuesta de empresas y todooooooooooo',axiosResponse[0]);
+
   return (
     <>
       <Container fluid className='mt-5 mb-5'>
@@ -60,10 +62,10 @@ function TablaFinanciera({ axiosResponse }) {
                       >
                         {item.col1}
                       </th>
-                      {Array.from({ length: 28 }, (_, i) => i + 2).map(
+                      {Array.from({ length: 15 }, (_, i) => i + 2).map(
                         (colIndex) => {
                           // Excluir las columnas de 5 a 21
-                          if (colIndex >= 5 && colIndex <= 21) {
+                          if (colIndex >= 6 && colIndex <= 2) {
                             return null;
                           }
                           return (
