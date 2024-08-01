@@ -43,7 +43,7 @@ function TablaEstadoResultados({ axiosResponse }) {
                 margin: '0 auto',
               }}
             >
-              <h3>Previsualización del Archivo de Situación Financiera*</h3>
+              <h3>Previsualización del Archivo de Estado de Resultados*</h3>
               <Table hover bordered responsive>
                 <thead>
                   <tr></tr>
