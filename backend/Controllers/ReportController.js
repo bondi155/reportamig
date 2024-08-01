@@ -17,7 +17,6 @@ async function obtenerCompaniasActivas() {
 
   try {
     const [companias] = await pool.promise().query(sqlCompaniasActivas);
-    //console.log(companias);
     return companias;
   } catch (error) {
     console.error('Error al obtener compañías activas:', error);
@@ -33,8 +32,7 @@ async function getEnc(id) {
   WHERE tipo_arc = 'S' AND id = ?`; //de ser necesario agregar separador en el select
   try {
     const [rows] = await pool.promise().query(sqlGetEnc, id);
-    const mapeoEnc = rows[0] || [];
-    //console.log(mapeoEnc);
+    const mapeoEnc = rows[0] || [];    //console.log(mapeoEnc);
     return mapeoEnc;
   } catch (error) {
     console.error('error', error);
@@ -101,7 +99,6 @@ async function nombreTab(idEncabezado) {
   WHERE id_map_enc = ? AND tipo_det = 'D' AND activo = 1
   ORDER BY 1`;
 
-    //  console.log(sqlGetTab);
     const [rows] = await pool.promise().query(sqlGetTab, [idEncabezado]);
     const resultadoTab = rows || {};
     return resultadoTab;
@@ -162,17 +159,12 @@ function reempParam(pTexto, pCia, pAnio, pMes, pAnioAnt, pArrVal) {
       .replace(/\{ZZZ_ID_CIA\}/g, pCia)
       .replace(/\{ZZZ_ANIO_ANT\}/g, pAnioAnt);
       if(pTexto.search(busq_col) >= 0) {
-        //console.log("valores:", pArrVal);
-        
         for (let z = 0; z < pArrVal.length; z++) {
           let re = new RegExp("{ZZZ_" + (z+1) + "}", "g");
           if(typeof pArrVal[z] !== 'undefined') {
             let busq_col_def = new RegExp("{ZZZ_" + (z+1) + "}", "g");
-            //console.log("llega:", valDevAux);
             if(pTexto.search(busq_col_def) >= 0) {
-              //console.log("llega al replace:", valDevAux, pArrVal[z]);
               valDevAux = valDevAux.replace(re, pArrVal[z]);
-              //console.log("sale:", valDevAux);
             }
           }
         }
@@ -254,8 +246,6 @@ async function consultaDinamica(idCia, anio, mes, anioAnt, detalles) {
         );
         consultaFinal = `SELECT ${sqlDinamica} AS ${alias} FROM ${tablaOrig} WHERE ${whereCond}`; //
       }
-      //console.log(sqlDinamica);
-      //  console.log('Consulta Final: ',consultaFinal);
       try {
         const [resultadoConsulta] = await pool.promise().query(consultaFinal);
 
@@ -450,7 +440,8 @@ async function armaResultVert2(
   pAnioAnt,
   pArrCia,
   pProcCia,
-  pDetalles
+  pDetalles,
+  pDetalles2
 ) {
   let resultados = [];
   let valParam = [];
@@ -465,124 +456,133 @@ async function armaResultVert2(
 
   let sqlDinamica, tablaOrig, whereCond, consultaFinal;
 
+  let detAProcList = [];
+
+  detAProcList.push(pDetalles);
+
+  if(pDetalles2) {
+    detAProcList.push(pDetalles2);
+  }
+  
   if (pProcCia == 1) {
     cantCiclos = pArrCia.length;
   } else {
     cantCiclos = 1;
   }
-
-  for (let idxCia = 0; idxCia < cantCiclos; idxCia++) {
-    lineaSal = [];
-    valParam = [];
-    for (let i = 0; i < pDetalles.length; i++) {
-      idxDet = 1;
-
-      detalle = pDetalles[i];
-
-      alias = 'valor';
-      valIns = null;
-      // valAComp = null;
-
-      idCia = pArrCia[idxCia].id_cia;
-      if (detalle.val_fijo !== null) {
-        let valorDinamico;
-        if (detalle.val_fijo.startsWith('=')) {
-          const expression = detalle.val_fijo.slice(1);
-          const parsedExpression = reempParam(
-            expression,
-            idCia,
-            pAnio,
-            pMes,
-            pAnioAnt,
-            valParam
-          );
-
-          const mexp = new Mexp();
-          try {
-            valorDinamico = mexp.eval(parsedExpression);
-          } catch (e) {
-            valorDinamico = null;
-          }
-        } else {
-          valorDinamico =
-            detalle.val_fijo !== ''
-              ? reempParam(
-                  detalle.val_fijo,
-                  idCia,
-                  pAnio,
-                  pMes,
-                  pAnioAnt,
-                  valParam
-                )
-              : detalle.val_def; //
-        }
-        //resultados.push({ [alias]: valorDinamico });
-        valIns = valorDinamico;
-      } else {
-        sqlDinamica = reempParam(
-          detalle.campo_orig,
-          idCia,
-          pAnio,
-          pMes,
-          pAnioAnt,
-          valParam
-        );
-
-        tablaOrig = detalle.tabla_orig; // AGREGAR SI TABLA_ORIG ES NULL AL QUERY QUE ARMO SOLO SELECT SIN FROM NI WHERE ELSE LO DE SIEMPRE
-
-        if (tablaOrig === null) {
-          consultaFinal = `SELECT ${sqlDinamica} AS ${alias}`; //
-        } else {
-          whereCond = reempParam(
-            detalle.where_cond,
-            idCia,
-            pAnio,
-            pMes,
-            pAnioAnt,
-            valParam
-          );
-          consultaFinal = `SELECT ${sqlDinamica} AS ${alias} FROM ${tablaOrig} WHERE ${whereCond}`; //
-        }
-        try {
-          const [resultadoConsulta] = await pool.promise().query(consultaFinal);
-
-          //resultados.push(resultadoConsulta[0]);
-          if (resultadoConsulta[0]) {
-            valIns = resultadoConsulta[0][alias];
-          }
-        } catch (error) {
-          if(error.errno==1365) {
-            valIns = '0';
+  for (let idxCia = 0; idxCia < cantCiclos; idxCia++) {    
+    for (let detAProc of detAProcList) {
+      lineaSal = [];
+      valParam = [];
+      for (let i = 0; i < detAProc.length; i++) {
+        idxDet = 1;
+  
+        detalle = detAProc[i];
+  
+        alias = 'valor';
+        valIns = null;
+        // valAComp = null;
+  
+        idCia = pArrCia[idxCia].id_cia;
+        if (detalle.val_fijo !== null) {
+          let valorDinamico;
+          if (detalle.val_fijo.startsWith('=')) {
+            const expression = detalle.val_fijo.slice(1);
+            const parsedExpression = reempParam(
+              expression,
+              idCia,
+              pAnio,
+              pMes,
+              pAnioAnt,
+              valParam
+            );
+  
+            const mexp = new Mexp();
+            try {
+              valorDinamico = mexp.eval(parsedExpression);
+            } catch (e) {
+              valorDinamico = null;
+            }
           } else {
-            console.error('Error al ejecutar consulta dinámica:', error);
+            valorDinamico =
+              detalle.val_fijo !== ''
+                ? reempParam(
+                    detalle.val_fijo,
+                    idCia,
+                    pAnio,
+                    pMes,
+                    pAnioAnt,
+                    valParam
+                  )
+                : detalle.val_def; //
           }
-        }
-      }
-      if (valIns == null && detalle.val_def != null) {
-        valIns = detalle.val_def;
-      } else {
-        if (
-          detalle.id_tipo_dato_orig == 1 &&
-          (isNaN(valIns) || !isFinite(valIns))
-        ) {
-          valIns = '0';
+          //resultados.push({ [alias]: valorDinamico });
+          valIns = valorDinamico;
         } else {
-          if (detalle.id_tipo_dato_orig == 1 && detalle.presic_orig_2 != null) {
-            if (detalle.presic_dato_orig_2 == 0) {
-              valIns = Math.round(valIns);
+          sqlDinamica = reempParam(
+            detalle.campo_orig,
+            idCia,
+            pAnio,
+            pMes,
+            pAnioAnt,
+            valParam
+          );
+  
+          tablaOrig = detalle.tabla_orig; // AGREGAR SI TABLA_ORIG ES NULL AL QUERY QUE ARMO SOLO SELECT SIN FROM NI WHERE ELSE LO DE SIEMPRE
+  
+          if (tablaOrig === null) {
+            consultaFinal = `SELECT ${sqlDinamica} AS ${alias}`; //
+          } else {
+            whereCond = reempParam(
+              detalle.where_cond,
+              idCia,
+              pAnio,
+              pMes,
+              pAnioAnt,
+              valParam
+            );
+            consultaFinal = `SELECT ${sqlDinamica} AS ${alias} FROM ${tablaOrig} WHERE ${whereCond}`; //
+          }
+          try {
+            const [resultadoConsulta] = await pool.promise().query(consultaFinal);
+  
+            //resultados.push(resultadoConsulta[0]);
+            if (resultadoConsulta[0]) {
+              valIns = resultadoConsulta[0][alias];
+            }
+          } catch (error) {
+            if(error.errno==1365) {
+              valIns = '0';
             } else {
-              valIns = parseFloat(valIns).toFixed(detalle.presic_orig_2);
+              console.error('Error al ejecutar consulta dinámica:', error);
             }
           }
         }
+        if (valIns == null && detalle.val_def != null) {
+          valIns = detalle.val_def;
+        } else {
+          if (
+            detalle.id_tipo_dato_orig == 1 &&
+            (isNaN(valIns) || !isFinite(valIns))
+          ) {
+            valIns = '0';
+          } else {
+            if (detalle.id_tipo_dato_orig == 1 && detalle.presic_orig_2 != null) {
+              if (detalle.presic_dato_orig_2 == 0) {
+                valIns = Math.round(valIns);
+              } else {
+                valIns = parseFloat(valIns).toFixed(detalle.presic_orig_2);
+              }
+            }
+          }
+        }
+        valParam[i] = valIns;
+        lineaSal.push(valIns);
+        idxDet++;
       }
-      valParam[i] = valIns;
-      lineaSal.push(valIns);
-      idxDet++;
+      //pArrCia.forEach(async (compania) => {
+      //});
+      resultados.push(lineaSal);
     }
-    //pArrCia.forEach(async (compania) => {
-    //});
-    resultados.push(lineaSal);
   }
   return resultados;
 }
@@ -680,43 +680,60 @@ async function procesaReporte(pIdArch, pAnio, pMes, pAnioAnt) {
             tabElem.tab_num,
             'D'
           );
-
           let lineaSal = [];
           let detalleSal = [];
           let primerCol = true;
+          let procColPorCia;
+          let detallesD2;
           const idxProcCia = 5;
+          const idxProcCiaSegundaCol = 6;
 
           let idxResultCol = 1;
 
           for (let colDefDet of resultadoSeqLine) {
-            detallesD = await obtenerDetallesD(
-              resultadoEnc.id,
-              tabElem.tab_num,
-              colDefDet.num_linea
-            );
+            if(colDefDet.num_linea!=idxProcCiaSegundaCol) {
+              procColPorCia = (colDefDet.num_linea == idxProcCia) ? 1 : 0;
 
-            const consultas = await armaResultVert2(
-              pAnio,
-              pMes,
-              pAnioAnt,
-              companias,
-              colDefDet.num_linea == idxProcCia ? 1 : 0, //Es el ID de seqLin que procesa varias veces la columna, por cada compañia
-              detallesD
-            );
-
-            let resultCol = await Promise.all(consultas);
-
-            for (let resultColLin of resultCol) {
-              let numCol = 1;
-              for (let columnaVal of resultColLin) {
-                if (primerCol) {
-                  lineaSal[numCol] = [];
-                }
-                lineaSal[numCol].push({ ['col' + idxResultCol]: columnaVal });
-                numCol++;
+              detallesD = await obtenerDetallesD(
+                resultadoEnc.id,
+                tabElem.tab_num,
+                colDefDet.num_linea
+              );
+  
+              if(procColPorCia==1) {
+                detallesD2 = await obtenerDetallesD(
+                  resultadoEnc.id,
+                  tabElem.tab_num,
+                  idxProcCiaSegundaCol
+                );
+              } else {
+                detallesD2 = null;
               }
-              primerCol = false;
-              idxResultCol++;
+  
+              const consultas = await armaResultVert2(
+                pAnio,
+                pMes,
+                pAnioAnt,
+                companias,
+                procColPorCia, //Es el ID de seqLin que procesa varias veces la columna, por cada compañia
+                detallesD,
+                detallesD2
+              );
+  
+              let resultCol = await Promise.all(consultas);
+  
+              for (let resultColLin of resultCol) {
+                let numCol = 1;
+                for (let columnaVal of resultColLin) {
+                  if (primerCol) {
+                    lineaSal[numCol] = [];
+                  }
+                  lineaSal[numCol].push({ ['col' + idxResultCol]: columnaVal });
+                  numCol++;
+                }
+                primerCol = false;
+                idxResultCol++;
+              }
             }
           }
           lineaSal.shift();
