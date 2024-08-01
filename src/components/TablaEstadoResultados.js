@@ -33,7 +33,7 @@ function TablaEstadoResultados({ axiosResponse }) {
     <>
       <Container fluid className='mt-5 mb-5'>
         <Row>
-          <Col>
+          <Col lg={12}>
             <div
               style={{
                 overflow: 'auto',
