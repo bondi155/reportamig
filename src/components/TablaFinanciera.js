@@ -6,7 +6,7 @@ function TablaFinanciera({ axiosResponse }) {
     position: 'sticky',
     left: 0,
     zIndex: 2,
-    backgroundColor: '#dee2e6', // Importante para cubrir otras columnas al desplazar
+    backgroundColor: '#eeeeee', // Importante para cubrir otras columnas al desplazar
   };
 
   const getCellStyle = (colIndex, rowIndex) => {
@@ -22,7 +22,7 @@ function TablaFinanciera({ axiosResponse }) {
       style = {
         ...style,
         fontWeight: 'bold',
-        backgroundColor: '#dee2e6',
+        backgroundColor: '#eeeeee',
       };
     }
 
@@ -36,6 +36,9 @@ function TablaFinanciera({ axiosResponse }) {
       <Container fluid className='mt-5 mb-5'>
         <Row>
           <Col>
+          <h3 style={{ textAlign: 'center', margin: '20px 0' }}>
+          Previsualización del Archivo de Situación Financiera*
+            </h3>{' '}
             <div
               style={{
                 overflow: 'auto',
@@ -45,7 +48,6 @@ function TablaFinanciera({ axiosResponse }) {
                 margin: '0 auto',
               }}
             >
-              <h3>Previsualización del Archivo de Situación Financiera*</h3>
               <Table hover bordered responsive>
                 <thead>
                   <tr></tr>
@@ -64,7 +66,7 @@ function TablaFinanciera({ axiosResponse }) {
                       </th>
                       {Array.from({ length: 15 }, (_, i) => i + 2).map(
                         (colIndex) => {
-                          // Excluir las columnas de 5 a 21
+                          // Excluir las columnas de 5 a 21 arriba era 28
                           if (colIndex >= 6 && colIndex <= 2) {
                             return null;
                           }

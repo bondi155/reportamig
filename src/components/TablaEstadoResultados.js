@@ -6,23 +6,29 @@ function TablaEstadoResultados({ axiosResponse }) {
     position: 'sticky',
     left: 0,
     zIndex: 2,
-    backgroundColor: '#dee2e6', // Importante para cubrir otras columnas al desplazar
+    backgroundColor: '#eeeeee', // Importante para cubrir otras columnas al desplazar
+    width: '150px', // Puedes ajustar este valor según necesites
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
   };
 
   const getCellStyle = (colIndex, rowIndex) => {
     let style = {
-      textAlign:
-        colIndex === 24 || colIndex === 1 || rowIndex === 0 || rowIndex === 1
-          ? 'left'
-          : 'right',
+      textAlign: 'right', // Alineación por defecto a la derecha
     };
 
-    // Aplicar negrita y fondo para condiciones específicas
-    if (rowIndex === 0 || rowIndex === 1) {
+    // Alineación específica para la primera columna y la columna total
+    if (colIndex === 1 || colIndex === 24) {
+      style.textAlign = 'left';
+    }
+
+    // Aplicar negrita y fondo para la primera fila
+    if (rowIndex === 0) {
       style = {
         ...style,
         fontWeight: 'bold',
-        backgroundColor: '#dee2e6',
+        backgroundColor: '#eeeeee',
       };
     }
 
@@ -33,7 +39,10 @@ function TablaEstadoResultados({ axiosResponse }) {
     <>
       <Container fluid className='mt-5 mb-5'>
         <Row>
-          <Col lg={12}>
+          <Col lg={{ span: 10, offset: 1 }}>
+            <h3 style={{ textAlign: 'center', margin: '20px 0' }}>
+              Previsualización del Archivo de Estado de Resultados*
+            </h3>{' '}
             <div
               style={{
                 overflow: 'auto',
@@ -43,7 +52,6 @@ function TablaEstadoResultados({ axiosResponse }) {
                 margin: '0 auto',
               }}
             >
-              <h3>Previsualización del Archivo de Estado de Resultados*</h3>
               <Table hover bordered responsive>
                 <thead>
                   <tr></tr>
@@ -62,7 +70,7 @@ function TablaEstadoResultados({ axiosResponse }) {
                       </th>
                       {Array.from({ length: 5 }, (_, i) => i + 2).map(
                         (colIndex) => {
-                          if (colIndex >= 5 && colIndex <= 21) {
+                          if (colIndex >= 3 && colIndex <= 20) {
                             return null;
                           }
                           return (
@@ -82,13 +90,12 @@ function TablaEstadoResultados({ axiosResponse }) {
             </div>
           </Col>
           <Col
-            lg={12}
+            lg={{ span: 8, offset: 2 }}
             style={{
               overflow: 'auto',
               maxHeight: '60vh',
               fontSize: '0.7rem',
-              width: '80%',
-              margin: '0 auto',
+              width: '60%',
             }}
           >
             <p>
