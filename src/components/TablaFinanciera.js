@@ -28,8 +28,6 @@ function TablaFinanciera({ axiosResponse }) {
     return style;
   };
 
-  console.log('respuesta de empresas y todooooooooooo', axiosResponse[0]);
-
   return (
     <>
       <Container fluid className='mt-5 mb-5'>
