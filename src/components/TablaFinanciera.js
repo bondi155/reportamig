@@ -6,19 +6,18 @@ function TablaFinanciera({ axiosResponse }) {
     position: 'sticky',
     left: 0,
     zIndex: 2,
-    backgroundColor: '#eeeeee', // Importante para cubrir otras columnas al desplazar
+    backgroundColor: '#eeeeee',
   };
 
   const getCellStyle = (colIndex, rowIndex) => {
     let style = {
       textAlign:
-        colIndex === 24 || colIndex === 1 || rowIndex === 0 || rowIndex === 1
+        colIndex === 1 || rowIndex === 0 || rowIndex === 1 || (colIndex === 5 && rowIndex !== 0)
           ? 'left'
           : 'right',
     };
 
-    // Aplicar negrita y fondo para condiciones específicas
-    if (colIndex === 24 || rowIndex === 0 || rowIndex === 1) {
+    if (rowIndex === 0 || colIndex === 5) {
       style = {
         ...style,
         fontWeight: 'bold',
@@ -29,15 +28,15 @@ function TablaFinanciera({ axiosResponse }) {
     return style;
   };
 
-  console.log('respuesta de empresas y todooooooooooo',axiosResponse[0]);
+  console.log('respuesta de empresas y todooooooooooo', axiosResponse[0]);
 
   return (
     <>
       <Container fluid className='mt-5 mb-5'>
         <Row>
           <Col>
-          <h3 style={{ textAlign: 'center', margin: '20px 0' }}>
-          Previsualización del Archivo de Situación Financiera*
+            <h3 style={{ textAlign: 'center', margin: '20px 0' }}>
+              Previsualización del Archivo de Situación Financiera*
             </h3>{' '}
             <div
               style={{
@@ -53,35 +52,47 @@ function TablaFinanciera({ axiosResponse }) {
                   <tr></tr>
                 </thead>
                 <tbody>
-                  {axiosResponse[0].slice(1).map((item, index) => (
-                    <tr key={index}>
-                      <th
-                        scope='row'
-                        style={{
-                          ...stickyColumnStyle,
-                          ...getCellStyle(1, index),
-                        }}
-                      >
-                        {item.col1}
-                      </th>
-                      {Array.from({ length: 15 }, (_, i) => i + 2).map(
-                        (colIndex) => {
-                          // Excluir las columnas de 5 a 21 arriba era 28
-                          if (colIndex >= 6 && colIndex <= 2) {
-                            return null;
-                          }
-                          return (
-                            <td
-                              key={colIndex}
-                              style={getCellStyle(colIndex, index)}
-                            >
-                              {item[`col${colIndex}`]}
-                            </td>
-                          );
-                        }
-                      )}
-                    </tr>
-                  ))}
+                  {axiosResponse[0].slice(1).map((item, index) => {
+                    const totalCols = Object.keys(item).length;
+                    const firstSetKeys = Object.keys(item).slice(2, 5);
+                    const lastSetKeys = Object.keys(item).slice(
+                      totalCols - 6,
+                      totalCols - 2
+                    );
+
+                    // Filtra para excluir específicamente la quinta columna (index 3 desde slice(1))
+                    const filteredFirstSetKeys = firstSetKeys.filter(
+                      (_, idx) => idx !== 3
+                    );
+
+                    const keysToShow = filteredFirstSetKeys.concat(lastSetKeys); // Combina los dos sets ajustados
+
+                    return (
+                      <tr key={index}>
+                        <th
+                          scope='row'
+                          style={{
+                            ...stickyColumnStyle,
+                            ...getCellStyle(1, index),
+                          }}
+                        >
+                          {index === 0 ? 'CONCEPTO' : item.col1}
+                        </th>
+                        {keysToShow.map((colKey, subIndex) => (
+                          <td
+                            key={subIndex}
+                            style={getCellStyle(subIndex + 2, index)}
+                          >
+                            {index === 0 && subIndex === 3 ? (
+                              <div style={{ textAlign: 'left' }}>CONCEPTO</div>
+                            ) : (
+                              item[colKey]
+                            )}
+                          </td>
+                        ))}
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </Table>
             </div>
