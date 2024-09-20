@@ -686,12 +686,12 @@ async function procesaReporte(pIdArch, pAnio, pMes, pAnioAnt) {
           let procColPorCia;
           let detallesD2;
           const idxProcCia = 5;
-          const idxProcCiaSegundaCol = 6;
+          //const idxProcCiaSegundaCol = 6;
 
           let idxResultCol = 1;
 
           for (let colDefDet of resultadoSeqLine) {
-            if(colDefDet.num_linea!=idxProcCiaSegundaCol) {
+            //if(colDefDet.num_linea!=idxProcCiaSegundaCol) {
               procColPorCia = (colDefDet.num_linea == idxProcCia) ? 1 : 0;
 
               detallesD = await obtenerDetallesD(
@@ -700,15 +700,15 @@ async function procesaReporte(pIdArch, pAnio, pMes, pAnioAnt) {
                 colDefDet.num_linea
               );
   
-              if(procColPorCia==1) {
-                detallesD2 = await obtenerDetallesD(
-                  resultadoEnc.id,
-                  tabElem.tab_num,
-                  idxProcCiaSegundaCol
-                );
-              } else {
+              //if(procColPorCia==1) {
+                //detallesD2 = await obtenerDetallesD(
+                //  resultadoEnc.id,
+                //  tabElem.tab_num
+                  //, idxProcCiaSegundaCol
+                //);
+              //} else {
                 detallesD2 = null;
-              }
+              //}
   
               const consultas = await armaResultVert2(
                 pAnio,
@@ -734,7 +734,7 @@ async function procesaReporte(pIdArch, pAnio, pMes, pAnioAnt) {
                 primerCol = false;
                 idxResultCol++;
               }
-            }
+            //}
           }
           lineaSal.shift();
           detalleSal.push(lineaSal);
