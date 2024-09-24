@@ -812,6 +812,7 @@ async function reporteMapExcel(
   nombreArchivo,
   tipoArchivo
 ) {
+  const nombresMeses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
   const rutaEntrada = path.join(__dirname, '..', 'Reportes', nombreArchivo);
   const rutaBase = path.join(__dirname, '..', 'Resultados');
   const nombreArchivoDinamico = nombreArchivo
@@ -863,9 +864,16 @@ async function reporteMapExcel(
         });
         filaActual++;
       });
+
       const anioNumero = +anio; // Convertir 'anio' a número
+      const nombreMes = nombresMeses[mes - 1];  // mes - 1 porque los arrays en JS comienzan en 0
+      const fechaEnExcel = `${nombreMes} ${anio}`;  // Formatea la fecha como 'Junio 2023'
       const cellAnio = 'B38';
+      const cellFecha = 'B5';
+
       sheet.getCell(cellAnio).value = anioNumero; // Asignar año al archivo
+      sheet.getCell(cellFecha).value = fechaEnExcel; // Asignar fecha 
+
     });
   } else if (tipoArchivo === 'V') {
     const pestaña = datosTotal[0];
@@ -900,6 +908,11 @@ async function reporteMapExcel(
       });
 
       currentRow++; // Moverse a la siguiente fila después terminar un array
+      const nombreMes = nombresMeses[mes - 1];  // mes - 1 porque los arrays en JS comienzan en 0
+      const fechaEnExcel = `${nombreMes} ${anio}`;  // Formatea la fecha como 'Junio 2023'
+      const cellFecha = 'C5';
+      sheet.getCell(cellFecha).value = fechaEnExcel; // Asignar fecha 
+
     });
   } else if (tipoArchivo === 'W') {
     datosTotal.forEach((pestaña) => {
@@ -922,7 +935,7 @@ async function reporteMapExcel(
           const cellRef = colLetter + filaInicial;
           const valor = valorColumna ? Object.values(valorColumna)[0] : null;
 
-          console.log(`Accediendo a la celda: ${cellRef} con valor: ${valor}`);
+          //console.log(`Accediendo a la celda: ${cellRef} con valor: ${valor}`);
 
           if (valor !== null) {
             // Si el valor es numérico y no empieza con letra, convertir a número
@@ -937,6 +950,10 @@ async function reporteMapExcel(
               sheet.getCell(cellRef).value = valor;
             }
           }
+          const nombreMes = nombresMeses[mes - 1];  // mes - 1 porque los arrays en JS comienzan en 0
+          const fechaEnExcel = `${nombreMes} ${anio}`;  // Formatea la fecha como 'Junio 2023'
+          const cellFecha = 'C5';
+          sheet.getCell(cellFecha).value = fechaEnExcel; // Asignar fecha 
         });
         filaInicial++; // Moverse a la siguiente fila después de terminar con una fila de detalle
       });
