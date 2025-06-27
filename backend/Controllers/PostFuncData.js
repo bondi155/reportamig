@@ -54,6 +54,30 @@ function deleteUser__(req, res) {
   });
 }
 
+
+function editCompania__(req, res) {
+  const id = req.params.id;
+  const { nombre_cia, cod_cia } = req.body;
+  const sqlUpdate = `
+    UPDATE am_compania
+    SET nombre_cia = ?, cod_cia = ?
+    WHERE id_cia = ?
+  `;
+
+  pool.query(sqlUpdate, [nombre_cia, cod_cia, id], (error, result) => {
+    if (error) {
+      console.error('Error al actualizar la compañía:', error);
+      res.status(500).json({ message: 'Error al actualizar la compañía' });
+    } else {
+      if (result.affectedRows === 0) {
+        res.status(404).json({ message: 'Compañía no encontrada' });
+      } else {
+        res.status(200).json({ message: 'Compañía actualizada correctamente' });
+      }
+    }
+  });
+}
+
 async function deleteArchivoTxt__(req, res) {
   const id = req.params.id;
   const connection = await pool.promise().getConnection();
@@ -106,4 +130,5 @@ module.exports = {
   resetPassword__,
   deleteUser__,
   deleteArchivoTxt__,
+  editCompania__
 };

@@ -71,6 +71,13 @@ app.get(
   getDataController.ArchivosCargados__
 ); // Ejecutar funcion para la prima
 
+
+app.get(
+  '/amCompanias',
+  authenticateToken,
+  getDataController.ComapaniasAm__
+); 
+
 app.post(
   '/descargarExcel',
   authenticateToken,
@@ -100,6 +107,8 @@ app.get('/limpiar-cache', authenticateToken, (req, res) => {
   limpiarCache();
   res.send('Caché limpiada con éxito.');
 });
+
+app.put('/amCompanias/:id', authenticateToken, PostDataController.editCompania__);
 
 app.listen(port, () => {
   console.log('servidor funcionando en el puerto ' + port);

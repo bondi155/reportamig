@@ -128,6 +128,24 @@ async function erroresLista__(req, res) {
     connection.release();
   }
 }
+
+
+
+// Esta función es para borrar los archivos subidos por id de proceso , no la termine
+async function ComapaniasAm__(req, res) {
+  const connection = await pool.promise().getConnection();
+
+  try {
+    const SqlIdProceso = `SELECT * FROM amigdb.am_compania ORDER BY id_cia DESC;`;
+    const [rows] = await connection.query(SqlIdProceso);
+    //    console.log(rows);
+    res.send(rows);
+  } catch (err) {
+    console.log(err);
+  } finally {
+    connection.release();
+  }
+}
 module.exports = {
   loginUsers__,
   listUsers__,
@@ -135,4 +153,5 @@ module.exports = {
   ArchivosCargados__,
   erroresLista__,
   validarRole__,
+  ComapaniasAm__
 };

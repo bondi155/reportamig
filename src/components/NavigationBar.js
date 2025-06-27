@@ -104,6 +104,13 @@ function NavigationBar({ setIslogin, form }) {
                   >
                     Listado de Errores de Carga{' '}
                   </NavDropdown.Item>{' '}
+                    <NavDropdown.Item
+                    as={Link}
+                    onClick={handleToggleClick}
+                    to='/GridEmpresas'
+                  >
+                    Cambio de Nombres Empresas{' '}
+                  </NavDropdown.Item>{' '}
                 </NavDropdown>
                 <NavDropdown title='Reportes' id='basic-nav-dropdown'>
                   <NavDropdown.Item

@@ -25,6 +25,7 @@ import SiniestrosCtaOrden from './pages/SiniestrosCtaOrden';
 import PrimasCantidad from './pages/PrimasCantidad';
 import GestorArchCargados from './pages/GestorArchCargados';
 import GestorErrores from './pages/GestorErrores';
+import GridEmpresas from './components/GridEmpresas';
 function App() {
   const [islogin, setIslogin] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -290,6 +291,18 @@ function App() {
               </PrivateRoute>
             }
           />
+              <Route
+            path='/GridEmpresas'
+            element={
+              <PrivateRoute islogin={islogin}>
+                <GridEmpresas
+                  form={form}
+                  userCreate={userCreate}
+                  setUserCreate={setUserCreate}
+                />{' '}
+              </PrivateRoute>
+            }
+          /> 
         </Route>
       </Routes>
     </BrowserRouter>
