@@ -29,6 +29,7 @@ import Spinner from 'react-bootstrap/Spinner';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import MesAnioSelector from '../components/MesAnioSelector.js';
+import dayjs from 'dayjs';
 
 const downloadExcel = async (e, setDownloadStatus, anio, mes) => {
   e.preventDefault();
@@ -60,8 +61,9 @@ const downloadExcel = async (e, setDownloadStatus, anio, mes) => {
 };
 
 const ReporteTotal = () => {
-  const [anio, setAnio] = useState(2023);
-  const [mes, setMes] = useState(6);
+  const hoy = dayjs();
+  const [anio, setAnio] = useState(hoy.subtract(1, 'month').year());
+  const [mes, setMes] = useState(hoy.subtract(1, 'month').month() + 1);
   const [isLoading, setIsLoading] = useState(true);
   const [isDownloading, setDownloadStatus] = useState(false);
   const [axiosResponse, setAxiosResponse] = useState([]);
