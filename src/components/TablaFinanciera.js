@@ -1,5 +1,6 @@
 import React from 'react';
 import { Container, Col, Row, Table } from 'react-bootstrap';
+import { Box } from "@mui/material";
 
 function TablaFinanciera({ axiosResponse }) {
   const stickyColumnStyle = {
@@ -28,6 +29,28 @@ function TablaFinanciera({ axiosResponse }) {
     return style;
   };
 
+  // 🛡️ Protección contra falta de datos
+  if (!axiosResponse || !Array.isArray(axiosResponse[0])) {
+    return (
+      <Container fluid className='mt-5 mb-5'>
+        <Row>
+          <Col>
+          <Box
+    sx={{
+      mt: "6rem",
+      textAlign: "center",
+      fontSize: "1.2rem",
+      color: "#555",
+    }}
+  >
+    Para visualizar información, seleccione el mes, año y haga clic en el botón <strong>'Confirmar'</strong>.
+  </Box>
+          </Col>
+        </Row>
+      </Container>
+    );
+  }
+
   return (
     <>
       <Container fluid className='mt-5 mb-5'>
@@ -50,6 +73,7 @@ function TablaFinanciera({ axiosResponse }) {
                   <tr></tr>
                 </thead>
                 <tbody>
+                  
                   {axiosResponse[0].slice(1).map((item, index) => {
                     const totalCols = Object.keys(item).length;
                     const firstSetKeys = Object.keys(item).slice(2, 5);

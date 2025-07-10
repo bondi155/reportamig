@@ -1,6 +1,6 @@
 import React from 'react';
 import { Container, Col, Row, Table } from 'react-bootstrap';
-
+import { Box } from "@mui/material";
 function TablaEstadoResultados({ axiosResponse }) {
   const stickyColumnStyle = {
     position: 'sticky',
@@ -34,6 +34,28 @@ function TablaEstadoResultados({ axiosResponse }) {
 
     return style;
   };
+
+  if (!axiosResponse || !Array.isArray(axiosResponse[0])) {
+      return (
+        <Container fluid className='mt-5 mb-5'>
+          <Row>
+            <Col>
+            <Box
+      sx={{
+        mt: "6rem",
+        textAlign: "center",
+        fontSize: "1.2rem",
+        color: "#555",
+      }}
+    >
+      Para visualizar información, seleccione el mes, año y haga clic en el botón <strong>'Confirmar'</strong>.
+    </Box>
+            </Col>
+          </Row>
+        </Container>
+      );
+    }
+  
 
   return (
     <>

@@ -11,6 +11,7 @@ import ChartPrimas from "../charts/ChartPrimas.js";
 import dayjs from "dayjs";
 const PrimasCantidad = () => {
   const hoy = dayjs();
+  const [showGrids, setShowGrids] = useState(false);
   const [anio, setAnio] = useState(hoy.subtract(1, "month").year());
   const [mes, setMes] = useState(hoy.subtract(1, "month").month() + 1);
   const [isLoading, setIsLoading] = useState(true);
@@ -19,6 +20,8 @@ const PrimasCantidad = () => {
   const handleConfirmarSeleccion = ({ anio, mes }) => {
     setAnio(anio);
     setMes(mes);
+    setShowGrids(true);
+
     // Llama a la función para actualizar el estado o realizar acciones del datepiker
   };
 
@@ -107,20 +110,33 @@ const PrimasCantidad = () => {
           </Row>
         </Form>
       </Container>
-      {isLoading ? (
-        <PlaneSpinner />
-      ) : (
-        <Box
-          sx={{
-            maxWidth: "75%",
-            mt: "6rem",
-            width: "100%",
-            mx: "auto", // Centra el Box de mui como lo hace un contenedor Bootstrap
-          }}
-        >
-          <ChartPrimas series={axiosResponse} categories={categories} />
-        </Box>
-      )}
+     {showGrids ? (
+  isLoading ? (
+    <PlaneSpinner />
+  ) : (
+    <Box
+      sx={{
+        maxWidth: "75%",
+        mt: "6rem",
+        width: "100%",
+        mx: "auto", // Centra el Box de mui como lo hace un contenedor Bootstrap
+      }}
+    >
+      <ChartPrimas series={axiosResponse} categories={categories} />
+    </Box>
+  )
+) : (
+  <Box
+    sx={{
+      mt: "6rem",
+      textAlign: "center",
+      fontSize: "1.2rem",
+      color: "#555",
+    }}
+  >
+    Para visualizar información, seleccione mes/año y haga clic en el botón <strong>'Confirmar'</strong>.
+  </Box>
+)}
     </>
   );
 };

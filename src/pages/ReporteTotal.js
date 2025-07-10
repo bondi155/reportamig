@@ -62,6 +62,7 @@ const downloadExcel = async (e, setDownloadStatus, anio, mes) => {
 
 const ReporteTotal = () => {
   const hoy = dayjs();
+  const [showGrids, setShowGrids] = useState(false);
   const [anio, setAnio] = useState(hoy.subtract(1, 'month').year());
   const [mes, setMes] = useState(hoy.subtract(1, 'month').month() + 1);
   const [isLoading, setIsLoading] = useState(true);
@@ -76,6 +77,7 @@ const ReporteTotal = () => {
   const handleConfirmarSeleccion = ({ anio, mes }) => {
     setAnio(anio);
     setMes(mes);
+    setShowGrids(true);
     // Llama a la función para actualizar el estado o realizar acciones del datepiker
   };
 
@@ -103,6 +105,8 @@ const ReporteTotal = () => {
   };
 
   useEffect(() => {
+      if (!showGrids) return;
+
     const asyncCall = async () => {
       setIsLoading(true);
       try {
@@ -130,7 +134,7 @@ const ReporteTotal = () => {
     };
 
     asyncCall();
-  }, [anio, mes]);
+  }, [anio, mes, showGrids]);
 
   const handleDownload = (e) => downloadExcel(e, setDownloadStatus, anio, mes);
 
@@ -202,120 +206,134 @@ const ReporteTotal = () => {
           </Row>
         </Form>
       </Container>
-      {isLoading ? (
-        <PlaneSpinner />
-      ) : (
-        <Box
-          sx={{
-            maxWidth: '95%',
-            mt: '6rem',
-            width: '100%',
-            mx: 'auto',
-          }}
-        >
-          <Tabs
-            value={valueTab}
-            onChange={handleChange}
-            variant={scrollableTabs ? 'scrollable' : 'fullWidth'}
-            scrollButtons='auto'
-            allowScrollButtonsMobile
-            sx={{
-              '.MuiTabs-scroller': {
-                flexGrow: '0',
-              },
-              '.MuiTab-root': {
-                minWidth: 0,
-                padding: '6px 12px',
-              },
-            }}
-          >
-            <Tab label='PD' value='pd' />
-            <Tab label='COB_EXC' value='cobexc' />
-            <Tab label='GTOSOP' value='gtosop' />
-            <Tab label='ORVAS' value='orvas' />
-            <Tab label='IND. GESTION' value='indGestion' />
-            <Tab label='ROE' value='roe' />
-          </Tabs>
-          {valueTab === 'pd' &&
-            axiosResponse[0] &&
-            axiosResponse[0].length > 0 && (
-              <Box className='mt-4 mb-2'>
-                <GridEval
-                  rows={axiosResponse[0]}
-                  columnsVar={columnasPDAnio}
-                  fileNameVar='PD'
-                  autoHeight
-                  columnGroupingModel={ColumnaGrupoPd}
-                  experimentalFeatures={{ columnGrouping: true }}
-                />
-              </Box>
-            )}
-          {valueTab === 'cobexc' &&
-            axiosResponse[1] &&
-            axiosResponse[1].length > 0 && (
-              <Box className='mt-4 mb-2'>
-                <GridEval
-                  rows={axiosResponse[1]}
-                  columnsVar={columnasCOB_EXCAnio}
-                  fileNameVar='COB_EXC'
-                  columnGroupingModel={ColumnaGrupoCOB_EXC}
-                  experimentalFeatures={{ columnGrouping: true }}
-                />
-              </Box>
-            )}
-          {valueTab === 'gtosop' &&
-            axiosResponse[2] &&
-            axiosResponse[2].length > 0 && (
-              <Box className='mt-4 mb-2' sx={{ height: 400, width: '100%' }}>
-                <GridEval
-                  rows={axiosResponse[2]}
-                  columnsVar={columnasGTOSOPAnio}
-                  fileNameVar='GTOSOP'
-                  columnGroupingModel={ColumnaGrupoGTOSOP}
-                  experimentalFeatures={{ columnGrouping: true }}
-                />
-              </Box>
-            )}
-          {valueTab === 'orvas' &&
-            axiosResponse[3] &&
-            axiosResponse[3].length > 0 && (
-              <Box className='mt-4 mb-2' sx={{ height: 400, width: '100%' }}>
-                <GridEval
-                  rows={axiosResponse[3]}
-                  columnsVar={columnasORVASAnio}
-                  fileNameVar='ORVAS'
-                  columnGroupingModel={ColumnaGrupoORVAS}
-                />
-              </Box>
-            )}{' '}
-          {valueTab === 'indGestion' &&
-            axiosResponse[4] &&
-            axiosResponse[4].length > 0 && (
-              <Box className='mt-4 mb-2'>
-                <GridEval
-                  rows={axiosResponse[4]}
-                  columnsVar={columnasINDGESTIONAnio}
-                  fileNameVar='IND. GESTION'
-                  columnGroupingModel={ColumnaGrupoINDGESTION}
-                  experimentalFeatures={{ columnGrouping: true }}
-                />
-              </Box>
-            )}
-          {valueTab === 'roe' &&
-            axiosResponse[5] &&
-            axiosResponse[5].length > 0 && (
-              <Box className='mt-4 mb-2'>
-                <GridEval
-                  rows={axiosResponse[5]}
-                  columnsVar={columnasROE}
-                  fileNameVar='ROE'
-                  columnGroupingModel={ColumnaGrupoROE}
-                  experimentalFeatures={{ columnGrouping: true }}
-                />
-              </Box>
-            )}
-        </Box>
-      )}
+   {showGrids ? (
+  isLoading ? (
+    <PlaneSpinner />
+  ) : (
+    <Box
+      sx={{
+        maxWidth: '95%',
+        mt: '6rem',
+        width: '100%',
+        mx: 'auto',
+      }}
+    >
+      <Tabs
+        value={valueTab}
+        onChange={handleChange}
+        variant={scrollableTabs ? 'scrollable' : 'fullWidth'}
+        scrollButtons='auto'
+        allowScrollButtonsMobile
+        sx={{
+          '.MuiTabs-scroller': {
+            flexGrow: '0',
+          },
+          '.MuiTab-root': {
+            minWidth: 0,
+            padding: '6px 12px',
+          },
+        }}
+      >
+        <Tab label='PD' value='pd' />
+        <Tab label='COB_EXC' value='cobexc' />
+        <Tab label='GTOSOP' value='gtosop' />
+        <Tab label='ORVAS' value='orvas' />
+        <Tab label='IND. GESTION' value='indGestion' />
+        <Tab label='ROE' value='roe' />
+      </Tabs>
+
+      {valueTab === 'pd' &&
+        axiosResponse[0] &&
+        axiosResponse[0].length > 0 && (
+          <Box className='mt-4 mb-2'>
+            <GridEval
+              rows={axiosResponse[0]}
+              columnsVar={columnasPDAnio}
+              fileNameVar='PD'
+              autoHeight
+              columnGroupingModel={ColumnaGrupoPd}
+              experimentalFeatures={{ columnGrouping: true }}
+            />
+          </Box>
+        )}
+      {valueTab === 'cobexc' &&
+        axiosResponse[1] &&
+        axiosResponse[1].length > 0 && (
+          <Box className='mt-4 mb-2'>
+            <GridEval
+              rows={axiosResponse[1]}
+              columnsVar={columnasCOB_EXCAnio}
+              fileNameVar='COB_EXC'
+              columnGroupingModel={ColumnaGrupoCOB_EXC}
+              experimentalFeatures={{ columnGrouping: true }}
+            />
+          </Box>
+        )}
+      {valueTab === 'gtosop' &&
+        axiosResponse[2] &&
+        axiosResponse[2].length > 0 && (
+          <Box className='mt-4 mb-2' sx={{ height: 400, width: '100%' }}>
+            <GridEval
+              rows={axiosResponse[2]}
+              columnsVar={columnasGTOSOPAnio}
+              fileNameVar='GTOSOP'
+              columnGroupingModel={ColumnaGrupoGTOSOP}
+              experimentalFeatures={{ columnGrouping: true }}
+            />
+          </Box>
+        )}
+      {valueTab === 'orvas' &&
+        axiosResponse[3] &&
+        axiosResponse[3].length > 0 && (
+          <Box className='mt-4 mb-2' sx={{ height: 400, width: '100%' }}>
+            <GridEval
+              rows={axiosResponse[3]}
+              columnsVar={columnasORVASAnio}
+              fileNameVar='ORVAS'
+              columnGroupingModel={ColumnaGrupoORVAS}
+            />
+          </Box>
+        )}
+      {valueTab === 'indGestion' &&
+        axiosResponse[4] &&
+        axiosResponse[4].length > 0 && (
+          <Box className='mt-4 mb-2'>
+            <GridEval
+              rows={axiosResponse[4]}
+              columnsVar={columnasINDGESTIONAnio}
+              fileNameVar='IND. GESTION'
+              columnGroupingModel={ColumnaGrupoINDGESTION}
+              experimentalFeatures={{ columnGrouping: true }}
+            />
+          </Box>
+        )}
+      {valueTab === 'roe' &&
+        axiosResponse[5] &&
+        axiosResponse[5].length > 0 && (
+          <Box className='mt-4 mb-2'>
+            <GridEval
+              rows={axiosResponse[5]}
+              columnsVar={columnasROE}
+              fileNameVar='ROE'
+              columnGroupingModel={ColumnaGrupoROE}
+              experimentalFeatures={{ columnGrouping: true }}
+            />
+          </Box>
+        )}
+    </Box>
+  )
+) : (
+  <Box
+    sx={{
+      mt: '6rem',
+      textAlign: 'center',
+      fontSize: '1.2rem',
+      color: '#555',
+    }}
+  >
+    Para visualizar información, seleccione el mes, año y haga clic en el botón <strong>'Confirmar'</strong>.
+  </Box>
+)}
     </>
   );
 };
